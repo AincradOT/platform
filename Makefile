@@ -29,8 +29,5 @@ run:         run-$(MK_OS)         	## Run the project locally
 lint:        lint-$(MK_OS)        	## Run lint checks
 format:      format-$(MK_OS)      	## Auto-format code
 test:        test-$(MK_OS)        	## Run tests
-build:       build-$(MK_OS)       	## Build the project
-package:     build package-$(MK_OS) ## Package the project for distribution (tarballs, docker images, etc.)
 clean:       clean-$(MK_OS)       	## Remove caches, containers, images, volumes
-up:          up-$(MK_OS)          	## Start project via Docker Compose
 check-env:   check-env-$(MK_OS)
