@@ -2,7 +2,7 @@ name: mkdocs
 
 on:
   push:
-    branches: [master]
+    branches: [master, feat/docs]
     paths:
       - "docs/**"
       - ".github/mkdocs.yml"

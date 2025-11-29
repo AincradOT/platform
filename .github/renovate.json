@@ -3,8 +3,40 @@
   "dependencyDashboardTitle": "Renovate Dashboard 🤖",
   "suppressNotifications": ["prEditedNotification", "prIgnoreNotification"],
   "baseBranchPatterns": ["master"],
+  "schedule": ["after 2am on Sunday"],
+  "timezone": "UTC",
+  "platformAutomerge": true,
+  "ignoreTests": false,
+  "prConcurrentLimit": 5,
+  "prCreation": "not-pending",
+  "rebaseWhen": "behind-base-branch",
+  "stabilityDays": 3,
+  "semanticCommits": "enabled",
+  "commitMessagePrefix": "chore(deps):",
+  "separateMajorMinor": true,
+  "separateMultipleMajor": true,
+  "rangeStrategy": "bump",
+  "lockfileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 3am on the first day of the month"]
+  },
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "schedule": ["at any time"],
+    "stabilityDays": 0,
+    "labels": ["security", "dependencies"]
+  },
   "extends": [
     "config:recommended",
-    "github>AincradOT/foundation//.github/renovate/auto-merge.json"
+    "github>AincradOT/foundation//.github/renovate/auto-merge.json",
+    ":dependencyDashboard"
+  ],
+  "packageRules": [
+    {
+      "description": "Group GitHub Actions updates",
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions",
+      "automerge": false
+    }
   ]
 }
