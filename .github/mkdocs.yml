@@ -1,0 +1,17 @@
+site_name: {{ organisation }} {{ repository }}
+site_url: https://{{ organisation }}.github.io/{{ repository }}
+repo_url: https://github.com/{{ organisation }}/{{ repository }}
+edit_uri: edit/master/docs/
+
+theme:
+  name: material
+
+docs_dir: ../docs
+
+nav:
+  - Home: index.md
+  - Setup: setup.md
+  - Usage: usage.md
+  - Workflows: workflows.md
+  - Contributing: contributing.md
+  - Documentation: documentation.md

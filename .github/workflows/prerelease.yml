@@ -1,0 +1,120 @@
+name: prerelease
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-tags
+  cancel-in-progress: false
+
+jobs:
+  rc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
+
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.TERRAFORM_GITHUB_APP_ID }}
+          private-key: ${{ secrets.TERRAFORM_GITHUB_APP_PEM }}
+
+      - name: Install Semantic Release + plugins
+        run: |
+          npm install --no-save \
+            semantic-release \
+            @semantic-release/exec \
+            @semantic-release/github \
+            @semantic-release/git \
+            @semantic-release/release-notes-generator \
+            @semantic-release/commit-analyzer
+
+      - name: Install changelog deps
+        run: npm install --no-save conventional-changelog-cli conventional-changelog-conventionalcommits
+
+      - name: Generate RELEASE_NOTES.md
+        shell: bash
+        run: |
+          npx --no-install conventional-changelog-cli \
+            -p conventionalcommits \
+            -n .github/changelog.config.cjs \
+            -r 1 \
+            -o RELEASE_NOTES.md
+          test -s RELEASE_NOTES.md || echo "No user-facing changes since last release." > RELEASE_NOTES.md
+
+      - name: Compute next version
+        id: ver
+        shell: bash
+        run: |
+          set -euo pipefail
+          LAST_STABLE=$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n1 || echo "v0.0.0")
+          TYPE=$(npx conventional-recommended-bump -p conventionalcommits 2>/dev/null || echo patch)
+          TYPE=$(echo "$TYPE" | grep -Eo 'major|minor|patch' | head -1 || echo patch)
+          NEXT=$(node -e 'const semver=require("semver"); const base=process.argv[1].replace(/^v/,""); const t=process.argv[2]||"patch"; console.log("v"+semver.inc(base,t));' "$LAST_STABLE" "$TYPE")
+          echo "last=$LAST_STABLE" >> $GITHUB_OUTPUT
+          echo "type=$TYPE"        >> $GITHUB_OUTPUT
+          echo "next=$NEXT"        >> $GITHUB_OUTPUT
+
+      - name: Remove previous prereleases/tags
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # delete prerelease GitHub releases
+          mapfile -t REL_IDS < <(gh api repos/$REPO/releases --paginate --jq '.[] | select(.prerelease==true) | .id')
+          for id in "${REL_IDS[@]:-}"; do gh api repos/$REPO/releases/$id -X DELETE || true; done
+
+          # delete rc-like tags (remote)
+          mapfile -t TAGS < <(gh api repos/$REPO/git/refs/tags --paginate \
+            --jq '.[] | .ref | sub("^refs/tags/";"") | select(test("^(rc|v[0-9]+\\.[0-9]+\\.[0-9]+-rc)$"))')
+          for tag in "${TAGS[@]:-}"; do gh api -X DELETE repos/$REPO/git/refs/tags/$tag || true; done
+
+          # delete any local rc-like tags to avoid “clobber” during future fetches
+          git tag -l 'v*-rc' | xargs -r -n1 git tag -d || true
+          git tag -d rc || true
+
+      - name: Generate prerelease notes
+        run: |
+          npx conventional-changelog \
+            --preset conventionalcommits \
+            --config .github/changelog.config.cjs \
+            --release-count 1 \
+            > RELEASE_NOTES.md
+
+          test -s RELEASE_NOTES.md || echo "No user-facing changes since last release." > RELEASE_NOTES.md
+
+      - run: |
+          echo "Preview notes:"
+          sed -n '1,80p' RELEASE_NOTES.md || true
+
+      - name: Create/update single prerelease
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          TAG="rc"
+          TITLE="${{ steps.ver.outputs.next }}-rc"
+          gh release create "$TAG" --prerelease --title "$TITLE" -F RELEASE_NOTES.md --target "$GITHUB_SHA"
+
+      - name: Trigger docker build for RC
+        if: success()
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          jq -n --arg tag rc --arg sha "$GITHUB_SHA" \
+            '{event_type:"prerelease", client_payload:{tag:$tag, sha:$sha}}' \
+          | gh api repos/${{ github.repository }}/dispatches \
+              -X POST \
+              -H "Accept: application/vnd.github+json" \
+              --input -

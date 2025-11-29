@@ -1,0 +1,93 @@
+name: release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: release-tags
+  cancel-in-progress: false
+
+jobs:
+  latest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Remove mutable prerelease tag locally
+        run: |
+          git tag -d rc || true
+          git update-ref -d refs/tags/rc || true
+
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.TERRAFORM_GITHUB_APP_ID }}
+          private-key: ${{ secrets.TERRAFORM_GITHUB_APP_PEM }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Cache semantic-release dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-cache-${{ hashFiles('.github/.releaserc') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-cache-
+
+      - name: Install Semantic Release + plugins
+        run: |
+          npm install --no-save \
+            semantic-release \
+            @semantic-release/exec \
+            @semantic-release/github \
+            @semantic-release/git \
+            @semantic-release/release-notes-generator \
+            @semantic-release/commit-analyzer \
+            conventional-changelog-conventionalcommits
+
+      - name: Use release config
+        run: cp .github/.releaserc ./.releaserc
+
+      - name: Run semantic-release
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: npx --no-install semantic-release --no-ci
+
+      - name: Determine released tag
+        id: tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Give GitHub a moment to publish the tag, then fetch
+          for i in {1..5}; do
+            git fetch --tags --force && break || sleep 2
+          done
+          TAG=$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n1)
+          test -n "$TAG" || { echo "No version tag found"; exit 1; }
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger docker build for stable
+        if: success()
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          jq -n --arg tag "${{ steps.tag.outputs.tag }}" \
+            '{event_type:"release", client_payload:{tag:$tag}}' \
+          | gh api repos/${{ github.repository }}/dispatches \
+              -X POST \
+              -H "Accept: application/vnd.github+json" \
+              --input -

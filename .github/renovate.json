@@ -1,0 +1,10 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "dependencyDashboardTitle": "Renovate Dashboard 🤖",
+  "suppressNotifications": ["prEditedNotification", "prIgnoreNotification"],
+  "baseBranchPatterns": ["master"],
+  "extends": [
+    "config:recommended",
+    "github>{{ organisation }}/{{ repository }}//.github/renovate/auto-merge.json"
+  ]
+}
