@@ -5,6 +5,6 @@
   "baseBranchPatterns": ["master"],
   "extends": [
     "config:recommended",
-    "github>{{ organisation }}/{{ repository }}//.github/renovate/auto-merge.json"
+    "github>AincradOT/foundation//.github/renovate/auto-merge.json"
   ]
 }

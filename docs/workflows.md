@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project uses GitHub Actions for automated testing, building, and releasing. The pipeline integrates with our [Contributing Guidelines](https://{{ organisation }}.github.io/{{ repository }}/contributing) to provide a seamless development experience.
+This project uses GitHub Actions for automated testing, building, and releasing. The pipeline integrates with our [Contributing Guidelines](https://AincradOT.github.io/foundation/contributing) to provide a seamless development experience.
 
 ## Workflows
 
@@ -36,4 +36,4 @@ Repository branches are protected with automated rules:
 
 ## Next Steps
 
-For detailed development practices and commit standards, see the [Contributing Guidelines](https://{{ organisation }}.github.io/{{ repository }}/contributing).
+For detailed development practices and commit standards, see the [Contributing Guidelines](https://AincradOT.github.io/foundation/contributing).

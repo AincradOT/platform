@@ -1,9 +1,9 @@
 FROM ubuntu:24.04
 
-LABEL org.opencontainers.image.vendor="{{ organisation }}"
-LABEL org.opencontainers.image.title="{{ organisation }}/{{ repository }}"
-LABEL org.opencontainers.image.url="https://github.com/{{ organisation }}/{{ repository }}"
-LABEL org.opencontainers.image.documentation="https://{{ organisation }}.github.io/{{ repository }}/"
+LABEL org.opencontainers.image.vendor="AincradOT"
+LABEL org.opencontainers.image.title="AincradOT/foundation"
+LABEL org.opencontainers.image.url="https://github.com/AincradOT/foundation"
+LABEL org.opencontainers.image.documentation="https://AincradOT.github.io/foundation/"
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \

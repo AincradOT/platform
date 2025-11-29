@@ -11,7 +11,7 @@ Make sure you have the following installed:
 
 ## Getting Started
 
-Follow the [setup instructions](https://{{ organisation }}.github.io/{{ repository }}/setup) for installation and environment configuration.
+Follow the [setup instructions](https://AincradOT.github.io/foundation/setup) for installation and environment configuration.
 
 Quick start:
 
@@ -23,5 +23,5 @@ make help
 
 Additional documentation is available on the repository documentation website:
 
-- [Contributing Guide](https://{{ organisation }}.github.io/{{ repository }}/contributing)
-- [Usage Guide](https://{{ organisation }}.github.io/{{ repository }}/usage)
+- [Contributing Guide](https://AincradOT.github.io/foundation/contributing)
+- [Usage Guide](https://AincradOT.github.io/foundation/usage)

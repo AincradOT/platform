@@ -1,6 +1,6 @@
-site_name: {{ organisation }} {{ repository }}
-site_url: https://{{ organisation }}.github.io/{{ repository }}
-repo_url: https://github.com/{{ organisation }}/{{ repository }}
+site_name: AincradOT foundation
+site_url: https://AincradOT.github.io/foundation
+repo_url: https://github.com/AincradOT/foundation
 edit_uri: edit/master/docs/
 
 theme:

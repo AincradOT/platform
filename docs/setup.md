@@ -13,8 +13,8 @@ Make sure you have the following installed:
 Clone the repository and navigate to the project directory:
 
 ```bash
-git clone https://github.com/{{ organisation }}/{{ repository }}
-cd {{ repository }}
+git clone https://github.com/AincradOT/foundation
+cd foundation
 ```
 
 ## Setup
@@ -27,4 +27,4 @@ make setup
 
 ## Next Steps
 
-Once setup is complete, check out the [usage guide](https://{{ organisation }}.github.io/{{ repository }}/usage) to learn how to use the project, or see the [contributing guide](https://{{ organisation }}.github.io/{{ repository }}/contributing) if you'd like to contribute.
+Once setup is complete, check out the [usage guide](https://AincradOT.github.io/foundation/usage) to learn how to use the project, or see the [contributing guide](https://AincradOT.github.io/foundation/contributing) if you'd like to contribute.

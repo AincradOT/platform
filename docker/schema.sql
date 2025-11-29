@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS {{ organisation }};
+CREATE DATABASE IF NOT EXISTS AincradOT;
 
-USE {{ organisation }};
+USE AincradOT;
 
 CREATE TABLE IF NOT EXISTS healthcheck (
     id INT AUTO_INCREMENT PRIMARY KEY,
