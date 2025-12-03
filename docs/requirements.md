@@ -1,18 +1,16 @@
 # Manual Setup
 
-When you’re bootstrapping a brand-new platform, there’s a small
-“chicken-and-egg” problem.. The Terraform, GitHub Actions, and other automation expect that:
+## Introduction
+
+When you’re bootstrapping a brand-new platform, there’s a small “chicken-and-egg” problem.. The Terraform, GitHub Actions, and other automation expect that:
 
   - A Google Cloud organization, billing account, and core IAM roles already exist.
   - A GitHub organization exists to host repos and pipelines.
   - A DNS provider (Cloudflare) is already managing the main domain.
 
-However, those things **cannot be created by the automation itself** - the
-automation needs an existing cloud org, project, and credentials to run in the
-first place.
+However, those things **cannot be created by the automation itself** - the automation needs an existing cloud org, project, and credentials to run in the first place.
 
-This manual setup guide documents the one-time manual steps an org admin must
-do to get to that starting point:
+This manual setup guide documents the one-time manual steps an org admin must do to get to that starting point:
 
   - Set up a domain and DNS in Cloudflare.
   - Create Cloud Identity + Google Cloud Organization and a billing account.
