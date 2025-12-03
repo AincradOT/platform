@@ -1,4 +1,10 @@
 .ONESHELL:
+
+ifeq ($(OS),Windows_NT)
+$(error This Makefile requires a Unix-like shell (bash + coreutils). \
+Run it from WSL, Git Bash, MSYS2, or a Linux/macOS environment—not from PowerShell/cmd.)
+endif
+
 .SHELL := /usr/bin/bash
 .PHONY: help set-env prep plan plan-target destroy-plan apply destroy destroy-target format lint check-security documentation
 

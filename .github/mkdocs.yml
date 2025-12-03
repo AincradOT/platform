@@ -3,14 +3,15 @@ site_url: https://aincradot.github.io/platform
 repo_url: https://github.com/aincradot/platform
 edit_uri: edit/master/docs/
 repo_name: Github
-
 docs_dir: ../docs
+
+extra:
+  social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/aincradot
 
 theme:
   name: material
-  # Optional: point these at your own logo/icon when you have them
-  # logo: img/logo.svg
-  # favicon: img/favicon.png
   language: en
   palette:
     - media: "(prefers-color-scheme)"
@@ -81,15 +82,11 @@ markdown_extensions:
   - pymdownx.mark
   - pymdownx.tilde
 
-extra:
-  social:
-    - icon: fontawesome/brands/github-alt
-      link: https://github.com/aincradot
-
 nav:
   - Platform:
       - Overview: index.md
       - Golden Path: golden-path.md
+      - Requirements: requirements.md
 
   - Architecture:
       - Overview: architecture/index.md
