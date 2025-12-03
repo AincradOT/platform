@@ -100,6 +100,9 @@ Minimum steps:
 !!! note
     If this is a brand-new organization and you are using the same admin account that created Cloud Identity / the organization and the billing account, you likely already have the necessary permissions and can treat this section as reference. These role assignments are mainly for when you delegate platform setup to another user or group.
 
+!!! danger
+    The roles below are high-privilege. Only grant them to trusted administrators or admin groups - never to general developers.
+
 Go to the IAM admin page:
 [https://console.cloud.google.com/iam-admin/](https://console.cloud.google.com/iam-admin/)
 
@@ -117,16 +120,13 @@ On the Google Cloud organization:
 * `roles/resourcemanager.lienModifier`
 * `roles/securitycenter.admin`
 
-!!! danger
-    The roles below are high-privilege. Only grant them to trusted administrators or admin groups - never to general developers.
-
 ### Google Cloud SDK (gcloud)
 
 !!! note
     All CLI commands in later steps assume:
-    - `gcloud` is installed and on your `PATH`.
-    - You are authenticated as your domain admin (or delegated platform admin).
-    - You have selected the correct bootstrap project.
+        - `gcloud` is installed and on your `PATH`.
+        - You are authenticated as your domain admin (or delegated platform admin).
+        - You have selected the correct bootstrap project.
 
 Check if the SDK is installed:
 
@@ -152,6 +152,82 @@ gcloud services enable iam.googleapis.com
 gcloud services enable cloudkms.googleapis.com
 gcloud services enable servicenetworking.googleapis.com
 ```
+
+## GitHub
+
+We use a dedicated GitHub organization to host the platform code and CI/CD.  
+This keeps everything separate from personal accounts and makes it easier to manage access and automation.
+
+### GitHub Account
+
+Make sure you have a GitHub user account:
+
+- Sign up or log in at <https://github.com/>
+
+This account will create and own the organization (at least initially).
+
+### Create the GitHub Organization
+
+!!! note
+    You only need one GitHub organization for the platform, even if you add
+    more services later. All repositories and CI/CD pipelines will live under this org.
+
+1. Go to the “New organization” page: <https://github.com/organizations/new>
+2. Choose the **Free** plan (you can upgrade later if needed).
+3. Enter:
+   - An organization name (e.g. `my-org`)
+   - A contact email that is monitored (not a personal throwaway)
+4. Complete the wizard to finish creating the organization.
+
+Once done, you should see your new organization listed under **Your organizations** on GitHub.
+
+### Add Organization Owners
+
+!!! danger
+    Organization Owners have full control over repositories, secrets, and billing.
+    Only grant this role to trusted platform administrators.
+
+1. Open your organization on GitHub and go to **People**.  
+2. Invite any additional platform admins as **Owners**.
+3. Confirm they have accepted the invite and appear with the correct role.
+
+Regular developers should later be added as **Members**, not Owners.
+
+### Create the `platform` Repository
+
+For this setup, you only need a single repository called `platform`.  
+This repository will host:
+
+- Platform infrastructure code (e.g. Terraform, bootstrap scripts)
+- Shared configuration and documentation for the platform
+
+To create it:
+
+1. In your organization, go to **Repositories → New**.
+2. Set:
+   - **Owner** to your organization (e.g. `my-org`)
+   - **Repository name** to `platform`
+3. Choose **Private** by default.
+4. Initialize with:
+   - A simple `README.md` (optional but recommended)
+   - You can skip `.gitignore` and license for now, or add them if you already know what you want.
+
+After creation, clone the repo locally and verify you can push changes from your machine.
+
+### Enable GitHub Actions
+
+GitHub Actions will run the platform’s CI/CD pipelines from the `platform` repo.
+
+1. Open the `platform` repository in GitHub.
+2. Click the **Actions** tab.
+3. If prompted, enable GitHub Actions for the organization.
+4. (Optional) Add a simple workflow (e.g. a basic CI file) to confirm that workflows can run.
+
+At this point you should have:
+
+- A GitHub organization with at least one **Owner**
+- A single `platform` repository under that organization
+- GitHub Actions enabled and ready for your infrastructure and application pipelines
 
 ---
 
