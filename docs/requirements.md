@@ -1,27 +1,25 @@
 # Manual Setup
 
-When you’re bootstrapping a **brand-new platform**, there’s a small
-“chicken-and-egg” problem:
+When you’re bootstrapping a brand-new platform, there’s a small
+“chicken-and-egg” problem.. The Terraform, GitHub Actions, and other automation expect that:
 
-- Our **Terraform**, **GitHub Actions**, and other automation expect that:
+  - A Google Cloud organization, billing account, and core IAM roles already exist.
+  - A GitHub organization exists to host repos and pipelines.
+  - A DNS provider (Cloudflare) is already managing the main domain.
 
-  - A **Google Cloud organization**, **billing account**, and core **IAM roles** already exist.
-  - A **GitHub organization** exists to host repos and pipelines.
-  - A **DNS provider** (Cloudflare) is already managing the main domain.
-
-However, those things **cannot be created by the automation itself** – the
+However, those things **cannot be created by the automation itself** - the
 automation needs an existing cloud org, project, and credentials to run in the
 first place.
 
-This **Day 0** guide documents the **one-time manual steps** an org admin must
+This manual setup guide documents the one-time manual steps an org admin must
 do to get to that starting point:
 
-  - Set up a domain and DNS in **Cloudflare**.
-  - Create **Cloud Identity + Google Cloud Organization** and a **billing account**.
+  - Set up a domain and DNS in Cloudflare.
+  - Create Cloud Identity + Google Cloud Organization and a billing account.
   - Ensure an admin user has the right IAM roles and `gcloud` access.
-  - Create a **GitHub organization** to host the platform repositories and CI/CD pipelines.
+  - Create a GitHub organization to host the platform repositories and CI/CD pipelines.
 
-Everything after these zeroday set up instruction should be done via **code and pipelines**, not more manual clicking.
+Everything after these zeroday set up instruction should be done via code and pipelines, not more manual clicking.
 
 ## Requirements
 
@@ -38,18 +36,18 @@ terraform version
 python --version
 ```
 
-If any command fails, install or fix that tool **before** continuing.
+If any command fails, install or fix that tool before continuing.
 
-## Cloudflare – Domain Registration
+## Cloudflare - Domain Registration
 
 !!! note
-    You only need **one** domain for the entire platform (e.g. `example.com`).
+    You only need one domain for the entire platform (e.g. `example.com`).
     Subdomains and DNS records are created later by automation.
 
 We use Cloudflare to manage DNS for the platform.
 
 1. Create a free Cloudflare account: [https://dash.cloudflare.com/signup](https://dash.cloudflare.com/signup)
-2. Log in and **add a site**:
+2. Log in and add a site:
     * Either **register/buy a new domain**, or
     * **Use/transfer an existing domain** from another registrar.
 3. If using an existing domain, update the nameservers at your registrar to the Cloudflare-provided nameservers.
@@ -218,7 +216,7 @@ gsutil versioning set on gs://${STATE_BUCKET}
 
 # Optional hardening
 # gsutil retention set 30d gs://${STATE_BUCKET}
-# gsutil retention lock gs://${STATE_BUCKET}   # irreversible – consider carefully
+# gsutil retention lock gs://${STATE_BUCKET}   # irreversible - consider carefully
 ```
 
 4) Configure Terraform backends to use the bucket:
