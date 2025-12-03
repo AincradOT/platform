@@ -1,15 +1,13 @@
-name: mkdocs
+name: docs
 
 on:
   push:
-    branches: [master, feat/docs]
-    paths:
-      - "docs/**"
-      - ".github/mkdocs.yml"
+    branches: [master]
   workflow_dispatch:
+  pull_request:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -18,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  publish:
+  mkdocs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -57,3 +55,17 @@ jobs:
           path: .github/site
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  # terraform:
+  #   name: terraform-docs README generation
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout source code
+  #       uses: actions/checkout@v6
+  #       with:
+  #         ref: ${{ github.event.pull_request.head.ref }}
+  #     - name: Render terraform docs and push changes
+  #       uses: terraform-docs/gh-actions@v1.4.1
+  #       with:
+  #         config-file: .terraform-docs.yaml
+  #         git-push: "true"
