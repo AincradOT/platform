@@ -14,14 +14,14 @@ variable "logging_project_id" {
 }
 
 variable "prod_project_id" {
-  description = "Unique project ID for production (e.g. foundations-prod)."
+  description = "Unique project ID for production (e.g. platform-prod)."
   type        = string
 }
 
 variable "prod_project_name" {
   description = "Human-friendly name for production project."
   type        = string
-  default     = "Foundations Production"
+  default     = "Platform Production"
 }
 
 variable "gcp_platform_viewers_group" {

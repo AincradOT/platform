@@ -1,6 +1,6 @@
 site_name: Aincrad
-site_url: https://aincradot.github.io/foundations
-repo_url: https://github.com/aincradot/foundations
+site_url: https://aincradot.github.io/platform
+repo_url: https://github.com/aincradot/platform
 edit_uri: edit/master/docs/
 repo_name: Github
 
@@ -87,7 +87,7 @@ extra:
       link: https://github.com/aincradot
 
 nav:
-  - Foundations:
+  - Platform:
       - Overview: index.md
       - Golden Path: golden-path.md
 

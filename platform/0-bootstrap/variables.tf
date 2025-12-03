@@ -9,14 +9,14 @@ variable "billing_account_id" {
 }
 
 variable "bootstrap_project_id" {
-  description = "Globally-unique project ID for the bootstrap project (e.g. foundations-bootstrap)."
+  description = "Globally-unique project ID for the bootstrap project (e.g. platform-bootstrap)."
   type        = string
 }
 
 variable "bootstrap_project_name" {
   description = "Human-friendly project name."
   type        = string
-  default     = "Foundations Bootstrap"
+  default     = "Platform Bootstrap"
 }
 
 variable "create_bootstrap_project" {

@@ -17,8 +17,8 @@ Inputs (variables):
 
 - `org_id`
 - `billing_account_id`
-- `logging_project_id` (unique project id, e.g. `foundations-logging`)
-- `logging_project_name` (default: `Foundations Logging`)
+- `logging_project_id` (unique project id, e.g. `platform-logging`)
+- `logging_project_name` (default: `Platform Logging`)
 - `gcp_logging_viewers_group` (e.g. `logging-viewers@example.com`)
 - Optional: `labels`
 

@@ -13,8 +13,8 @@ Make sure you have the following installed:
 Clone the repository and navigate to the project directory:
 
 ```bash
-git clone https://github.com/aincradot/foundation
-cd foundation
+git clone https://github.com/aincradot/platform
+cd platform
 ```
 
 ## Setup
@@ -27,4 +27,4 @@ make setup
 
 ## Next Steps
 
-Once setup is complete, check out the [usage guide](https://aincradot.github.io/foundations/usage) to learn how to use the project, or see the [contributing guide](https://aincradot.github.io/foundations/contributing) if you'd like to contribute.
+Once setup is complete, check out the [usage guide](https://aincradot.github.io/platform/usage) to learn how to use the project, or see the [contributing guide](https://aincradot.github.io/platform/contributing) if you'd like to contribute.

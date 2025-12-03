@@ -7,7 +7,7 @@
 
 This document describes the recommended way to structure:
 
-* the platform foundations for Open Tibia services
+* the platform platform for Open Tibia services
 * the application and service infrastructure that runs on top
 
 The goal is to give a clear, opinionated path that:
@@ -154,16 +154,16 @@ This reduces blast radius and stops every repo from becoming a second platform i
 
 ### Single platform repository
 
-There is one repository for platform foundations, for example:
+There is one repository for platform platform, for example:
 
-* `platform-foundation`
+* `platform-platform`
 
 This repository contains two Terraform roots:
 
 * `cloud` for GCP organisation, environment projects, state, secrets and CI identities
 * `github` for GitHub organisation settings, core repositories, teams and branch protections
 
-Application repositories depend on `platform-foundation`. They do not modify it.
+Application repositories depend on `platform-platform`. They do not modify it.
 
 ### Remote state for everything except bootstrap
 
@@ -212,7 +212,7 @@ A single platform repository contains the following logical components.
 **`github` component**
 
 * configures GitHub organisation settings
-* creates core repositories such as `platform-foundation`, `game-infra`, `game-server`, `web-ui`
+* creates core repositories such as `platform-platform`, `game-infra`, `game-server`, `web-ui`
 * defines teams and their permissions
 * enforces branch protection on main and production branches
 

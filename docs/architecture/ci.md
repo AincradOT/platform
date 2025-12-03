@@ -11,7 +11,7 @@ CI jobs in GitHub Actions need to talk to GCP without using long lived JSON keys
 
 ## Workload Identity design
 
-The GCP foundation creates:
+The GCP platform creates:
 
 - a Workload Identity Pool named `github`
 - a Workload Identity Provider in that pool that trusts GitHub's OIDC issuer

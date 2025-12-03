@@ -1,4 +1,4 @@
-# Aincrad Foundations
+# Aincrad Platform
 
 This is the official documentation for Aincrad’s organisation platforming.
 
@@ -9,7 +9,7 @@ It defines:
 - CI service accounts and Workload Identity Federation for GitHub Actions
 - GitHub organisation settings, core repositories, teams and branch protections
 
-Application and service repositories consume these foundations. They do not modify them.
+Application and service repositories consume these platform. They do not modify them.
 
 For the full rationale behind these patterns, the pitfalls of the old “bare metal and XAMPP” model, and how application repositories are expected to consume this platform, see the [`Golden path`](golden-path.md) write-up.
 
@@ -31,7 +31,7 @@ It does not manage:
 - application specific infrastructure inside environment projects
 - per project CI pipelines beyond what is needed for platform itself
 
-Those concerns live in separate application or infrastructure repositories that consume the foundations defined here.
+Those concerns live in separate application or infrastructure repositories that consume the platform defined here.
 
 ## How to use these docs
 
@@ -49,4 +49,4 @@ Those concerns live in separate application or infrastructure repositories that 
 
 - [Contributing](contributing/index.md)
 
-      Expectations and workflow for making changes to the platform foundations, including review requirements and testing strategy.
+      Expectations and workflow for making changes to the platform platform, including review requirements and testing strategy.

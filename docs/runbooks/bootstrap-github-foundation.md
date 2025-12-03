@@ -1,4 +1,4 @@
-# Runbook: bootstrap GitHub foundation
+# Runbook: bootstrap GitHub platform
 
 This runbook covers the first time setup of the GitHub organisation using Terraform.
 
@@ -10,7 +10,7 @@ This runbook covers the first time setup of the GitHub organisation using Terraf
   - manage organisation settings
   - manage repositories
   - manage teams
-- You have cloned the `foundation` repository.
+- You have cloned the `platform` repository.
 
 ## Steps
 
@@ -55,9 +55,9 @@ Terraform will:
 - create core repositories if they do not exist
 - ensure branch protection rules are in place
 
-5. Configure CI for foundation
+5. Configure CI for platform
 
-Add a GitHub Actions workflow in `foundation` that:
+Add a GitHub Actions workflow in `platform` that:
 
 - runs `terraform plan` on pull requests that touch the `github/` directory
 - runs `terraform apply` on merges to `main` for the same directory

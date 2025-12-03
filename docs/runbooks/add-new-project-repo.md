@@ -1,11 +1,11 @@
 # Runbook: adding a new project repository
 
-This runbook covers how to add a new application or service repository that consumes the existing platform foundations.
+This runbook covers how to add a new application or service repository that consumes the existing platform platform.
 
 ## Prerequisites
 
 - GCP environment projects exist and are recorded.
-- GitHub foundation is already applied.
+- GitHub platform is already applied.
 - You know which team owns the new project.
 
 ## Steps
@@ -35,7 +35,7 @@ Use a separate prefix per environment and per Terraform root.
 
 3. Reference environment projects
 
-Add variables for the environment project IDs and pass them into the root module. These IDs come from the GCP foundation.
+Add variables for the environment project IDs and pass them into the root module. These IDs come from the GCP platform.
 
 4. Configure CI authentication
 

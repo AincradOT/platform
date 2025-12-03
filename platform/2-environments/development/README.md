@@ -16,7 +16,7 @@ Inputs (variables):
 - `billing_account_id`
 - `folder_id` (use the `development_folder_id` output from `1-org`)
 - `logging_project_id` (use the `logging_project_id` output from `1-org`)
-- `dev_project_id` (unique, e.g. `foundations-dev`)
+- `dev_project_id` (unique, e.g. `platform-dev`)
 - `dev_project_name` (default provided)
 - `gcp_platform_devs_group` (e.g. `platform-devs@example.com`)
 - Optional: `labels`

@@ -1,10 +1,10 @@
-# GCP foundation
+# GCP platform
 
 This section describes how we use GCP as the control plane for cloud resources, Terraform state and secrets.
 
 ## Scope
 
-The GCP foundation Terraform root is located under `cloud/` in the `foundation` repository. It manages:
+The GCP platform Terraform root is located under `cloud/` in the `platform` repository. It manages:
 
 - enabling the GCP organisation for Terraform usage
 - a bootstrap project for shared services
@@ -54,7 +54,7 @@ Projects are created and managed by the `cloud/` Terraform root. Application rep
 
 ## Service accounts and roles
 
-The GCP foundation defines a small set of service accounts:
+The GCP platform defines a small set of service accounts:
 
 - platform CI service account for Terraform operations on platform resources
 - project CI service account per environment project
@@ -64,7 +64,7 @@ Service accounts are granted only the roles they need. For example:
 
 - platform CI service account:
   - read and write on the state bucket
-  - organisation level roles required by the foundation
+  - organisation level roles required by the platform
 - project CI service account:
   - compute, storage and other roles within its environment project only
   - no organisation level permissions
@@ -91,7 +91,7 @@ This makes it clear which repository and branch is allowed to manage which envir
 
 Secret Manager is the canonical store for secrets that need to be consumed by applications, Ansible or CI.
 
-The GCP foundation Terraform root is responsible for:
+The GCP platform Terraform root is responsible for:
 
 - creating secrets with stable names
 - configuring replication and labels

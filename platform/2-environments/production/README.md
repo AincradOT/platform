@@ -16,7 +16,7 @@ Inputs (variables):
 - `billing_account_id`
 - `folder_id` (use the `production_folder_id` output from `1-org`)
 - `logging_project_id` (use the `logging_project_id` output from `1-org`)
-- `prod_project_id` (unique, e.g. `foundations-prod`)
+- `prod_project_id` (unique, e.g. `platform-prod`)
 - `prod_project_name` (default provided)
 - `gcp_platform_viewers_group` (e.g. `platform-viewers@example.com`)
 - Optional: `labels`

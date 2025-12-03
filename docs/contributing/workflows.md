@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project uses GitHub Actions for automated testing, building, and releasing. The pipeline integrates with our [Contributing Guidelines](https://aincradot.github.io/foundations/contributing) to provide a seamless development experience.
+This project uses GitHub Actions for automated testing, building, and releasing. The pipeline integrates with our [Contributing Guidelines](https://aincradot.github.io/platform/contributing) to provide a seamless development experience.
 
 ## Workflows
 
@@ -36,4 +36,4 @@ Repository branches are protected with automated rules:
 
 ## Next Steps
 
-For detailed development practices and commit standards, see the [Contributing Guidelines](https://aincradot.github.io/foundations/contributing).
+For detailed development practices and commit standards, see the [Contributing Guidelines](https://aincradot.github.io/platform/contributing).

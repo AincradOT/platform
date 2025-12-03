@@ -1,10 +1,10 @@
-# GitHub foundation
+# GitHub platform
 
 This section describes how we manage the GitHub organisation as part of the platform.
 
 ## Scope
 
-The GitHub foundation Terraform root lives under `github/` in the `foundation` repository. It manages:
+The GitHub platform Terraform root lives under `github/` in the `platform` repository. It manages:
 
 - organisation level settings
 - core teams and their permissions
@@ -57,14 +57,14 @@ Terraform manages these through `github_organization_settings`.
 
 Teams organise access and responsibilities. The initial set might look like:
 
-- `platform` for engineers who manage GCP and GitHub foundations
+- `platform` for engineers who manage GCP and GitHub platform
 - `game` for game server and game infrastructure work
 - `web` for the web application and launcher
 - `readers` for people who need code visibility but no write access
 
 Terraform defines team names and slugs, and binds them to repositories with a clear permission level:
 
-- `platform` team has maintain rights on `foundation` and read on everything else
+- `platform` team has maintain rights on `platform` and read on everything else
 - `game` team has write or maintain rights on `game-infra` and `game-server`
 - `web` team has write or maintain rights on `web-ui`
 
@@ -74,7 +74,7 @@ Individual human membership in teams can be managed manually at first, or codifi
 
 We treat several repositories as part of the platform:
 
-- `foundation`
+- `platform`
 - `game-infra`
 - `game-server`
 - `web-ui`

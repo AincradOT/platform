@@ -9,7 +9,7 @@ This project uses [MkDocs](https://www.mkdocs.org/) with the [Material theme](ht
 The documentation is organized as follows:
 
 ```
-foundation/
+platform/
 ├── .github/
 │   └── mkdocs.yml          # MkDocs configuration
 └── docs/
@@ -26,8 +26,8 @@ The MkDocs configuration is located at `.github/mkdocs.yml`:
 
 ```yaml
 site_name: Aincrad
-site_url: https://aincradot.github.io/foundation
-repo_url: https://github.com/aincradot/foundation
+site_url: https://aincradot.github.io/platform
+repo_url: https://github.com/aincradot/platform
 edit_uri: edit/master/docs/
 
 theme:

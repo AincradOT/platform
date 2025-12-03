@@ -9,14 +9,14 @@ variable "billing_account_id" {
 }
 
 variable "logging_project_id" {
-  description = "Unique project ID for the central logging/monitoring project (e.g. foundations-logging)."
+  description = "Unique project ID for the central logging/monitoring project (e.g. platform-logging)."
   type        = string
 }
 
 variable "logging_project_name" {
   description = "Human-friendly name for the logging project."
   type        = string
-  default     = "Foundations Logging"
+  default     = "Platform Logging"
 }
 
 variable "gcp_logging_viewers_group" {

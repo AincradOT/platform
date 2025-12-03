@@ -14,14 +14,14 @@ variable "logging_project_id" {
 }
 
 variable "dev_project_id" {
-  description = "Unique project ID for development (e.g. foundations-dev)."
+  description = "Unique project ID for development (e.g. platform-dev)."
   type        = string
 }
 
 variable "dev_project_name" {
   description = "Human-friendly name for development project."
   type        = string
-  default     = "Foundations Development"
+  default     = "Platform Development"
 }
 
 variable "gcp_platform_devs_group" {

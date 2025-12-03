@@ -1,6 +1,6 @@
-# Runbook: bootstrap GCP foundation
+# Runbook: bootstrap GCP platform
 
-This runbook describes the steps to run the GCP foundation Terraform roots for the first time.
+This runbook describes the steps to run the GCP platform Terraform roots for the first time.
 
 ## Prerequisites
 
@@ -8,7 +8,7 @@ This runbook describes the steps to run the GCP foundation Terraform roots for t
 - Billing account exists.
 - You have an identity with organisation owner or equivalent permissions.
 - Google Cloud SDK is installed on your machine.
-- You have cloned the `foundation` repository.
+- You have cloned the `platform` repository.
 
 ## Steps
 

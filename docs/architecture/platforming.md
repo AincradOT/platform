@@ -17,7 +17,7 @@ Platform in this context means everything that exists before any application or 
 
 ## High level architecture
 
-The platform is made of two Terraform roots inside a single `foundation` repository.
+The platform is made of two Terraform roots inside a single `platform` repository.
 
 - `cloud/` manages GCP organisation, environment projects, state bucket, keys and CI service accounts.
 - `github/` manages GitHub organisation settings, teams, core repositories and branch protections.
@@ -42,7 +42,7 @@ This phase is intentionally small and documented. Everything after this should b
 
 ### 2. Platform provisioning
 
-- Clone `foundation`.
+- Clone `platform`.
 - Run the `cloud/` Terraform roots in order.
 - Run the `github/` Terraform root.
 - Configure GitHub Actions for the platform repository so it can manage itself.
@@ -56,4 +56,4 @@ At the end of this phase the organisation and platform are in a known, reproduci
 - Use Workload Identity Federation to grant CI jobs access to GCP projects.
 - Use GCP Secret Manager as the canonical store for shared secrets and Ansible lookups.
 
-Projects can be added and removed without changing the platform foundations.
+Projects can be added and removed without changing the platform platform.

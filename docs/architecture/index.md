@@ -1,4 +1,4 @@
-# Platform foundation
+# Platform platform
 
 This section describes how we the architecture and how we manage platform responsibilities for both Google Cloud Platform (GCP) and GitHub.
 
@@ -10,10 +10,10 @@ The goal is to:
 
 The platform has two main pillars:
 
-- **GCP foundation** for organisation, projects, state, secrets and CI identities
-- **GitHub foundation** for organisation settings, core repositories, teams and branch protections
+- **GCP platform** for organisation, projects, state, secrets and CI identities
+- **GitHub platform** for organisation settings, core repositories, teams and branch protections
 
-Application and service repositories consume these foundations but do not modify them.
+Application and service repositories consume these platform but do not modify them.
 
 If you have not read the [Golden path](../golden-path.md) yet, start there. It explains the rationale and the problems this platform is designed to solve.
 

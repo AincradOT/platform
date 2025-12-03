@@ -1,6 +1,6 @@
-# Foundations (GCP) – Minimal, public-safe, two-environment template
+# Platform (GCP) – Minimal, public-safe, two-environment template
 
-This template provides a clean, minimal Google Cloud “foundations” setup for small teams, aligned with the golden-path in `docs/golden-path.md`.
+This template provides a clean, minimal Google Cloud “platform” setup for small teams, aligned with the golden-path in `docs/golden-path.md`.
 
 Key design points:
 

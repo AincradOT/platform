@@ -28,7 +28,7 @@
   },
   "extends": [
     "config:recommended",
-    "github>AincradOT/foundation//.github/renovate/auto-merge.json",
+    "github>AincradOT/platform//.github/renovate/auto-merge.json",
     ":dependencyDashboard"
   ],
   "packageRules": [

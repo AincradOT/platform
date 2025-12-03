@@ -90,7 +90,7 @@ Steps:
 
 ```bash
 ORG_ID="<your_org_id>"                              # numeric, e.g. 123456789012
-BOOTSTRAP_PROJECT_ID="<foundations-bootstrap>"      # globally unique
+BOOTSTRAP_PROJECT_ID="<platform-bootstrap>"      # globally unique
 BILLING_ACCOUNT_ID="<XXXXXX-YYYYYY-ZZZZZZ>"
 
 gcloud projects create ${BOOTSTRAP_PROJECT_ID} --organization=${ORG_ID}

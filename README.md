@@ -1,6 +1,6 @@
 # Aincrad Platforming
 
-This repository holds the platform foundations for both Google Cloud Platform and the GitHub organisation.
+This repository holds the platform platform for both Google Cloud Platform and the GitHub organisation.
 
 It defines:
 
@@ -9,9 +9,9 @@ It defines:
 - CI service accounts and Workload Identity Federation for GitHub Actions
 - GitHub organisation settings, core repositories, teams and branch protections
 
-Application and service repositories consume these foundations. They do not modify them.
+Application and service repositories consume these platform. They do not modify them.
 
-For the full rationale behind these patterns, the pitfalls of the old “bare metal and XAMPP” model, and how application repositories are expected to consume this platform, see the [`Golden path`](https://aincradot.github.io/foundations/golden-path) write-up.
+For the full rationale behind these patterns, the pitfalls of the old “bare metal and XAMPP” model, and how application repositories are expected to consume this platform, see the [`Golden path`](https://aincradot.github.io/platform/golden-path) write-up.
 
 ## Scope
 
@@ -31,7 +31,7 @@ It does not manage:
 - application specific infrastructure inside environment projects
 - per project CI pipelines beyond what is needed for platform itself
 
-Those concerns live in separate application or infrastructure repositories that consume the foundations defined here.
+Those concerns live in separate application or infrastructure repositories that consume the platform defined here.
 
 ## Prerequisites
 
@@ -55,5 +55,5 @@ The initial bootstrap also requires a personal access token or GitHub App token 
 
 Additional documentation is available on the repository documentation website:
 
-- [Contributing Guide](https://aincradot.github.io/foundations/contributing)
-- [Architecture Overview](https://aincradot.github.io/foundations/architecture)
+- [Contributing Guide](https://aincradot.github.io/platform/contributing)
+- [Architecture Overview](https://aincradot.github.io/platform/architecture)

@@ -6,7 +6,7 @@ This runbook describes how to onboard a new developer into the platform.
 
 1. Add the developer to the GitHub organisation.
 2. Add them to the appropriate teams:
-   - `platform` if they work on foundation and infrastructure
+   - `platform` if they work on platform and infrastructure
    - `game` for game related repositories
    - `web` for web and launcher work
 
@@ -27,7 +27,7 @@ Developers working on Terraform or Ansible should:
 - install the Google Cloud SDK
 - install Terraform
 - install Ansible and required collections
-- clone `foundation` and application repositories they will work on
+- clone `platform` and application repositories they will work on
 
 For GCP access they should use:
 
@@ -41,7 +41,7 @@ and confirm they can list projects and storage buckets.
 
 Set clear expectations:
 
-- platform changes go through pull requests in `foundation`
+- platform changes go through pull requests in `platform`
 - infrastructure changes in application repositories also go through pull requests and CI
 - secrets are never hardcoded in code or state
 - state bucket and environment projects are considered shared and must not be changed manually

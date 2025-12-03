@@ -1,6 +1,6 @@
 # Documentation
 
-This is the official documentation for the aincradot **foundation**.
+This is the official documentation for the aincradot **platform**.
 
 ## Sections
 
