@@ -174,10 +174,7 @@ This account will create and own the organization (at least initially).
 
 1. Go to the “New organization” page: <https://github.com/organizations/new>
 2. Choose the **Free** plan (you can upgrade later if needed).
-3. Enter:
-   - An organization name (e.g. `my-org`)
-   - A contact email that is monitored (not a personal throwaway)
-4. Complete the wizard to finish creating the organization.
+3. Complete the wizard to finish creating the organization.
 
 Once done, you should see your new organization listed under **Your organizations** on GitHub.
 
@@ -193,7 +190,7 @@ Once done, you should see your new organization listed under **Your organization
 
 Regular developers should later be added as **Members**, not Owners.
 
-### Create the `platform` Repository
+### Create the `platform` repository
 
 For this setup, you only need a single repository called `platform`.  
 This repository will host:
@@ -205,12 +202,11 @@ To create it:
 
 1. In your organization, go to **Repositories → New**.
 2. Set:
-   - **Owner** to your organization (e.g. `my-org`)
-   - **Repository name** to `platform`
+    - **Owner** to your organization (e.g. `my-org`)
+    - **Repository name** to `platform`
 3. Choose **Private** by default.
 4. Initialize with:
-   - A simple `README.md` (optional but recommended)
-   - You can skip `.gitignore` and license for now, or add them if you already know what you want.
+    - A simple `README.md`
 
 After creation, clone the repo locally and verify you can push changes from your machine.
 
@@ -221,7 +217,7 @@ GitHub Actions will run the platform’s CI/CD pipelines from the `platform` rep
 1. Open the `platform` repository in GitHub.
 2. Click the **Actions** tab.
 3. If prompted, enable GitHub Actions for the organization.
-4. (Optional) Add a simple workflow (e.g. a basic CI file) to confirm that workflows can run.
+4. Add a simple workflow (e.g. a basic CI file) to confirm that workflows can run.
 
 At this point you should have:
 
