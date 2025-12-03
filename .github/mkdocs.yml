@@ -1,8 +1,8 @@
-site_name: AincradOT foundation
-site_url: https://AincradOT.github.io/foundation
-repo_name: Github
-repo_url: https://github.com/AincradOT/foundation
+site_name: Aincrad
+site_url: https://aincradot.github.io/foundations
+repo_url: https://github.com/aincradot/foundations
 edit_uri: edit/master/docs/
+repo_name: Github
 
 docs_dir: ../docs
 
@@ -62,7 +62,6 @@ plugins:
   - typeset
 
 markdown_extensions:
-  # Core Markdown extras
   - abbr
   - attr_list
   - footnotes
@@ -70,6 +69,9 @@ markdown_extensions:
   - tables
   - toc:
       permalink: true
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
   - pymdownx.betterem
   - pymdownx.caret
   - pymdownx.highlight:
@@ -78,36 +80,22 @@ markdown_extensions:
   - pymdownx.keys
   - pymdownx.mark
   - pymdownx.tilde
-  - pymdownx.blocks.admonition:
-      types:
-        - note
-        - attention
-        - caution
-        - danger
-        - error
-        - tip
-        - hint
-        - warning
-        - info
-        - check
-  - pymdownx.blocks.details
-  - pymdownx.blocks.tab:
-      alternate_style: true
 
 extra:
   social:
     - icon: fontawesome/brands/github-alt
-      link: https://github.com/AincradOT
+      link: https://github.com/aincradot
 
 nav:
   - Foundations:
       - Overview: index.md
+      - Golden Path: golden-path.md
 
   - Architecture:
       - Overview: architecture/index.md
-      - Platforming: architecture/platforming.md
+      - Design: architecture/platforming.md
       - Google Cloud: architecture/gcp.md
-      - GitHub: architecture/github.md
+      - GitHub Organisation: architecture/github.md
       - Continuous Integration: architecture/ci.md
       - Secrets & State Management: architecture/state.md
 

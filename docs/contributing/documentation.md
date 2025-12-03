@@ -25,9 +25,9 @@ foundation/
 The MkDocs configuration is located at `.github/mkdocs.yml`:
 
 ```yaml
-site_name: AincradOT foundation
-site_url: https://AincradOT.github.io/foundation
-repo_url: https://github.com/AincradOT/foundation
+site_name: Aincrad
+site_url: https://aincradot.github.io/foundation
+repo_url: https://github.com/aincradot/foundation
 edit_uri: edit/master/docs/
 
 theme:

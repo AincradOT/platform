@@ -1,191 +1,59 @@
-############################
-# OS / Editor Files
-############################
+#################################################################
+# Default .gitignore content for all Terraform Modules
+#################################################################
+
 .DS_Store
-Thumbs.db
-.idea/
-.vscode/
-.lvimrc
-.clang_complete
-*.kate-swap
-*.autosave
-*.swp
-*.suo
-*.user
-*.sln.docstates
-*.pidb
-*.scc
 
-############################
-# Environment / Config Files
-############################
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-config.otml
+# Local .terraform directories
+**/.terraform/*
 
-############################
-# Visual Studio
-############################
-.vs/
-vc16/.vs/
-**.sln
-**.vcxproj
-**.vcxproj.user
-vc16/DirectX/
-vc16/OpenGL/
-vc16/Debug*/
-vc16/otclient/*/Debug*/
-[Bb]in/
-[Oo]bj/
-[Dd]ebug*/
-[Rr]elease*/
-x64/
-ipch/
-*.aps
-*.ncb
-*.opensdf
-*.sdf
-*.cachefile
+# Terraform lockfile
+.terraform.lock.hcl
 
-############################
-# Build & Compilation Output
-############################
-build/
-out/
-tmp/
-tools/
-pdbs/
-bin/
-*.obj
-*.pch
-*.pdb
-*.ilk
-*.meta
-*.pgc
-*.pgd
-*.rsp
-*.sbr
-*.tlb
-*.tli
-*.tlh
-*.tmp
-*.tmp_proj
-*.log
-*.dll
-*.so
-*.dylib
-*.lib
-*.exp
-*.a
-*.o
-*.gch
-*.exe
-!signtool.exe
-*.apk
-*.test
-*.recipe*
-*.gz
-*.7z
-!tests.7z
-!android_libs.7z
-*.rar
-releases/
+# .tfstate files
+**/*.tfstate
+**/*.tfstate.*
 
-############################
-# CMake / Project Files
-############################
-CMakeCache.txt
-CMakeFiles/
-cmake_install.cmake
-CMakeLists.txt.user*
-src/framework/graphics/dx/
-modules/.project/modules.sublime-workspace
+# Crash log files
+crash.log
 
-############################
-# VCPKG / Dependencies
-############################
-vcpkg_installed/
-vcpkg/
-node_modules/
-vendor/
-go.work
-go.work.sum
-/.pnp
-.pnp.js
+# Exclude all auto.tfvars files, which are likely to contain sensitive data, such as
+# password, private keys, and other secrets. These should not be part of version
+# control as they are data points which should only be used for testing changes locally.
+*.auto.tfvars
 
-############################
-# Python
-############################
-.venv/
-venv/
+# Ignore override files as they are usually used to override resources locally and so
+# are not checked in
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
 
-############################
-# Test / Coverage
-############################
-coverage/
-[Tt]est[Rr]esult*/
-[Bb]uild[Ll]og.*
-cypress.env.json
-cypress/e2e/2-advanced-examples
-cypress/screenshots
+# Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
+*tfplan*
 
-############################
-# PHP / Composer
-############################
-composer.lock
-system/cache/*
-!system/cache/index.html
-!system/cache/twig/index.html
-!system/cache/signatures/index.html
-!system/cache/plugins/index.html
-system/php_sessions/*
-!system/php_sessions/index.html
-system/logs/*
-!system/logs/index.html
-system/data/*
-!system/data/index.html
-system/pages/downloads.php
-plugins/*
-!plugins/.htaccess
-!plugins/example.json
-!plugins/account-create-hint.json
-!plugins/account-create-hint
-!plugins/email-confirmed-reward.json
-!plugins/email-confirmed-reward
-landing
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
 
-############################
-# Templates & Images
-############################
-templates/*
-!templates/tibiacom
-!templates/kathrine
-images/guilds/*
-!images/guilds/default.gif
-images/editor/*
-!images/editor/index.html
-images/gallery/*
-!images/gallery/index.html
-!images/gallery/demon.jpg
-!images/gallery/demon_thumb.gif
+# Backend configuration files (provide per-root and do not commit)
+backend.hcl
 
-############################
-# Data / Game Files
-############################
-otclient.map
-otclient.layout
+# Checkov
+checkov-output
+results.sarif
 
-############################
-# Logs / Backup
-############################
-*.bak
-*.log
-tags
+# Local test files
+temp.sh
 
-############################
-# Misc
-############################
-.local/
+# ################################################################
+# For Terraform Modules containing Python files
+# ################################################################
+## Uncomment the following lines for enabling Python formating
+# # Python
+# builds/
+# *.egg-info/
+# __pycache__/
+# .tox
+# .coverage
+cloud/
