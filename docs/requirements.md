@@ -60,12 +60,9 @@ We use Cloudflare to manage DNS for the platform.
 ### Google Cloud Identity & Organization
 
 !!! danger
-    Do not use a personal Gmail account (e.g. `something@gmail.com`) as the
-    long-term admin. Always use a domain account such as
-    `platform-admin@example.com`.
+    Do not use a personal Gmail account (e.g. `something@gmail.com`) as the long-term admin. Always use a domain account such as `platform-admin@example.com`. This is always free to do as it is linked to your domain from Cloudflare.
 
-To create a Google Cloud organization for your domain, you must first sign up
-for a free Google Cloud Identity account:
+To create a Google Cloud organization for your domain, you must first sign up for a free Google Cloud Identity account:
 
 * Cloud Identity signup (free):
   [https://workspace.google.com/gcpidentity/signup?sku=identitybasic](https://workspace.google.com/gcpidentity/signup?sku=identitybasic)
