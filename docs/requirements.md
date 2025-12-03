@@ -38,7 +38,9 @@ python --version
 
 If any command fails, install or fix that tool before continuing.
 
-## Cloudflare - Domain Registration
+## Cloudflare
+
+### Domain Registration
 
 !!! note
     You only need one domain for the entire platform (e.g. `example.com`).
@@ -48,8 +50,8 @@ We use Cloudflare to manage DNS for the platform.
 
 1. Create a free Cloudflare account: [https://dash.cloudflare.com/signup](https://dash.cloudflare.com/signup)
 2. Log in and add a site:
-    * Either **register/buy a new domain**, or
-    * **Use/transfer an existing domain** from another registrar.
+    * Either register/buy a new domain, or
+    * Use/transfer an existing domain from another registrar.
 3. If using an existing domain, update the nameservers at your registrar to the Cloudflare-provided nameservers.
 4. Wait until the domain shows as **Active** in the Cloudflare dashboard.
 
@@ -58,12 +60,12 @@ We use Cloudflare to manage DNS for the platform.
 ### Google Cloud Identity & Organization
 
 !!! danger
-    Do **not** use a personal Gmail account (e.g. `something@gmail.com`) as the
+    Do not use a personal Gmail account (e.g. `something@gmail.com`) as the
     long-term admin. Always use a domain account such as
     `platform-admin@example.com`.
 
-To create a **Google Cloud organization** for your domain, you must first sign up
-for a **free Google Cloud Identity** account:
+To create a Google Cloud organization for your domain, you must first sign up
+for a free Google Cloud Identity account:
 
 * Cloud Identity signup (free):
   [https://workspace.google.com/gcpidentity/signup?sku=identitybasic](https://workspace.google.com/gcpidentity/signup?sku=identitybasic)
@@ -79,37 +81,27 @@ High-level steps:
 4. Accept the terms and conditions.
 
 !!! note
-    If you are new to Google Cloud and have never created a project before, the
-    **organization resource is created automatically** a few minutes after you
-    accept the terms in the console.
-    Check the project/organization selector at the top of the console and
-    confirm you see your domain listed as an organization.
+    If you are new to Google Cloud and have never created a project before, the organization resource is created automatically a few minutes after you accept the terms in the console. Check the project/organization selector at the top of the console and confirm you see your domain listed as an organization.
 
 ### Set Up a Billing Account
 
 !!! warning
-    Make sure the billing account belongs to the **correct organization** and is
-    not accidentally created under a personal account.
+    Make sure the billing account belongs to the correct organization and is not accidentally created under a personal account.
 
 Follow Google’s billing guide:
 [https://cloud.google.com/billing/docs/how-to/manage-billing-account](https://cloud.google.com/billing/docs/how-to/manage-billing-account)
 
 Minimum steps:
 
-1. In the Google Cloud Console, go to **Billing**.
-2. Create a **billing account** (choose correct country and currency).
-3. Add a **payment method**.
+1. In the Google Cloud Console, go to Billing.
+2. Create a billing account (choose correct country and currency).
+3. Add a payment method.
 4. Link your initial project to this billing account.
 
 ### Workspace / IAM Roles
 
 !!! note
-    If this is a **brand-new** organization and you are using the **same admin
-    account** that created Cloud Identity / the organization and the billing
-    account, you likely already have the necessary permissions and can treat
-    this section as reference.
-    These role assignments are mainly for when you **delegate platform setup**
-    to another user or group.
+    If this is a brand-new organization and you are using the same admin account that created Cloud Identity / the organization and the billing account, you likely already have the necessary permissions and can treat this section as reference. These role assignments are mainly for when you delegate platform setup to another user or group.
 
 Go to the IAM admin page:
 [https://console.cloud.google.com/iam-admin/](https://console.cloud.google.com/iam-admin/)
@@ -117,7 +109,7 @@ Go to the IAM admin page:
 For the user (or group) that will run the procedures in this document
 (typically your platform admin), grant the following roles.
 
-On the **Google Cloud organization**:
+On the Google Cloud organization:
 
 * `roles/resourcemanager.organizationAdmin`
 * `roles/orgpolicy.policyAdmin`
@@ -129,8 +121,7 @@ On the **Google Cloud organization**:
 * `roles/securitycenter.admin`
 
 !!! danger
-    The roles below are **high-privilege**. Only grant them to trusted
-    administrators or admin groups - never to general developers.
+    The roles below are high-privilege. Only grant them to trusted administrators or admin groups - never to general developers.
 
 ### Google Cloud SDK (gcloud)
 
@@ -138,7 +129,7 @@ On the **Google Cloud organization**:
     All CLI commands in later steps assume:
     - `gcloud` is installed and on your `PATH`.
     - You are authenticated as your domain admin (or delegated platform admin).
-    - You have selected the correct **bootstrap project**.
+    - You have selected the correct bootstrap project.
 
 Check if the SDK is installed:
 
@@ -148,8 +139,7 @@ gcloud version
 
 If it fails, install the SDK: [https://cloud.google.com/sdk/docs/install](https://cloud.google.com/sdk/docs/install)
 
-Then authenticate using your **domain admin user** (e.g.
-`platform-admin@example.com`) and select the bootstrap project:
+Then authenticate using your domain admin user (e.g. `platform-admin@example.com`) and select the bootstrap project:
 
 ```bash
 # Interactively log in and choose your project (usually option 1)
