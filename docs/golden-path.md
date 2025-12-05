@@ -1,7 +1,7 @@
 # Golden path for platform and application infrastructure (Open Tibia)
 
 !!! note
-    A Golden Path refers to an opinionated, well-documented, and supported way of building and deploying software within an organization. With a supported path, development teams are able to build more efficiently in ways that meet organizational standards. Golden Paths offer a clear approach for platform engineers to guide DevOps teams, AI/MLOps teams, security, networking or any other IT organization, ensuring consistency, reliability, and efficient use of time and resources.
+        A Golden Path refers to an opinionated, well-documented, and supported way of building and deploying software within an organization. With a supported path, development teams are able to build more efficiently in ways that meet organizational standards. Golden Paths offer a clear approach for platform engineers to guide DevOps teams, AI/MLOps teams, security, networking or any other IT organization, ensuring consistency, reliability, and efficient use of time and resources.
 
 ## Audience and scope
 
@@ -111,8 +111,8 @@ The platform layer exists to:
 * make onboarding a new engineer a documentation exercise, not archaeology
 
 !!! note
-    If you are building a short lived prototype, this is optional.
-    If you expect your Open Tibia services to live longer than a hackathon, this is strongly recommended.
+        If you are building a short lived prototype, this is optional.
+        If you expect your Open Tibia services to live longer than a hackathon, this is strongly recommended.
 
 ## Why GCP and GitHub for this golden path
 
@@ -169,30 +169,67 @@ Application repositories depend on `platform-platform`. They do not modify it.
 
 All non bootstrap Terraform roots use a shared GCS bucket for state.
 
-* 0-bootstrap uses a local backend to create the bucket and KMS key.
-* 1-org, 2-envs and all application roots use the GCS backend.
+* 0-bootstrap uses a local backend to create the bucket.
+* 1-foundation, 2-environments and all application roots use the GCS backend.
 * Each root uses a unique prefix in the bucket to isolate state.
 
-State is treated as an internal implementation detail, not something developers touch directly.
+State is treated as an internal implementation detail, not something developers touch directly. Access is restricted to org administrators who run terraform.
 
 ### Secrets are not in Terraform
 
 Terraform does not own secret values.
 
-* Terraform creates Secret Manager secrets and IAM bindings.
-* Secret values are set via CLI or console, or injected at runtime by applications.
-* Terraform configuration and state do not contain hardcoded passwords or API keys.
+* Terraform creates Secret Manager resources and IAM bindings.
+* Secret values (API keys, database passwords, tokens) are set via gcloud CLI or injected at runtime.
+* Terraform configuration and state never contain hardcoded secrets.
 
-Ansible and applications read from Secret Manager when they need sensitive values.
+Applications and configuration management tools read from Secret Manager at runtime when they need sensitive values.
 
-### CI identities are short lived
+**Why Secret Manager:** Provides versioned, encrypted storage for application secrets with fine-grained IAM control. Secrets are encrypted at rest automatically (no KMS required). Cost is ~$0.06/month per secret, negligible for small teams. Alternative of environment variables or config files is error-prone and insecure.
 
-CI pipelines authenticate to GCP and GitHub using:
+### CI identities use scoped credentials
 
-* GitHub Actions OIDC tokens and Workload Identity Federation for GCP.
-* GitHub Apps or fine grained tokens for GitHub itself.
+CI pipelines authenticate using:
 
-No JSON service account keys are committed to repositories or stored as permanent secrets.
+* Organization-scoped GitHub App with permissions across all repositories.
+* Service account keys stored as organization-level GitHub encrypted secrets (rotated quarterly).
+
+For small teams managing multiple services (10+ repositories), org-scoped credentials are more practical than per-repository credentials. The operational overhead of maintaining individual apps per repo outweighs the marginal security benefit when:
+
+* All repositories are within the same trust boundary (same team, same organization)
+* The service account permissions are already scoped to specific GCP projects (dev vs prod)
+* The GitHub org has branch protection preventing unauthorized merges
+
+This approach is simpler than Workload Identity Federation and adequate for teams without compliance requirements. As the team grows beyond 20 developers or adds compliance requirements, migration to Workload Identity Federation can be considered.
+
+!!! note
+        No credentials are committed to repositories. All secrets are stored in GitHub encrypted secrets or GCP Secret Manager.
+
+### Portability and lift-and-shift
+
+This platform design is deliberately portable and forkable:
+
+* All GCP-specific identifiers (org ID, project IDs, bucket names) are variables, not hardcoded
+* No vendor lock-in to proprietary services (GCS and Secret Manager have drop-in replacements on other clouds)
+* Terraform state can be migrated to different backends (S3, Azure Storage, Terraform Cloud) with minimal changes
+* The folder structure and separation of concerns transfers directly to AWS (replace folders with OUs) or Azure (replace with management groups)
+
+The entire platform can be forked, re-parameterized, and deployed to a new organization in under an hour. This makes the pattern:
+
+* Easy to replicate for multiple Open Tibia communities
+* Recoverable if starting fresh after a catastrophic failure
+* Transferable if ownership changes hands
+
+!!! warning
+        When forking, update all variables in terraform.tfvars files. Never commit real org IDs, project IDs, or bucket names to public repositories.
+
+### Additional architecture details
+
+For implementation specifics, see:
+
+* [State Management](architecture/state-management.md) - State bucket IAM, versioning, locking strategy, and recovery procedures
+* [Disaster Recovery](architecture/disaster-recovery.md) - Platform DR procedures, backup strategies, and rebuild runbooks  
+* [Cost Model](architecture/cost-model.md) - GCP cost estimates and optimization strategies for budget-conscious teams
 
 ## Golden path architecture
 
@@ -202,51 +239,55 @@ At a high level the golden path looks like this.
 
 A single platform repository contains the following logical components.
 
-**`cloud` component**
+**GCP platform component**
 
-* creates a bootstrap project
-* creates the GCS state bucket with versioning and encryption
-* creates environment projects such as `env-dev` and `env-prod`
-* defines service accounts and Workload Identity Federation for CI
+* creates a bootstrap project for platform administration
+* creates the GCS state bucket with versioning for terraform state
+* creates organizational folders (shared, dev, prod)
+* creates environment projects and shared services project
+* creates Secret Manager resources for application secrets
+* defines service accounts for terraform CI operations
 
-**`github` component**
+**GitHub organization component** (optional, can be managed manually)
 
-* configures GitHub organisation settings
-* creates core repositories such as `platform-platform`, `game-infra`, `game-server`, `web-ui`
-* defines teams and their permissions
-* enforces branch protection on main and production branches
+* configures GitHub organisation settings as a one-time bootstrap
+* creates core repository structure
+* defines teams and their base permissions
+* sets up branch protection rules
+
+For small teams, this can be a one-time terraform apply with drift ignored, or managed entirely via GitHub UI.
 
 The platform layer is applied rarely. It changes when the organisation shape changes, not every week.
 
 ### Application layer
 
-Each application or service has its own repository, for example:
+Each application or service has its own repository with its own infrastructure code, for example:
 
-* `game-infra`
-* `game-server`
-* `web-ui`
+* `game-infra` - VM infrastructure, networking, load balancers for game servers
+* `game-server` - application deployment, configuration management
+* `web-ui` - web application infrastructure and deployment
 
 Each repository:
 
-* uses the shared GCS bucket as its Terraform backend
-* targets one or more environment projects created by the platform layer
-* uses GitHub Actions with Workload Identity Federation to assume the correct service account for each environment
-* reads secrets from Secret Manager via Ansible or application code
+* contains its own Terraform roots for infrastructure within the environment projects
+* uses the shared GCS bucket as its Terraform backend (with unique prefix per repo)
+* targets the appropriate environment project (dev or prod) created by the platform
+* uses GitHub Actions with service account credentials to run terraform
+* reads application secrets from Secret Manager
 
-Application layer repositories are where day to day infrastructure changes happen.
+This separation keeps platform concerns (org structure, projects, state backend) separate from application concerns (VMs, databases, deployments). Application own their infrastructure within the boundaries the platform defines.
 
 ## Responsibilities of the platform repository
 
 The platform repository handles:
 
 * GCP organisation level setup that must exist before anything else
-* the bootstrap project, state bucket and KMS key
-* environment projects for dev and prod
+* the bootstrap project and state bucket
+* organizational folders (shared, dev, prod)
+* environment projects and shared services project
+* Secret Manager resources for application secrets
 * CI service accounts and their IAM bindings
-* Workload Identity Federation configuration for GitHub Actions
-* GitHub organisation level settings
-* core repositories and mandatory branch protections
-* teams and their permissions on core repositories
+* (optionally) GitHub organisation level settings as one-time bootstrap
 
 It does not create application specific infrastructure such as game server VMs, databases or load balancers. Those belong to application repositories.
 
@@ -263,9 +304,9 @@ Each application or service repository is responsible for:
 
 These repositories do not:
 
-* create or destroy GCP organisations or environment projects
-* change the shared state bucket or KMS key
-* change GitHub organisation level settings or core teams
+* create or destroy GCP organisations, folders, or environment projects
+* change the shared state bucket configuration
+* modify platform-level IAM or service accounts
 
 They consume the boundaries defined by the platform and work within them.
 
@@ -273,19 +314,17 @@ They consume the boundaries defined by the platform and work within them.
 
 A typical deployment flow for an application repository looks like this.
 
-1. A change is made to Terraform or Ansible in the infra repository.
+1. A change is made to Terraform in the application infrastructure repository.
 2. A pull request is opened.
-3. GitHub Actions runs `terraform init` with the GCS backend and `terraform plan` against the appropriate environment project.
-4. The plan is reviewed and the pull request is merged.
-5. GitHub Actions on `main` requests an OIDC token, uses Workload Identity Federation to assume the environment service account, and runs `terraform apply` against the same state and project.
+3. GitHub Actions authenticates using a service account key (stored as GitHub encrypted secret).
+4. The workflow runs `terraform init` with the GCS backend and `terraform plan` against the appropriate environment project.
+5. The plan output is posted as a comment on the PR for review.
+6. After review and merge to `main`, GitHub Actions runs `terraform apply` to deploy changes.
+7. Applications read secrets from Secret Manager at runtime using their service account identity.
 
-For configuration management:
+**Configuration management** (if needed for VMs) lives in the same application repository and uses the same CI identity to provision infrastructure.
 
-* Ansible runs either in CI or from a trusted controller machine.
-* Ansible uses a GCP identity to read secrets from Secret Manager.
-* Ansible provisions Docker, systemd units and configuration files on the target VMs.
-
-Runtime changes are driven by code changes, not ad hoc console changes.
+Runtime changes are driven by code changes, not manual console changes.
 
 ## When you can deviate from the golden path
 

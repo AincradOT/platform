@@ -5,11 +5,11 @@ This is the official documentation for Aincrad’s organisation platforming.
 It defines:
 
 - GCP organisation level layout and environment projects
-- shared Terraform state backend and encryption
-- CI service accounts and Workload Identity Federation for GitHub Actions
-- GitHub organisation settings, core repositories, teams and branch protections
+- Shared Terraform state backend
+- Secret Manager for application secrets
+- CI service accounts for GitHub Actions
 
-Application and service repositories consume these platform. They do not modify them.
+Application and service repositories consume this platform. They do not modify it.
 
 For the full rationale behind these patterns, the pitfalls of the old “bare metal and XAMPP” model, and how application repositories are expected to consume this platform, see the [`Golden path`](golden-path.md) write-up.
 
@@ -20,16 +20,16 @@ This documentation is about platforming only.
 It discusses the management of:
 
 - GCP organisation level resources
-- environment projects such as dev and prod
-- shared Terraform state storage and encryption
+- Environment projects such as dev and prod
+- Shared Terraform state storage
+- Secret Manager for application secrets
 - CI identities and their permissions
-- GitHub organisation settings, core repositories, teams and branch protections
 
 It does not manage:
 
-- individual game or web workloads
-- application specific infrastructure inside environment projects
-- per project CI pipelines beyond what is needed for platform itself
+- Individual game or web workloads
+- Application specific infrastructure inside environment projects
+- Per project CI pipelines beyond what is needed for platform itself
 
 Those concerns live in separate application or infrastructure repositories that consume the platform defined here.
 

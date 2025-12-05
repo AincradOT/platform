@@ -1,32 +1,32 @@
-# 1-org
+# 1-foundation
 
 Purpose:
 
-- Create core organisation scaffolding for a small team.
-- Create three top-level folders: `Platform`, `Development`, `Production`.
-- Create a central logging/monitoring project to act as the metrics scope.
-- Apply a minimal org policy to prevent default VPC creation.
+- Create core organisation scaffolding.
+- Create three top-level folders: `shared`, `dev`, `prod`.
+- Create a central logging/monitoring project in the `shared` folder.
+- Apply an org policy to prevent default VPC creation.
 - Bind minimal viewer roles for observability to the logging project.
 
 Backend:
 
-- Uses a GCS remote backend. Provide your bucket/prefix via a local `backend.hcl` file (gitignored).
-- Example `backend.hcl.example` is provided; copy to `backend.hcl` and set values locally.
+- Uses GCS remote backend configured in `backends.tf`.
+- Update the `bucket` value with your state bucket name from `0-bootstrap` output.
 
 Inputs (variables):
 
 - `org_id`
 - `billing_account_id`
-- `logging_project_id` (unique project id, e.g. `platform-logging`)
-- `logging_project_name` (default: `Platform Logging`)
+- `logging_project_id` (unique project id, e.g. `sao-shared-logging`)
+- `logging_project_name` (default: `Shared Logging`)
 - `gcp_logging_viewers_group` (e.g. `logging-viewers@example.com`)
 - Optional: `labels`
 
 Outputs:
 
-- `platform_folder_id`
-- `development_folder_id`
-- `production_folder_id`
+- `shared_folder_id`
+- `dev_folder_id`
+- `prod_folder_id`
 - `logging_project_id`
 
 Notes:

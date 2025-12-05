@@ -1,35 +1,91 @@
 # 0-bootstrap
 
-Purpose:
+Creates the GCP bootstrap project and GCS bucket for Terraform state.
 
-- Create the bootstrap project that will host Terraform state and shared platform tooling.
-- Create the GCS bucket for Terraform remote state with versioning enabled.
-- No real IDs or emails are committed; all inputs are variables.
+## Prerequisites
 
-Backend:
+1. Verify `gcloud` is installed:
+   ```bash
+   gcloud version
+   ```
 
-- This root intentionally uses the local backend. After applying, configure the remote state in subsequent roots using the created bucket name.
+2. Authenticate and initialize gcloud:
+   ```bash
+   gcloud init
+   ```
+   Select your organization account when prompted.
 
-Inputs:
+## Setup
 
-- `org_id`
-- `billing_account_id`
-- `bootstrap_project_id` (must be globally unique)
-- `bootstrap_project_name` (optional)
-- `state_bucket_name` (must be globally unique)
-- `location` (GCS location, e.g. `US`, `EU`, `australia-southeast1`)
+1. Copy example tfvars file:
+   ```bash
+   cp platform/0-bootstrap/example.terraform.tfvars platform/0-bootstrap/terraform.tfvars
+   ```
 
-Outputs:
+2. Edit `platform/0-bootstrap/terraform.tfvars` with your values.
 
-- `bootstrap_project_id`
-- `state_bucket_name`
+3. Initialize and apply (from repository root):
+   ```bash
+   terraform -chdir=platform/0-bootstrap init
+   terraform -chdir=platform/0-bootstrap apply
+   ```
 
-Apply order:
+4. Note the `state_bucket_name` output:
+   ```bash
+   terraform -chdir=platform/0-bootstrap output state_bucket_name
+   ```
 
-1) Run this stage first to create the state bucket.
-2) Edit the commented `backends.tf` in `1-org` and `2-environments/*` to point at the created bucket.
+## Migrate to Remote State
 
-Security:
+1. Edit `platform/0-bootstrap/backend.gcs.example.tf`:
+   - Update `bucket` with the state bucket name from output
+   - Uncomment the `terraform` block
 
-- Do not store secrets or real identifiers in code.
-- Optionally add CMEK for the state bucket later; left as a TODO here for simplicity.
+2. Rename and migrate (from repository root):
+   ```bash
+   mv platform/0-bootstrap/backend.gcs.example.tf platform/0-bootstrap/backend.gcs.tf
+   terraform -chdir=platform/0-bootstrap init -migrate-state
+   ```
+   Type `yes` when prompted.
+
+## Configure Other Roots
+
+Update the `bucket` value in:
+- `platform/1-foundation/backends.tf`
+- `platform/2-environments/*/backends.tf`
+
+Then initialize each root:
+```bash
+terraform -chdir=platform/1-foundation init
+terraform -chdir=platform/2-environments/development init
+terraform -chdir=platform/2-environments/production init
+```
+
+## Variables
+
+| Name | Description | Required |
+|------|-------------|----------|
+| `org_id` | GCP organization ID | Yes |
+| `billing_account_id` | Billing account ID | Yes |
+| `project_name` | Project name (e.g. `sao` generates project ID `sao-bootstrap`) | Yes |
+| `state_bucket_name` | GCS bucket name for state | Yes |
+| `location` | GCS bucket location | No (default: `europe-west3`) |
+| `labels` | Resource labels | No |
+
+## Outputs
+
+- `bootstrap_project_id`: The created project ID
+- `state_bucket_name`: The state bucket name
+
+## Recovery
+
+If local state is lost before migration, re-import resources:
+
+```bash
+terraform import google_project.bootstrap {project_id}
+terraform import google_storage_bucket.tf_state {bucket_name}
+terraform import 'google_project_service.enabled["cloudresourcemanager.googleapis.com"]' {project_id}/cloudresourcemanager.googleapis.com
+terraform import 'google_project_service.enabled["iam.googleapis.com"]' {project_id}/iam.googleapis.com
+terraform import 'google_project_service.enabled["serviceusage.googleapis.com"]' {project_id}/serviceusage.googleapis.com
+terraform import 'google_project_service.enabled["storage.googleapis.com"]' {project_id}/storage.googleapis.com
+```

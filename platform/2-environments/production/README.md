@@ -8,16 +8,16 @@ Purpose:
 
 Backend:
 
-- Uses a GCS remote backend. Provide your bucket/prefix via a local `backend.hcl` file (gitignored).
-- Example `backend.hcl.example` is provided; copy to `backend.hcl` and set values locally.
+- Uses GCS remote backend configured in `backends.tf`.
+- Update the `bucket` value with your state bucket name from `0-bootstrap` output.
 
 Inputs (variables):
 
 - `billing_account_id`
-- `folder_id` (use the `production_folder_id` output from `1-org`)
-- `logging_project_id` (use the `logging_project_id` output from `1-org`)
-- `prod_project_id` (unique, e.g. `platform-prod`)
-- `prod_project_name` (default provided)
+- `folder_id` (use the `prod_folder_id` output from `1-foundation`)
+- `logging_project_id` (use the `logging_project_id` output from `1-foundation`)
+- `prod_project_id` (unique, e.g. `sao-prod`)
+- `prod_project_name` (default: `Production`)
 - `gcp_platform_viewers_group` (e.g. `platform-viewers@example.com`)
 - Optional: `labels`
 

@@ -1,23 +1,23 @@
 locals {
   labels = merge({
     environment = "platform",
-    stage       = "org",
+    stage       = "foundation",
   }, var.labels)
 }
 
-# Top-level folders for simple two-environment layout
-resource "google_folder" "platform" {
-  display_name = "Platform"
+# Top-level folders
+resource "google_folder" "shared" {
+  display_name = "shared"
   parent       = "organizations/${var.org_id}"
 }
 
-resource "google_folder" "development" {
-  display_name = "Development"
+resource "google_folder" "dev" {
+  display_name = "dev"
   parent       = "organizations/${var.org_id}"
 }
 
-resource "google_folder" "production" {
-  display_name = "Production"
+resource "google_folder" "prod" {
+  display_name = "prod"
   parent       = "organizations/${var.org_id}"
 }
 
@@ -25,7 +25,7 @@ resource "google_folder" "production" {
 resource "google_project" "logging" {
   project_id      = var.logging_project_id
   name            = var.logging_project_name
-  folder_id       = google_folder.platform.name
+  folder_id       = google_folder.shared.name
   billing_account = var.billing_account_id
   labels          = local.labels
 }

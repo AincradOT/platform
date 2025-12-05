@@ -36,9 +36,6 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-# Backend configuration files (provide per-root and do not commit)
-backend.hcl
-
 # Checkov
 checkov-output
 results.sarif
@@ -57,3 +54,4 @@ temp.sh
 # .tox
 # .coverage
 cloud/
+platform/0-bootstrap/example.terraform.tfvars

@@ -21,7 +21,7 @@ platform/
     variables.tf
     main.tf
     outputs.tf
-  1-org/
+  1-foundation/
     README.md
     backends.tf (commented – template)
     versions.tf
@@ -51,7 +51,7 @@ platform/
 Recommended apply order:
 
 1) 0-bootstrap
-2) 1-org
+2) 1-foundation
 3) 2-environments/development
 4) 2-environments/production
 
@@ -80,6 +80,6 @@ Before using this template, you MUST set at minimum:
 - `billing_account_id`
 - Group emails (org admins, billing admins, platform devs, logging/monitoring viewers)
 - Project IDs for logging, development and production
-- Remote state bucket (for 1-org and 2-environments)
+- Remote state bucket (for 1-foundation and 2-environments)
 
 See the READMEs in each stage for details.

@@ -1,3 +1,0 @@
-# Copy to backend.hcl (do not commit) and adjust values
-bucket = "<your-state-bucket-name>"
-prefix = "platform/1-org"

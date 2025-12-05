@@ -22,8 +22,7 @@ Everything after these zeroday set up instruction should be done via code and pi
 ## Requirements
 
 !!! warning
-    These docs assume your local environment already has the basic tooling
-    installed and available on your `PATH`.
+        These docs assume your local environment already has the basic tooling installed and available on your `PATH`.
 
 Make sure the following commands all succeed:
 
@@ -41,8 +40,7 @@ If any command fails, install or fix that tool before continuing.
 ### Domain Registration
 
 !!! note
-    You only need one domain for the entire platform (e.g. `example.com`).
-    Subdomains and DNS records are created later by automation.
+        You only need one domain for the entire platform (e.g. `example.com`). Subdomains and DNS records are created later by automation.
 
 We use Cloudflare to manage DNS for the platform.
 
@@ -58,7 +56,7 @@ We use Cloudflare to manage DNS for the platform.
 ### Google Cloud Identity & Organization
 
 !!! danger
-    Do not use a personal Gmail account (e.g. `something@gmail.com`) as the long-term admin. Always use a domain account such as `platform-admin@example.com`. This is always free to do as it is linked to your domain from Cloudflare.
+        Do not use a personal Gmail account (e.g. `something@gmail.com`) as the long-term admin. Always use a domain account such as `platform-admin@example.com`. This is always free to do as it is linked to your domain from Cloudflare.
 
 To create a Google Cloud organization for your domain, you must first sign up for a free Google Cloud Identity account:
 
@@ -76,15 +74,15 @@ High-level steps:
 4. Accept the terms and conditions.
 
 !!! note
-    If you are new to Google Cloud and have never created a project before, the organization resource is created automatically a few minutes after you accept the terms in the console. Check the project/organization selector at the top of the console and confirm you see your domain listed as an organization.
+        If you are new to Google Cloud and have never created a project before, the organization resource is created automatically a few minutes after you accept the terms in the console. Check the project/organization selector at the top of the console and confirm you see your domain listed as an organization.
 
 ### Set Up a Billing Account
 
 !!! warning
-    Make sure the billing account belongs to the correct organization and is not accidentally created under a personal account.
+        Make sure the billing account belongs to the correct organization and is not accidentally created under a personal account.
 
 Follow Google’s billing guide:
-[https://cloud.google.com/billing/docs/how-to/manage-billing-account](https://cloud.google.com/billing/docs/how-to/manage-billing-account)
+[https://console.cloud.google.com/billing](https://console.cloud.google.com/billing)
 
 Minimum steps:
 
@@ -96,10 +94,10 @@ Minimum steps:
 ### Workspace / IAM Roles
 
 !!! note
-    If this is a brand-new organization and you are using the same admin account that created Cloud Identity / the organization and the billing account, you likely already have the necessary permissions and can treat this section as reference. These role assignments are mainly for when you delegate platform setup to another user or group.
+        If this is a brand-new organization and you are using the same admin account that created Cloud Identity / the organization and the billing account, you likely already have the necessary permissions and can treat this section as reference. These role assignments are mainly for when you delegate platform setup to another user or group.
 
 !!! danger
-    The roles below are high-privilege. Only grant them to trusted administrators or admin groups - never to general developers.
+        The roles below are high-privilege. Only grant them to trusted administrators or admin groups - never to general developers.
 
 Go to the IAM admin page:
 [https://console.cloud.google.com/iam-admin/](https://console.cloud.google.com/iam-admin/)
@@ -121,10 +119,10 @@ On the Google Cloud organization:
 ### Google Cloud SDK (gcloud)
 
 !!! note
-    All CLI commands in later steps assume:
+        All CLI commands in later steps assume:
+        
         - `gcloud` is installed and on your `PATH`.
         - You are authenticated as your domain admin (or delegated platform admin).
-        - You have selected the correct bootstrap project.
 
 Check if the SDK is installed:
 
@@ -134,22 +132,14 @@ gcloud version
 
 If it fails, install the SDK: [https://cloud.google.com/sdk/docs/install](https://cloud.google.com/sdk/docs/install)
 
-Then authenticate using your domain admin user (e.g. `platform-admin@example.com`) and select the bootstrap project:
+Then authenticate using your domain admin user (e.g. `platform-admin@example.com`):
 
 ```bash
-# Interactively log in and choose your project (usually option 1)
+# Interactively log in
 gcloud init
 ```
 
-Enable the required services on the current (bootstrap) project:
-
-```bash
-gcloud services enable cloudresourcemanager.googleapis.com
-gcloud services enable cloudbilling.googleapis.com
-gcloud services enable iam.googleapis.com
-gcloud services enable cloudkms.googleapis.com
-gcloud services enable servicenetworking.googleapis.com
-```
+You are now ready to proceed with bootstrapping the platform using Terraform. The bootstrap project and required APIs will be created by the Terraform code in the next steps.
 
 ## GitHub
 
@@ -167,8 +157,8 @@ This account will create and own the organization (at least initially).
 ### Create the GitHub Organization
 
 !!! note
-    You only need one GitHub organization for the platform, even if you add
-    more services later. All repositories and CI/CD pipelines will live under this org.
+        You only need one GitHub organization for the platform, even if you add
+        more services later. All repositories and CI/CD pipelines will live under this org.
 
 1. Go to the “New organization” page: <https://github.com/organizations/new>
 2. Choose the **Free** plan (you can upgrade later if needed).
@@ -179,8 +169,8 @@ Once done, you should see your new organization listed under **Your organization
 ### Add Organization Owners
 
 !!! danger
-    Organization Owners have full control over repositories, secrets, and billing.
-    Only grant this role to trusted platform administrators.
+        Organization Owners have full control over repositories, secrets, and billing.
+        Only grant this role to trusted platform administrators.
 
 1. Open your organization on GitHub and go to **People**.  
 2. Invite any additional platform admins as **Owners**.

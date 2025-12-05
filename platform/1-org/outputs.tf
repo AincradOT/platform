@@ -1,16 +1,16 @@
-output "platform_folder_id" {
-  description = "Folder resource name for Platform."
-  value       = google_folder.platform.name
+output "shared_folder_id" {
+  description = "Folder ID for shared services."
+  value       = google_folder.shared.name
 }
 
-output "development_folder_id" {
-  description = "Folder resource name for Development."
-  value       = google_folder.development.name
+output "dev_folder_id" {
+  description = "Folder ID for dev workloads."
+  value       = google_folder.dev.name
 }
 
-output "production_folder_id" {
-  description = "Folder resource name for Production."
-  value       = google_folder.production.name
+output "prod_folder_id" {
+  description = "Folder ID for prod workloads."
+  value       = google_folder.prod.name
 }
 
 output "logging_project_id" {

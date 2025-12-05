@@ -4,24 +4,24 @@ variable "billing_account_id" {
 }
 
 variable "folder_id" {
-  description = "Folder resource name or numeric ID for Development, e.g. folders/123456789 or 123456789."
+  description = "Folder resource name or numeric ID for dev, e.g. folders/123456789 or 123456789."
   type        = string
 }
 
 variable "logging_project_id" {
-  description = "Project ID of the central logging/monitoring project (from 1-org outputs)."
+  description = "Project ID of the central logging/monitoring project (from 1-foundation outputs)."
   type        = string
 }
 
 variable "dev_project_id" {
-  description = "Unique project ID for development (e.g. platform-dev)."
+  description = "Unique project ID for development (e.g. sao-dev)."
   type        = string
 }
 
 variable "dev_project_name" {
   description = "Human-friendly name for development project."
   type        = string
-  default     = "Platform Development"
+  default     = "Development"
 }
 
 variable "gcp_platform_devs_group" {

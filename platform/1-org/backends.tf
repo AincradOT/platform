@@ -1,5 +1,28 @@
-# Terraform backend (GCS)
-# Configuration (bucket, prefix) is provided via a local backend.hcl file (gitignored)
+# ============================================================================
+# Terraform Backend Configuration (GCS)
+# ============================================================================
+#
+# This root uses the GCS bucket created in 0-bootstrap for remote state.
+#
+# SETUP INSTRUCTIONS:
+#
+# 1. Complete the 0-bootstrap apply first to create the state bucket.
+#
+# 2. Update the `bucket` value below with the output from 0-bootstrap:
+#
+#    cd ../0-bootstrap
+#    terraform output state_bucket_name
+#
+# 3. Run terraform init in this directory:
+#
+#    cd ../1-foundation
+#    terraform init
+#
+# ============================================================================
+
 terraform {
-  backend "gcs" {}
+  backend "gcs" {
+    bucket = "<STATE_BUCKET_NAME_FROM_0_BOOTSTRAP_OUTPUT>"
+    prefix = "terraform/foundation"
+  }
 }
