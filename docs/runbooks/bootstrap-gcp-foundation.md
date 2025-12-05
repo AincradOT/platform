@@ -5,10 +5,11 @@ This runbook describes the steps to run the GCP platform Terraform roots for the
 !!! note
     Each terraform root has its own README with detailed configuration options:
     
-    - [platform/](../../platform/README.md) - Overview and prerequisites
-    - [0-bootstrap/](../../platform/0-bootstrap/README.md) - Bootstrap project and state bucket
-    - [1-org/](../../platform/1-org/README.md) - Organizational folders and shared project
-    - [2-environments/](../../platform/2-environments/development/README.md) - Environment projects
+    - [platform/](../platform/README.md) - Overview and prerequisites
+    - [0-bootstrap/](../platform/0-bootstrap/README.md) - Bootstrap project and state bucket
+    - [1-org/](../platform/1-org/README.md) - Organizational folders and shared project
+    - [2-environments/development/](../platform/2-environments/development/README.md) - Development environment
+    - [2-environments/production/](../platform/2-environments/production/README.md) - Production environment
 
 ## Prerequisites
 

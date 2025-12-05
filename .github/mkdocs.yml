@@ -96,8 +96,16 @@ nav:
       - Add Project Repository: runbooks/add-new-project-repo.md
       - Onboard Developer: runbooks/onboard-developer.md
 
+  - Platform Code:
+      - Overview: platform/README.md
+      - 0-bootstrap: platform/0-bootstrap/README.md
+      - 1-org: platform/1-org/README.md
+      - 2-environments/dev: platform/2-environments/development/README.md
+      - 2-environments/prod: platform/2-environments/production/README.md
+
   - Architecture:
       - Overview: architecture/index.md
+      - Platform: architecture/platforming.md
       - Cloudflare: architecture/cloudflare.md
       - Google Cloud: architecture/gcp.md
       - GitHub Organisation: architecture/github.md

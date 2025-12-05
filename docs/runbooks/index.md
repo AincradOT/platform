@@ -14,4 +14,4 @@ Step-by-step procedures for platform operations.
 
 ## Related Documentation
 
-For detailed terraform configuration, see the READMEs in the [platform/](../../platform/) directory.
+For detailed terraform configuration, see the [Platform Code](../platform/README.md) section.
