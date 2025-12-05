@@ -76,9 +76,13 @@ If you are only changing application code and not touching infrastructure, you r
 
       GitHub organisation settings, core repositories, team structure and branch protection rules.
 
+- [Cloudflare](cloudflare.md)
+
+      DNS management, TLS certificates, edge protection for web services, and architectural decisions around game server TCP exposure.
+
 - [Continuous Integration](ci.md)
 
-      CI patterns for Terraform and Ansible, use of GitHub Actions, Workload Identity Federation and how plans and applies are run per environment.
+      CI patterns for Terraform and Ansible, use of GitHub Actions, GitHub Apps for automation, and how plans and applies are run per environment.
 
 - [Secrets and state management](state.md)
 

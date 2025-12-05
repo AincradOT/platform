@@ -6,12 +6,15 @@ Secrets and state require deliberate handling. The goal is to make it hard to ac
 
 Terraform state is stored in a versioned GCS bucket.
 
-- Each project uses a unique `prefix` to isolate state files.
-- Versioning is enabled so previous states are available for debug and recovery.
-- Bucket IAM is restricted to the minimum set of humans and CI service accounts.
-- Bucket encryption uses a KMS key created by the platform `cloud/` root.
+- Each terraform root uses a unique `prefix` to isolate state files
+- Versioning is enabled so previous states are available for debug and recovery
+- Bucket IAM is restricted to org administrators and CI service accounts
+- Google-managed encryption at rest (no KMS required)
 
-GCS provides native state locking through object generation checks. We rely on this and do not use a separate lock store.
+!!! warning
+    GCS does not provide native state locking.
+    For small teams running terraform sequentially, this is acceptable.
+    CI workflows serialize applies per repository to avoid conflicts.
 
 We avoid running multiple concurrent applies against the same state key. CI workflows that target the same state are queued or made mutually exclusive.
 
@@ -35,36 +38,23 @@ Example CLI usage:
 
 ```bash
 gcloud secrets create db-root-password --replication-policy=automatic
-
 printf '%s' 'super-secret-value' | gcloud secrets versions add db-root-password --data-file=-
 ```
 
-## Ansible integration
+## Configuration management integration
 
-Ansible uses the `google.cloud.gcp_secret_manager` lookup plugin to read secrets at runtime.
+Configuration management tools (Ansible, cloud-init) can read secrets at runtime using the Secret Manager API.
 
-Example usage:
+Example using gcloud in a startup script:
 
-```yaml
-- name: Load DB root password
-  set_fact:
-    db_root_password: "{{ lookup('google.cloud.gcp_secret_manager', 'db-root-password') }}"
+```bash
+DB_PASSWORD=$(gcloud secrets versions access latest --secret=db-root-password)
+echo "DB_PASSWORD=${DB_PASSWORD}" >> /etc/myapp/db.env
 ```
 
-We then template configuration files or environment files on the target VM:
-
-```yaml
-- name: Render database env file
-  template:
-    src: db.env.j2
-    dest: /etc/myapp/db.env
-    owner: root
-    mode: '0600'
-  vars:
-    db_root_password: "{{ db_root_password }}"
-```
-
-Secrets never live in the Ansible inventory or playbook files.
+!!! danger
+    Secrets never live in configuration management repositories, inventory files, or playbooks.
+    Always fetch secrets at runtime using service account credentials.
 
 ## CI and secrets
 

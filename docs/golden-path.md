@@ -1,7 +1,9 @@
 # Golden path for platform and application infrastructure (Open Tibia)
 
 !!! note
-        A Golden Path refers to an opinionated, well-documented, and supported way of building and deploying software within an organization. With a supported path, development teams are able to build more efficiently in ways that meet organizational standards. Golden Paths offer a clear approach for platform engineers to guide DevOps teams, AI/MLOps teams, security, networking or any other IT organization, ensuring consistency, reliability, and efficient use of time and resources.
+    A Golden Path refers to an opinionated, well-documented, and supported way of building and deploying software within an organization.
+    With a supported path, development teams are able to build more efficiently in ways that meet organizational standards.
+    Golden Paths offer a clear approach for platform engineers to guide DevOps teams, AI/MLOps teams, security, networking or any other IT organization, ensuring consistency, reliability, and efficient use of time and resources.
 
 ## Audience and scope
 
@@ -111,8 +113,8 @@ The platform layer exists to:
 * make onboarding a new engineer a documentation exercise, not archaeology
 
 !!! note
-        If you are building a short lived prototype, this is optional.
-        If you expect your Open Tibia services to live longer than a hackathon, this is strongly recommended.
+    If you are building a short lived prototype, this is optional.
+    If you expect your Open Tibia services to live longer than a hackathon, this is strongly recommended.
 
 ## Why GCP and GitHub for this golden path
 
@@ -203,7 +205,8 @@ For small teams managing multiple services (10+ repositories), org-scoped creden
 This approach is simpler than Workload Identity Federation and adequate for teams without compliance requirements. As the team grows beyond 20 developers or adds compliance requirements, migration to Workload Identity Federation can be considered.
 
 !!! note
-        No credentials are committed to repositories. All secrets are stored in GitHub encrypted secrets or GCP Secret Manager.
+    No credentials are committed to repositories.
+    All secrets are stored in GitHub encrypted secrets or GCP Secret Manager.
 
 ### Portability and lift-and-shift
 
@@ -221,7 +224,8 @@ The entire platform can be forked, re-parameterized, and deployed to a new organ
 * Transferable if ownership changes hands
 
 !!! warning
-        When forking, update all variables in terraform.tfvars files. Never commit real org IDs, project IDs, or bucket names to public repositories.
+    When forking, update all variables in terraform.tfvars files.
+    Never commit real org IDs, project IDs, or bucket names to public repositories.
 
 ### Additional architecture details
 

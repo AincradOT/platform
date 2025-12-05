@@ -17,14 +17,15 @@ Platform in this context means everything that exists before any application or 
 
 ## High level architecture
 
-The platform is made of two Terraform roots inside a single `platform` repository.
+The platform is organized into terraform roots inside a single `platform` repository:
 
-- `cloud/` manages GCP organisation, environment projects, state bucket, keys and CI service accounts.
-- `github/` manages GitHub organisation settings, teams, core repositories and branch protections.
+- `0-bootstrap` creates the bootstrap project and GCS state bucket
+- `1-org` creates organizational folders (shared, dev, prod) and shared services project
+- `2-environments` creates dev and prod environment projects
 
-Both roots use a shared Terraform backend stored in GCS, but with separate state keys.
+All roots (after bootstrap migration) use a shared GCS backend with separate state prefixes.
 
-Application repositories (for example `game-infra`, `game-server`, `web-ui`) use Terraform with the same GCS backend and environment projects that are created by the `cloud/` root. They never modify organisation level resources.
+Application repositories use Terraform with the same GCS backend and target the environment projects created by the platform. They never modify organisation level resources.
 
 ## Lifecycle
 
@@ -42,18 +43,20 @@ This phase is intentionally small and documented. Everything after this should b
 
 ### 2. Platform provisioning
 
-- Clone `platform`.
-- Run the `cloud/` Terraform roots in order.
-- Run the `github/` Terraform root.
-- Configure GitHub Actions for the platform repository so it can manage itself.
+- Clone `platform` repository
+- Run `0-bootstrap` terraform to create state bucket
+- Migrate bootstrap state to GCS
+- Run `1-org` terraform to create folders and shared project
+- Run `2-environments` terraform to create dev and prod projects
+- Configure CI service accounts and GitHub secrets (Phase 2)
 
 At the end of this phase the organisation and platform are in a known, reproducible state.
 
 ### 3. Project consumption
 
-- Create new application or service repositories under the GitHub organisation.
-- Point their Terraform backends at the shared GCS bucket.
-- Use Workload Identity Federation to grant CI jobs access to GCP projects.
-- Use GCP Secret Manager as the canonical store for shared secrets and Ansible lookups.
+- Create new application or service repositories under the GitHub organisation
+- Point their Terraform backends at the shared GCS bucket with unique prefixes
+- Use org-level GitHub secrets for CI authentication to GCP
+- Use GCP Secret Manager as the canonical store for application secrets
 
-Projects can be added and removed without changing the platform platform.
+Projects can be added and removed without changing the platform.

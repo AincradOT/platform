@@ -14,7 +14,9 @@ Terraform state is stored in a single GCS bucket created by the bootstrap proces
 - Google-managed encryption at rest
 
 !!! note
-        No KMS encryption is used for the state bucket. GCS provides encryption at rest by default. Customer-managed encryption keys (CMEK) add cost and complexity without meaningful security benefit for this use case.
+    No KMS encryption is used for the state bucket.
+    GCS provides encryption at rest by default.
+    Customer-managed encryption keys (CMEK) add cost and complexity without meaningful security benefit for this use case.
 
 ## Access Control
 
@@ -24,7 +26,8 @@ Terraform state is stored in a single GCS bucket created by the bootstrap proces
 - Service accounts used by CI (read/write on their prefixes)
 
 !!! warning
-        State bucket access is restricted to terraform operators only. Developers work via terraform plan/apply, not by reading state directly.
+    State bucket access is restricted to terraform operators only.
+    Developers work via terraform plan/apply, not by reading state directly.
 
 ### IAM bindings
 
@@ -51,7 +54,8 @@ Application repositories use their repository name as part of the prefix to avoi
 ## State Locking
 
 !!! warning
-        GCS does not provide native state locking. For small teams (3-10 developers) running terraform sequentially, this is acceptable.
+    GCS does not provide native state locking.
+    For small teams (3-10 developers) running terraform sequentially, this is acceptable.
 
 ### Mitigation
 
@@ -71,7 +75,7 @@ The bootstrap process itself uses a two-phase state approach:
 2. After the bucket exists, migrate bootstrap state to GCS using `terraform init -migrate-state`
 
 !!! note
-        This solves the chicken-and-egg problem: the bucket must exist before it can store state, but terraform needs state to manage the bucket.
+    This solves the chicken-and-egg problem: the bucket must exist before it can store state, but terraform needs state to manage the bucket.
 
 ## State Security
 
@@ -89,7 +93,8 @@ The bootstrap process itself uses a two-phase state approach:
 - Rotate service account keys periodically if stored in state
 
 !!! danger
-        State should NOT contain secret values (passwords, API keys, tokens). These should be in Secret Manager, referenced by ID only.
+    State should NOT contain secret values (passwords, API keys, tokens).
+    These should be in Secret Manager, referenced by ID only.
 
 ## Recovery
 
@@ -105,4 +110,4 @@ If state is corrupted or lost:
 3. In worst case where the bucket is deleted, restore from local backups or recreate infrastructure
 
 !!! note
-        The state bucket has `prevent_destroy` lifecycle rule in terraform to prevent accidental deletion.
+    The state bucket has `prevent_destroy` lifecycle rule in terraform to prevent accidental deletion.

@@ -93,8 +93,12 @@ nav:
       - Design: architecture/platforming.md
       - Google Cloud: architecture/gcp.md
       - GitHub Organisation: architecture/github.md
+      - Cloudflare: architecture/cloudflare.md
       - Continuous Integration: architecture/ci.md
-      - Secrets & State Management: architecture/state.md
+      - Secrets & State: architecture/state.md
+      - State Management: architecture/state-management.md
+      - Disaster Recovery: architecture/disaster-recovery.md
+      - Cost Model: architecture/cost-model.md
 
   - Contributing:
       - Overview: contributing/index.md

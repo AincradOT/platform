@@ -4,15 +4,20 @@ This section describes how we use GCP as the control plane for cloud resources, 
 
 ## Scope
 
-The GCP platform Terraform root is located under `cloud/` in the `platform` repository. It manages:
+The GCP platform Terraform is organized into separate roots in the `platform` repository:
 
-- enabling the GCP organisation for Terraform usage
-- a bootstrap project for shared services
-- a GCS bucket for Terraform state with versioning
-- a KMS key for encrypting state and secrets
-- environment projects for `dev` and `prod`
-- service accounts for CI and Ansible
-- Workload Identity Federation (WIF) configuration for GitHub Actions
+- `0-bootstrap` creates the bootstrap project and GCS state bucket
+- `1-org` creates organizational folders and shared services project
+- `2-environments` creates dev and prod environment projects
+
+These manage:
+
+- GCP organisation folders (shared, dev, prod)
+- Bootstrap project for state storage
+- GCS bucket for Terraform state with versioning
+- Environment projects for dev and prod
+- Shared services project for logging and Secret Manager
+- Service accounts for CI operations (to be added)
 
 It does **not** manage individual workloads such as game servers or web applications. Those live in separate repositories and projects.
 
@@ -33,10 +38,10 @@ terraform {
 
 Key points:
 
-- The bucket is created and configured in the platform `cloud/` root.
-- Bucket versioning is enabled so there is a history of state changes.
-- Access to the bucket is restricted to platform engineers and CI service accounts.
-- Locking is handled by GCS generation preconditions and does not require a separate lock table.
+- The bucket is created in the `0-bootstrap` root
+- Bucket versioning is enabled for state change history
+- Access restricted to org administrators and CI service accounts
+- GCS does not provide native state locking, acceptable for small teams running sequentially
 
 Each Terraform root uses a distinct `prefix` so state files are isolated and blast radius is small.
 
@@ -44,65 +49,58 @@ Each Terraform root uses a distinct `prefix` so state files are isolated and bla
 
 We use a simple environment layout:
 
-- `platform-bootstrap` project for state, KMS and CI service accounts
-- `env-dev` project for development workloads
-- `env-prod` project for production workloads
+- Bootstrap project for state bucket and platform administration
+- Shared services project for logging, monitoring, and Secret Manager
+- Dev project for development workloads
+- Prod project for production workloads
 
-The exact naming convention can be adjusted but should be consistent across all stacks.
+Example naming: `sao-bootstrap`, `sao-shared-logging`, `sao-dev`, `sao-prod`
 
-Projects are created and managed by the `cloud/` Terraform root. Application repositories receive the project IDs as inputs and never create projects themselves.
+Projects are created by the platform Terraform roots. Application repositories receive the project IDs as inputs and never create projects themselves.
 
 ## Service accounts and roles
 
-The GCP platform defines a small set of service accounts:
+The GCP platform will define service accounts for CI operations (Phase 2):
 
-- platform CI service account for Terraform operations on platform resources
-- project CI service account per environment project
-- optional Ansible controller service account if Ansible pulls secrets directly from GCP
+- Platform CI service account for Terraform operations on org and projects
+- Dev CI service account for development environment operations
+- Prod CI service account for production environment operations
 
 Service accounts are granted only the roles they need. For example:
 
-- platform CI service account:
-  - read and write on the state bucket
-  - organisation level roles required by the platform
-- project CI service account:
-  - compute, storage and other roles within its environment project only
-  - no organisation level permissions
+- Platform CI service account has org-level permissions for folder and project management
+- Dev CI service account has permissions only within dev project
+- Prod CI service account has permissions only within prod project
+- All CI service accounts have read/write access to state bucket with appropriate prefixes
 
-## Workload Identity Federation for GitHub Actions
+## CI authentication approach
 
-We use Workload Identity Federation to allow GitHub Actions jobs to impersonate service accounts without storing JSON keys.
+For small teams, we use service account keys stored as GitHub encrypted secrets:
 
-The platform `cloud/` root creates:
+- Keys are generated manually via gcloud CLI
+- Stored as organization-level GitHub encrypted secrets
+- Rotated quarterly as part of security maintenance
+- Branch protection rules enforce which branches can deploy to production
 
-- a Workload Identity Pool for GitHub
-- a Workload Identity Provider that trusts `https://token.actions.githubusercontent.com`
-- attribute mappings for `repository` and `ref`
-- bindings that allow specific GitHub repositories to impersonate specific service accounts
-
-Example binding pattern:
-
-- repository `org/game-infra` on branch `main` can impersonate the `env-prod` project CI service account
-- repository `org/game-infra` on branch `develop` can impersonate the `env-dev` project CI service account
-
-This makes it clear which repository and branch is allowed to manage which environment.
+!!! note
+    Workload Identity Federation can be added later as team size or compliance requirements grow.
+    Current approach prioritizes operational simplicity over marginal security gains for small trusted teams.
 
 ## Secrets and Secret Manager
 
-Secret Manager is the canonical store for secrets that need to be consumed by applications, Ansible or CI.
+Secret Manager provides versioned, encrypted storage for application secrets (API keys, database passwords, tokens).
 
-The GCP platform Terraform root is responsible for:
+The GCP platform Terraform will be responsible for (Phase 2):
 
-- creating secrets with stable names
-- configuring replication and labels
-- granting read access to the appropriate service accounts
+- Creating Secret Manager resources with stable names
+- Configuring IAM bindings for service account access
+- Setting up replication policies
 
-We deliberately avoid storing secret values directly in Terraform configuration or state. Secret values are set via CLI or console by trusted humans or by one off scripts outside of normal Terraform runs.
+Secret values are never stored in Terraform. They are set via:
 
-Application repositories read secrets at runtime using:
+- `gcloud secrets versions add` for manual updates
+- Application injection at runtime
 
-- Ansible lookup plugins when provisioning VMs
-- application code or entrypoints that call Secret Manager
-- CI jobs when they need to pass secrets into templated manifests
+Applications read secrets at runtime using their service account identity.
 
-There is a separate document that covers secrets and state in more detail.
+See [State Management](state-management.md) for more details on secrets handling.
