@@ -127,11 +127,11 @@ There are three moving parts in this design:
 GCP is not objectively better than AWS or Azure in all cases. It is a good fit here because:
 
 * GCS is a simple and inexpensive Terraform state backend
-* state locking and versioning are built in without extra components
+* State versioning is built-in; state locking requires coordination (acceptable for sequential small team workflows)
 * Secret Manager integrates cleanly with Terraform, CI and Ansible
-* Workload Identity Federation with GitHub Actions avoids long lived service account keys
-* the organisation and project model is relatively simple for small teams
-* the idle cost of a minimal organisation, projects and state bucket is low
+* Service account keys for CI are simpler than Workload Identity Federation for small teams
+* The organisation and project model is relatively simple for small teams
+* The idle cost of a minimal organisation, projects and state bucket is low
 
 GitHub is used because:
 
@@ -156,23 +156,25 @@ This reduces blast radius and stops every repo from becoming a second platform i
 
 ### Single platform repository
 
-There is one repository for platform platform, for example:
+There is one repository for platform infrastructure, for example:
 
-* `platform-platform`
+* `platform`
 
-This repository contains two Terraform roots:
+This repository contains Terraform roots organized by lifecycle:
 
-* `cloud` for GCP organisation, environment projects, state, secrets and CI identities
-* `github` for GitHub organisation settings, core repositories, teams and branch protections
+* `0-bootstrap` - Creates bootstrap project and GCS state bucket (local backend initially)
+* `1-org` - Creates organizational folders and shared logging project
+* `2-environments` - Creates dev and production environment projects
+* (optional) `github` - GitHub organisation settings, core repositories, teams and branch protections
 
-Application repositories depend on `platform-platform`. They do not modify it.
+Application repositories depend on the platform repository. They do not modify it.
 
 ### Remote state for everything except bootstrap
 
 All non bootstrap Terraform roots use a shared GCS bucket for state.
 
 * 0-bootstrap uses a local backend to create the bucket.
-* 1-foundation, 2-environments and all application roots use the GCS backend.
+* 1-org, 2-environments and all application roots use the GCS backend.
 * Each root uses a unique prefix in the bucket to isolate state.
 
 State is treated as an internal implementation detail, not something developers touch directly. Access is restricted to org administrators who run terraform.
@@ -217,7 +219,7 @@ This platform design is deliberately portable and forkable:
 * [Terraform state](architecture/state-management.md) can be migrated to different backends ([S3](https://www.terraform.io/docs/language/settings/backends/s3.html), [Azure Storage](https://www.terraform.io/docs/language/settings/backends/azurerm.html), [Terraform Cloud](https://www.terraform.io/cloud)) with minimal changes
 * The folder structure and separation of concerns transfers directly to AWS (replace folders with [OUs](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_ous.html)) or Azure (replace with [management groups](https://docs.microsoft.com/en-us/azure/governance/management-groups/))
 
-The entire platform can be forked, re-parameterized, and deployed to a new organization in under an hour. This makes the pattern:
+The entire platform can be forked, re-parameterized, and deployed to a new organization in 2-3 hours. This makes the pattern:
 
 * Easy to replicate for multiple Open Tibia communities
 * Recoverable if starting fresh after a catastrophic failure
@@ -243,14 +245,18 @@ At a high level the golden path looks like this.
 
 A single platform repository contains the following logical components.
 
-**GCP platform component**
+**GCP platform component (current implementation)**
 
 * creates a bootstrap project for platform administration
 * creates the [GCS state bucket](architecture/state-management.md) with [versioning](https://cloud.google.com/storage/docs/object-versioning) for terraform state
 * creates [organizational folders](https://cloud.google.com/resource-manager/docs/creating-managing-folders) (shared, dev, prod)
-* creates environment [projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects) and shared services project
-* creates [Secret Manager](https://cloud.google.com/secret-manager/docs) resources for application secrets
-* defines [service accounts](https://cloud.google.com/iam/docs/service-accounts) for terraform CI operations
+* creates environment [projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects) and shared logging project
+* attaches projects to central logging metrics scope
+
+**Planned extensions:**
+
+* [Secret Manager](https://cloud.google.com/secret-manager/docs) resources for application secrets (containers only, not values)
+* [Service accounts](https://cloud.google.com/iam/docs/service-accounts) for terraform CI operations with appropriate IAM bindings
 
 **GitHub organization component** (optional, can be managed manually)
 
@@ -354,9 +360,9 @@ Key points:
 
 * a single platform repository defines the organisation skeleton and cross cutting concerns
 * application repositories consume that skeleton and own their own runtime infrastructure
-* GCP and GitHub are wired together using Terraform, Secret Manager, GCS state and Workload Identity Federation
+* GCP and GitHub are wired together using Terraform, GCS state and service account authentication
 * secrets are never hardcoded in Terraform or Ansible inventories
-* CI identities are short lived and narrowly scoped
+* CI identities use service account keys (rotated quarterly) scoped to specific projects
 * the old model of hand built servers, manual scripts and weak release engineering is explicitly rejected
 
 If you are about to add a new environment, a new application repository or a new kind of CI workflow, check here first and decide whether you are following this golden path or deviating from it on purpose.

@@ -3,7 +3,6 @@ site_url: https://aincradot.github.io/platform
 repo_url: https://github.com/aincradot/platform
 edit_uri: edit/master/docs/
 repo_name: Github
-docs_dir: ../docs
 
 extra:
   social:
@@ -84,24 +83,27 @@ markdown_extensions:
 
 nav:
   - Platform:
-      - Overview: index.md
-      - Golden Path: golden-path.md
-      - Requirements: requirements.md
+      - Overview: docs/index.md
+      - Golden Path: docs/golden-path.md
+      - Requirements: docs/requirements.md
+
+  - Runbooks:
+      - Bootstrap: platform/0-bootstrap/README.md
 
   - Architecture:
-      - Overview: architecture/index.md
-      - Cloudflare: architecture/cloudflare.md
-      - Google Cloud: architecture/gcp.md
-      - GitHub Organisation: architecture/github.md
-      - Continuous Integration: architecture/ci.md
-      - State Management: architecture/state-management.md
-      - Disaster Recovery: architecture/disaster-recovery.md
-      - Cost Model: architecture/cost-model.md
+      - Overview: docs/architecture/index.md
+      - Cloudflare: docs/architecture/cloudflare.md
+      - Google Cloud: docs/architecture/gcp.md
+      - GitHub Organisation: docs/architecture/github.md
+      - Continuous Integration: docs/architecture/ci.md
+      - State Management: docs/architecture/state-management.md
+      - Disaster Recovery: docs/architecture/disaster-recovery.md
+      - Cost Model: docs/architecture/cost-model.md
 
   - Contributing:
-      - Overview: contributing/index.md
-      - Setup: contributing/setup.md
-      - Usage: contributing/usage.md
-      - Workflows: contributing/workflows.md
-      - Contributing Guide: contributing/contributing.md
-      - Documentation: contributing/documentation.md
+      - Overview: docs/contributing/index.md
+      - Setup: docs/contributing/setup.md
+      - Usage: docs/contributing/usage.md
+      - Workflows: docs/contributing/workflows.md
+      - Contributing Guide: docs/contributing/contributing.md
+      - Documentation: docs/contributing/documentation.md

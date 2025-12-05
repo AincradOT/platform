@@ -2,6 +2,14 @@
 
 This runbook describes the steps to run the GCP platform Terraform roots for the first time.
 
+!!! note
+    Each terraform root has its own README with detailed configuration options:
+    
+    - [platform/](../../platform/README.md) - Overview and prerequisites
+    - [0-bootstrap/](../../platform/0-bootstrap/README.md) - Bootstrap project and state bucket
+    - [1-org/](../../platform/1-org/README.md) - Organizational folders and shared project
+    - [2-environments/](../../platform/2-environments/development/README.md) - Environment projects
+
 ## Prerequisites
 
 - GCP organisation exists.
@@ -27,25 +35,26 @@ Decide on the following values:
 
 - organisation ID
 - billing account ID
-- bootstrap project ID prefix
-- names for the Terraform state bucket and KMS key
+- bootstrap project ID
+- Terraform state bucket name
 
-Set them via a `terraform.tfvars` file or environment variables in `cloud/0-bootstrap`.
+Set them via a `terraform.tfvars` file in `platform/0-bootstrap`.
+
+See `platform/0-bootstrap/variables.tf` for all available variables and their descriptions.
 
 3. Run 0-bootstrap
 
 ```bash
-cd cloud/0-bootstrap
+cd platform/0-bootstrap
 terraform init
 terraform apply
 ```
 
 This will create:
 
-- a bootstrap project
-- a GCS bucket for Terraform state
-- a KMS key for encryption
-- initial service accounts
+- Bootstrap project
+- GCS bucket for Terraform state with versioning enabled
+- Lifecycle rules to retain last 50 state versions
 
 4. Run 1-org
 
@@ -63,17 +72,22 @@ This will create:
 5. Run 2-envs
 
 ```bash
-cd ../2-envs
+cd ../2-environments/development
+terraform init
+terraform apply
+
+cd ../production
 terraform init
 terraform apply
 ```
 
-This will create environment projects such as `env-dev` and `env-prod`.
+This will create development and production environment projects.
 
 6. Verify
 
-- Check that the state bucket exists and has versioning enabled.
-- Check that environment projects exist and are visible in the console.
-- Check that service accounts have been created as expected.
+- Check that the state bucket exists and has versioning enabled
+- Check that organizational folders (shared, dev, prod) exist
+- Check that environment projects exist and are visible in the console
+- Check that projects are attached to the central logging project's metrics scope
 
-Record the IDs of the environment projects for use in application repositories.
+Record the project IDs and folder IDs - you'll need them for application repositories.
