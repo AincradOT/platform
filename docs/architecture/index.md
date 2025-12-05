@@ -48,7 +48,7 @@ Application repositories use the same backend and target environment projects cr
 - Create application repositories
 - Point terraform backends at shared GCS bucket
 - Use org-level GitHub secrets for CI
-- Use [Secret Manager](state-management.md#secret-manager-as-canonical-store) for application secrets
+- Use [Secret Manager](state-management.md) for application secrets
 - Manage DNS via Cloudflare provider in application terraform
 
 ## Architecture pages

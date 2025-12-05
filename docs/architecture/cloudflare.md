@@ -40,7 +40,7 @@ resource "cloudflare_record" "game" {
 ### Origin Certificates
 
 1. Generate in Cloudflare dashboard (15 year validity)
-2. Store in [Secret Manager](architecture/state-management.md#secret-manager-as-canonical-store)
+2. Store in [Secret Manager](state-management.md)
 3. Configure web server to use origin cert
 4. Set SSL mode to "Full (strict)"
 
