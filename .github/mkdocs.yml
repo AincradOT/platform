@@ -3,6 +3,7 @@ site_url: https://aincradot.github.io/platform
 repo_url: https://github.com/aincradot/platform
 edit_uri: edit/master/docs/
 repo_name: Github
+docs_dir: .
 
 extra:
   social:
