@@ -1,17 +1,107 @@
-site_name: AincradOT foundation
-site_url: https://AincradOT.github.io/foundation
-repo_url: https://github.com/AincradOT/foundation
+site_name: Aincrad
+site_url: https://aincradot.github.io/platform
+repo_url: https://github.com/aincradot/platform
 edit_uri: edit/master/docs/
+repo_name: Github
+docs_dir: ../docs
+
+extra:
+  social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/aincradot
 
 theme:
   name: material
+  language: en
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/lightbulb-auto
+        name: Switch color scheme
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: amber
+      toggle:
+        icon: material/lightbulb
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: amber
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to system preference
+  features:
+    # Navigation / UX
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - navigation.path
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.tracking
+    # Content quality-of-life
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - content.tooltips
+    - content.footnote.tooltips
+    # Search / TOC
+    - search.highlight
+    - search.suggest
+    - search.share
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github-alt
 
-docs_dir: ../docs
+plugins:
+  - search
+  - typeset
+
+markdown_extensions:
+  - abbr
+  - attr_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.betterem
+  - pymdownx.caret
+  - pymdownx.highlight:
+      line_spans: __span
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
 
 nav:
-  - Home: index.md
-  - Setup: setup.md
-  - Usage: usage.md
-  - Workflows: workflows.md
-  - Contributing: contributing.md
-  - Documentation: documentation.md
+  - Platform:
+      - Overview: index.md
+      - Golden Path: golden-path.md
+      - Requirements: requirements.md
+
+  - Architecture:
+      - Overview: architecture/index.md
+      - Cloudflare: architecture/cloudflare.md
+      - Google Cloud: architecture/gcp.md
+      - GitHub Organisation: architecture/github.md
+      - Continuous Integration: architecture/ci.md
+      - State Management: architecture/state-management.md
+      - Disaster Recovery: architecture/disaster-recovery.md
+      - Cost Model: architecture/cost-model.md
+
+  - Contributing:
+      - Overview: contributing/index.md
+      - Setup: contributing/setup.md
+      - Usage: contributing/usage.md
+      - Workflows: contributing/workflows.md
+      - Contributing Guide: contributing/contributing.md
+      - Documentation: contributing/documentation.md
