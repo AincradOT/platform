@@ -1,11 +1,11 @@
 # CI authentication between GitHub and GCP
 
-CI jobs in GitHub Actions need to authenticate to GCP to run Terraform and manage infrastructure.
+CI jobs in [GitHub Actions](https://docs.github.com/en/actions) need to authenticate to GCP to run [Terraform](https://www.terraform.io/docs) and manage infrastructure.
 
 ## Goals
 
 - No credentials committed to repositories
-- Service account keys stored as GitHub encrypted secrets only
+- [Service account](https://cloud.google.com/iam/docs/service-accounts) keys stored as [GitHub encrypted secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets) only
 - Clear separation between dev and prod service accounts
 - Keys rotated quarterly
 - Terraform defines service accounts and their IAM bindings
@@ -69,7 +69,7 @@ The organization-level secrets are:
 
 ## GitHub Apps for automation
 
-Use GitHub Apps instead of PATs for CI automation (Renovate, etc.):
+Use [GitHub Apps](https://docs.github.com/en/apps/creating-github-apps/about-creating-github-apps/about-creating-github-apps) instead of PATs for CI automation ([Renovate](https://docs.renovatebot.com/), etc.):
 
 - Short-lived tokens (1 hour)
 - Scoped permissions
@@ -91,7 +91,7 @@ Use GitHub Apps instead of PATs for CI automation (Renovate, etc.):
 ```
 
 !!! note
-    Create separate GitHub Apps for different purposes (Renovate, terraform) to limit blast radius.
+    Create separate GitHub Apps for different purposes ([Renovate](https://docs.renovatebot.com/), terraform) to limit blast radius.
 
 ## Local development
 

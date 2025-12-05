@@ -1,17 +1,17 @@
 # Cloudflare
 
-Cloudflare provides DNS, TLS certificates, and edge protection for web services.
+Cloudflare provides [DNS](https://www.cloudflare.com/learning/dns/what-is-dns/), [TLS certificates](https://www.cloudflare.com/learning/ssl/what-is-ssl/), and edge protection for web services.
 
 ## What it provides
 
 * DNS management for primary domain and subdomains
 * Free TLS certificates with automatic renewal
-* DDoS protection for proxied services
-* CDN for static assets (rarely needed for Open Tibia)
+* [DDoS protection](https://www.cloudflare.com/learning/ddos/what-is-a-ddos-attack/) for proxied services
+* [CDN](https://www.cloudflare.com/learning/cdn/what-is-a-cdn/) for static assets (rarely needed for Open Tibia)
 
 ## DNS Self-Service Pattern
 
-Application repositories manage their own DNS records using Cloudflare Terraform provider:
+Application repositories manage their own DNS records using [Cloudflare Terraform provider](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs):
 
 ```hcl
 resource "cloudflare_record" "game" {
@@ -40,7 +40,7 @@ resource "cloudflare_record" "game" {
 ### Origin Certificates
 
 1. Generate in Cloudflare dashboard (15 year validity)
-2. Store in Secret Manager
+2. Store in [Secret Manager](architecture/state-management.md#secret-manager-as-canonical-store)
 3. Configure web server to use origin cert
 4. Set SSL mode to "Full (strict)"
 

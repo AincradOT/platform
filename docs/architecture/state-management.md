@@ -1,4 +1,6 @@
-# State Management
+# Terraform State Management
+
+[Terraform state](https://www.terraform.io/docs/language/state/index.html) is stored in a [GCS bucket](https://cloud.google.com/storage/docs) with [versioning](https://cloud.google.com/storage/docs/object-versioning) enabled by the bootstrap process. All terraform roots (except bootstrap itself initially) use this bucket with unique prefixes for state isolation.
 
 ## Overview
 
@@ -8,9 +10,9 @@ Terraform state is stored in a single GCS bucket created by the bootstrap proces
 
 ### Bucket features
 
-- Versioning enabled (retains last 50 versions)
-- Uniform bucket-level access (UBLA)
-- Public access prevention enforced
+- [Versioning](https://cloud.google.com/storage/docs/object-versioning) enabled (retains last 50 versions)
+- [Uniform bucket-level access](https://cloud.google.com/storage/docs/uniform-bucket-level-access) (UBLA)
+- [Public access prevention](https://cloud.google.com/storage/docs/public-access-prevention) enforced
 - Google-managed encryption at rest
 
 !!! note
@@ -76,6 +78,10 @@ The bootstrap process itself uses a two-phase state approach:
 
 !!! note
     This solves the chicken-and-egg problem: the bucket must exist before it can store state, but terraform needs state to manage the bucket.
+
+## Secret Manager as canonical store
+
+[GCP Secret Manager](https://cloud.google.com/secret-manager/docs) stores all sensitive values that need to be consumed by applications, Ansible or CI.
 
 ## State Security
 

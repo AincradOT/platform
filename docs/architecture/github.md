@@ -4,19 +4,19 @@ This section describes how we manage the GitHub organisation as part of the plat
 
 ## Scope
 
-The GitHub platform Terraform root lives under `github/` in the `platform` repository. It manages:
+The GitHub platform [Terraform](https://www.terraform.io/docs) root lives under `github/` in the `platform` repository. It manages:
 
 - organisation level settings
-- core teams and their permissions
+- core [teams](https://docs.github.com/en/organizations/organizing-members-into-teams) and their permissions
 - core repositories that must always exist
-- branch protection rules for main and production branches
+- [branch protection rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches) for main and production branches
 - standard labels and other repository level defaults
 
 It does **not** attempt to manage every user membership or every ad hoc repository. The goal is to codify the critical structure and guardrails, not micromanage everything through Terraform.
 
 ## Provider and backend
 
-Terraform uses the GitHub provider with the organisation as the owner.
+[Terraform](https://www.terraform.io/docs) uses the [GitHub provider](https://registry.terraform.io/providers/integrations/github/latest/docs) with the organisation as the owner.
 
 Example provider:
 
@@ -47,7 +47,7 @@ The `github_token` is supplied via environment variable and is never committed.
 
 We treat the following as non negotiable defaults:
 
-- two factor authentication required for all members
+- [two factor authentication](https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa) required for all members
 - base permission for organisation members is read, not write or admin
 - repository creation is restricted to admins and specific teams if needed
 
@@ -86,7 +86,7 @@ Non core repositories can still be created manually when needed. If a repository
 
 ## Branch protection
 
-Branch protection rules are essential for keeping infrastructure and core services stable.
+[Branch protection rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches) are essential for keeping infrastructure and core services stable.
 
 Terraform manages branch protection for at least:
 
@@ -95,8 +95,8 @@ Terraform manages branch protection for at least:
 
 Typical rules:
 
-- require pull requests for changes
-- require status checks to pass before merging
+- require [pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) for changes
+- require [status checks](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/collaborating-on-repositories-with-code-quality-features/about-status-checks) to pass before merging
 - disallow force pushes
 - restrict who can push directly
 

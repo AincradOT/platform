@@ -29,7 +29,7 @@ Application-specific DR (databases, VMs, application data) is the responsibility
 
 ### Prevention
 
-1. Versioning is enabled to keep the last 50 versions of each state file
+1. [Versioning](https://cloud.google.com/storage/docs/object-versioning) is enabled to keep the last 50 versions of each state file
 2. Lifecycle rule `prevent_destroy = true` in terraform prevents accidental deletion
 3. IAM restrictions ensure only org administrators can modify bucket
 4. Public access prevention is enforced via `public_access_prevention = "enforced"`
@@ -45,6 +45,9 @@ gsutil cp gs://sao-tfstate/terraform/foundation/default.tfstate#<version> \
           gs://sao-tfstate/terraform/foundation/default.tfstate
 ```
 
+!!! note
+    [`gsutil`](https://cloud.google.com/storage/docs/gsutil) is part of the Cloud SDK.
+
 ### Recovery from state bucket deletion
 
 If the bucket is deleted (despite prevent_destroy):
@@ -53,7 +56,7 @@ If the bucket is deleted (despite prevent_destroy):
 2. Recreate bucket manually via console
 3. Re-run `0-bootstrap` terraform to restore bucket configuration
 4. Restore state files from local backups if terraform was run locally recently
-5. In worst case, rebuild state via `terraform import` for all resources
+5. In worst case, rebuild state via [`terraform import`](https://www.terraform.io/docs/cli/import/index.html) for all resources
 
 ## Secret Manager Recovery
 
@@ -66,6 +69,9 @@ gcloud secrets versions list secret-name --project=sao-shared-logging
 # Access previous version
 gcloud secrets versions access <version> --secret=secret-name
 ```
+
+!!! note
+    Use [`gcloud secrets`](https://cloud.google.com/sdk/gcloud/reference/secrets) commands to manage Secret Manager.
 
 ### If Secret Manager resource is deleted
 

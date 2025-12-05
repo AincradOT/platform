@@ -2,20 +2,20 @@
 
 ## Introduction
 
-When you’re bootstrapping a brand-new platform, there’s a small “chicken-and-egg” problem.. The Terraform, GitHub Actions, and other automation expect that:
+When you're bootstrapping a brand-new platform, there's a small "chicken-and-egg" problem.. The [Terraform](https://www.terraform.io/docs), [GitHub Actions](https://docs.github.com/en/actions), and other automation expect that:
 
-  - A Google Cloud organization, billing account, and core IAM roles already exist.
+  - A Google Cloud organization, billing account, and core [IAM roles](https://cloud.google.com/iam/docs/understanding-roles) already exist.
   - A GitHub organization exists to host repos and pipelines.
-  - A DNS provider (Cloudflare) is already managing the main domain.
+  - A [DNS](https://www.cloudflare.com/learning/dns/what-is-dns/) provider ([Cloudflare](https://www.cloudflare.com/)) is already managing the main domain.
 
 However, those things **cannot be created by the automation itself** - the automation needs an existing cloud org, project, and credentials to run in the first place.
 
 This manual setup guide documents the one-time manual steps an org admin must do to get to that starting point:
 
-  - Set up a domain and DNS in Cloudflare.
-  - Create Cloud Identity + Google Cloud Organization and a billing account.
-  - Ensure an admin user has the right IAM roles and `gcloud` access.
-  - Create a GitHub organization to host the platform repositories and CI/CD pipelines.
+  - Set up a domain and [DNS](https://www.cloudflare.com/learning/dns/what-is-dns/) in [Cloudflare](https://www.cloudflare.com/).
+  - Create [Cloud Identity](https://cloud.google.com/identity) + Google Cloud Organization and a [billing account](https://cloud.google.com/billing/docs).
+  - Ensure an admin user has the right [IAM roles](https://cloud.google.com/iam/docs/understanding-roles) and [`gcloud`](https://cloud.google.com/sdk/gcloud) access.
+  - Create a [GitHub organization](https://docs.github.com/en/organizations) to host the platform repositories and CI/CD pipelines.
 
 Everything after these zeroday set up instruction should be done via code and pipelines, not more manual clicking.
 
@@ -32,6 +32,9 @@ gcloud version
 terraform version
 python --version
 ```
+
+!!! note
+    Install guides: [Git](https://git-scm.com/downloads), [gcloud](https://cloud.google.com/sdk/docs/install), [Terraform](https://www.terraform.io/downloads), [Python](https://www.python.org/downloads/)
 
 If any command fails, install or fix that tool before continuing.
 
@@ -61,7 +64,7 @@ We use Cloudflare to manage DNS for the platform.
     Always use a domain account such as `platform-admin@example.com`.
     This is always free to do as it is linked to your domain from Cloudflare.
 
-To create a Google Cloud organization for your domain, you must first sign up for a free Google Cloud Identity account:
+To create a [Google Cloud organization](https://cloud.google.com/resource-manager/docs/creating-managing-organization) for your domain, you must first sign up for a free [Google Cloud Identity](https://cloud.google.com/identity) account:
 
 * Cloud Identity signup (free):
   [https://workspace.google.com/gcpidentity/signup?sku=identitybasic](https://workspace.google.com/gcpidentity/signup?sku=identitybasic)
@@ -105,8 +108,7 @@ Minimum steps:
     The roles below are high-privilege.
     Only grant them to trusted administrators or admin groups - never to general developers.
 
-Go to the IAM admin page:
-[https://console.cloud.google.com/iam-admin/](https://console.cloud.google.com/iam-admin/)
+Go to the [IAM admin page](https://console.cloud.google.com/iam-admin/):
 
 For the user (or group) that will run the procedures in this document
 (typically your platform admin), grant the following roles.
@@ -136,9 +138,9 @@ Check if the SDK is installed:
 gcloud version
 ```
 
-If it fails, install the SDK: [https://cloud.google.com/sdk/docs/install](https://cloud.google.com/sdk/docs/install)
+If it fails, install the [Cloud SDK](https://cloud.google.com/sdk/docs/install).
 
-Then authenticate using your domain admin user (e.g. `platform-admin@example.com`):
+Then [authenticate](https://cloud.google.com/sdk/docs/authorizing) using your domain admin user (e.g. `platform-admin@example.com`):
 
 ```bash
 # Interactively log in

@@ -40,7 +40,7 @@ To test or develop new code you often had two bad options:
 Common failure modes:
 
 * no clear separation between dev and prod
-* config drift between machines that nobody can fully explain
+* [config drift](architecture/state-management.md) between machines that nobody can fully explain
 * upgrades that break because there is no consistent release process
 * no real way to hand the project over if the original owner disappears
 * no documentation of how the platform is put together
@@ -73,11 +73,11 @@ The golden path borrows specific ideas from the cloud native world that are wort
 
 In concrete terms here this means:
 
-* GCP is used as a control plane for projects, state and secrets
+* GCP is used as a control plane for projects, [state](architecture/state-management.md) and [secrets](https://cloud.google.com/secret-manager/docs)
 * GitHub is the source of truth for code and CI pipelines
-* Terraform defines infrastructure and can recreate environments
-* Docker is used on VMs for services like the game server, database and web UI
-* Ansible provisions those VMs consistently rather than hand written shell scripts that drift over time
+* [Terraform](https://www.terraform.io/docs) defines infrastructure and can recreate environments
+* [Docker](https://docs.docker.com/) is used on VMs for services like the game server, database and web UI
+* [Ansible](https://docs.ansible.com/) provisions those VMs consistently rather than hand written shell scripts that drift over time
 
 The golden path is a pragmatic subset of cloud native ideas. You get better reliability and repeatability without needing the full complexity and cost of Kubernetes.
 
@@ -179,30 +179,30 @@ State is treated as an internal implementation detail, not something developers 
 
 ### Secrets are not in Terraform
 
-Terraform does not own secret values.
+[Terraform](https://www.terraform.io/docs) does not own secret values.
 
-* Terraform creates Secret Manager resources and IAM bindings.
-* Secret values (API keys, database passwords, tokens) are set via gcloud CLI or injected at runtime.
-* Terraform configuration and state never contain hardcoded secrets.
+* Terraform creates [Secret Manager](https://cloud.google.com/secret-manager/docs) resources and [IAM bindings](https://cloud.google.com/iam/docs/overview).
+* Secret values (API keys, database passwords, tokens) are set via [gcloud CLI](https://cloud.google.com/sdk/gcloud) or injected at runtime.
+* Terraform configuration and [state](architecture/state-management.md) never contain hardcoded secrets.
 
 Applications and configuration management tools read from Secret Manager at runtime when they need sensitive values.
 
-**Why Secret Manager:** Provides versioned, encrypted storage for application secrets with fine-grained IAM control. Secrets are encrypted at rest automatically (no KMS required). Cost is ~$0.06/month per secret, negligible for small teams. Alternative of environment variables or config files is error-prone and insecure.
+**Why Secret Manager:** Provides versioned, encrypted storage for application secrets with fine-grained IAM control. Secrets are encrypted at rest automatically (no [KMS](https://cloud.google.com/kms/docs) required). Cost is ~$0.06/month per secret, negligible for small teams. Alternative of environment variables or config files is error-prone and insecure.
 
 ### CI identities use scoped credentials
 
-CI pipelines authenticate using:
+[CI pipelines](architecture/ci.md) authenticate using:
 
-* Organization-scoped GitHub App with permissions across all repositories.
-* Service account keys stored as organization-level GitHub encrypted secrets (rotated quarterly).
+* Organization-scoped [GitHub App](https://docs.github.com/en/apps) with permissions across all repositories.
+* [Service account](https://cloud.google.com/iam/docs/service-accounts) keys stored as organization-level [GitHub encrypted secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets) (rotated quarterly).
 
 For small teams managing multiple services (10+ repositories), org-scoped credentials are more practical than per-repository credentials. The operational overhead of maintaining individual apps per repo outweighs the marginal security benefit when:
 
 * All repositories are within the same trust boundary (same team, same organization)
 * The service account permissions are already scoped to specific GCP projects (dev vs prod)
-* The GitHub org has branch protection preventing unauthorized merges
+* The GitHub org has [branch protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches) preventing unauthorized merges
 
-This approach is simpler than Workload Identity Federation and adequate for teams without compliance requirements. As the team grows beyond 20 developers or adds compliance requirements, migration to Workload Identity Federation can be considered.
+This approach is simpler than [Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation) and adequate for teams without compliance requirements. As the team grows beyond 20 developers or adds compliance requirements, migration to Workload Identity Federation can be considered.
 
 !!! note
     No credentials are committed to repositories.
@@ -213,9 +213,9 @@ This approach is simpler than Workload Identity Federation and adequate for team
 This platform design is deliberately portable and forkable:
 
 * All GCP-specific identifiers (org ID, project IDs, bucket names) are variables, not hardcoded
-* No vendor lock-in to proprietary services (GCS and Secret Manager have drop-in replacements on other clouds)
-* Terraform state can be migrated to different backends (S3, Azure Storage, Terraform Cloud) with minimal changes
-* The folder structure and separation of concerns transfers directly to AWS (replace folders with OUs) or Azure (replace with management groups)
+* No vendor lock-in to proprietary services ([GCS](https://cloud.google.com/storage/docs) and Secret Manager have drop-in replacements on other clouds)
+* [Terraform state](architecture/state-management.md) can be migrated to different backends ([S3](https://www.terraform.io/docs/language/settings/backends/s3.html), [Azure Storage](https://www.terraform.io/docs/language/settings/backends/azurerm.html), [Terraform Cloud](https://www.terraform.io/cloud)) with minimal changes
+* The folder structure and separation of concerns transfers directly to AWS (replace folders with [OUs](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_ous.html)) or Azure (replace with [management groups](https://docs.microsoft.com/en-us/azure/governance/management-groups/))
 
 The entire platform can be forked, re-parameterized, and deployed to a new organization in under an hour. This makes the pattern:
 
@@ -246,11 +246,11 @@ A single platform repository contains the following logical components.
 **GCP platform component**
 
 * creates a bootstrap project for platform administration
-* creates the GCS state bucket with versioning for terraform state
-* creates organizational folders (shared, dev, prod)
-* creates environment projects and shared services project
-* creates Secret Manager resources for application secrets
-* defines service accounts for terraform CI operations
+* creates the [GCS state bucket](architecture/state-management.md) with [versioning](https://cloud.google.com/storage/docs/object-versioning) for terraform state
+* creates [organizational folders](https://cloud.google.com/resource-manager/docs/creating-managing-folders) (shared, dev, prod)
+* creates environment [projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects) and shared services project
+* creates [Secret Manager](https://cloud.google.com/secret-manager/docs) resources for application secrets
+* defines [service accounts](https://cloud.google.com/iam/docs/service-accounts) for terraform CI operations
 
 **GitHub organization component** (optional, can be managed manually)
 

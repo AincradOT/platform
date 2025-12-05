@@ -23,7 +23,7 @@ It does **not** manage individual workloads such as game servers or web applicat
 
 ## State backend
 
-Terraform state uses the GCS backend.
+[Terraform state](https://www.terraform.io/docs/language/state/index.html) uses the [GCS backend](https://www.terraform.io/docs/language/settings/backends/gcs.html).
 
 Example backend block for a project repository:
 
@@ -41,7 +41,7 @@ Key points:
 - The bucket is created in the `0-bootstrap` root
 - Bucket versioning is enabled for state change history
 - Access restricted to org administrators and CI service accounts
-- GCS does not provide native state locking, acceptable for small teams running sequentially
+- [GCS does not provide native state locking](state-management.md#state-locking), acceptable for small teams running sequentially
 
 Each Terraform root uses a distinct `prefix` so state files are isolated and blast radius is small.
 
@@ -88,7 +88,7 @@ For small teams, we use service account keys stored as GitHub encrypted secrets:
 
 ## Secrets and Secret Manager
 
-Secret Manager provides versioned, encrypted storage for application secrets (API keys, database passwords, tokens).
+[Secret Manager](https://cloud.google.com/secret-manager/docs) provides versioned, encrypted storage for application secrets (API keys, database passwords, tokens).
 
 The GCP platform Terraform will be responsible for (Phase 2):
 
@@ -103,4 +103,4 @@ Secret values are never stored in Terraform. They are set via:
 
 Applications read secrets at runtime using their service account identity.
 
-See [State Management](state-management.md) for more details on secrets handling.
+See [State Management](state-management.md) for details on secrets handling.

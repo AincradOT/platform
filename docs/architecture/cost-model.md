@@ -49,7 +49,7 @@ This keeps GCP costs minimal while providing enterprise-grade state management a
 
 - Don't store large files in GCS (use cheap blob storage for backups)
 - Minimize Secret Manager API calls (cache secrets in application for 5+ minutes)
-- Use lifecycle rules to delete old state versions (keep only last 50)
+- Use [lifecycle rules](https://cloud.google.com/storage/docs/lifecycle) to delete old state versions (keep only last 50)
 - Keep logging minimal (don't log every terraform operation)
 
 ## Cost Monitoring
@@ -64,6 +64,9 @@ gcloud billing budgets create \
   --budget-amount=5USD
 ```
 
+!!! note
+    See [GCP billing budgets](https://cloud.google.com/billing/docs/how-to/budgets) for alert configuration.
+
 ### Check costs monthly
 
 ```bash
@@ -75,13 +78,31 @@ gcloud billing accounts list
 
 ## Cost Projection
 
-### As team grows
+### Platform costs
 
 | Team Size | Environments | Monthly Platform Cost |
 |-----------|--------------|----------------------|
 | 1-3 devs | dev, prod | $14-17 |
-| 4-10 devs | dev, staging, prod | $30-40 |
-| 11-20 devs | multiple staging environments | $60-90 |
+| 3+ devs | dev, nonprod, prod | $28-35 |
+
+### VM/Application infrastructure costs
+
+| Environment | Server Specs | Provider | Monthly Cost |
+|-------------|--------------|----------|-------------|
+| Dev | 2-4 vCPU, 4-8GB RAM, 80GB SSD | Hetzner/OVH | $40 |
+| Prod | 4-8 vCPU, 8-16GB RAM, 160GB SSD | Hetzner/OVH | $70 |
+| **Total** | | | **$110** |
+
+!!! note
+    Dev environment runs lighter stack (no heavy monitoring like Prometheus/Grafana).
+    Prod environment sized for full observability stack and production load.
+
+### Total monthly cost summary
+
+| Team Size | Platform | VMs | **Total** |
+|-----------|----------|-----|----------|
+| 1-3 devs | $14-17 | $110 | **$124-127** |
+| 3+ devs | $28-35 | $110 | **$138-145** |
 
 ## Summary
 

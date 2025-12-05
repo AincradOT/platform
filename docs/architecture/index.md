@@ -15,13 +15,13 @@ Platform architecture for Open Tibia services using GCP, GitHub, and Cloudflare.
 
 ## Platform components
 
-The platform is organized into terraform roots in a single `platform` repository:
+The platform is organized into [Terraform](https://www.terraform.io/docs) roots in a single `platform` repository:
 
-- `0-bootstrap` creates bootstrap project and GCS state bucket
+- `0-bootstrap` creates bootstrap project and [GCS state bucket](state-management.md)
 - `1-org` creates organizational folders (shared, dev, prod) and shared services project
 - `2-environments` creates dev and prod environment projects
 
-All roots use shared GCS backend with separate state prefixes.
+All roots use shared [GCS backend](https://www.terraform.io/docs/language/settings/backends/gcs.html) with separate state prefixes.
 
 Application repositories use the same backend and target environment projects created by platform. They never modify organisation level resources.
 
@@ -48,7 +48,7 @@ Application repositories use the same backend and target environment projects cr
 - Create application repositories
 - Point terraform backends at shared GCS bucket
 - Use org-level GitHub secrets for CI
-- Use Secret Manager for application secrets
+- Use [Secret Manager](state-management.md#secret-manager-as-canonical-store) for application secrets
 - Manage DNS via Cloudflare provider in application terraform
 
 ## Architecture pages
