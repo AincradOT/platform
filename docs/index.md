@@ -1,8 +1,12 @@
 # Aincrad Platform
 
-This repository defines the platform infrastructure for the SAO/Aincrad organisation, but is **designed to be lifted and shifted** for other projects.
+This repository defines the platform infrastructure for the Aincrad Open Tibia community, but is **designed to be lifted and shifted** for other projects.
 
 ## Purpose
+
+!!! note
+    Costs are ~$15-18/month for platforming (GCP, Cloudflare domain, GitHub Team), and ~$110/month for VMs for service hosting.
+    See [Cost Model](architecture/cost-model.md) for details.
 
 This platform applies [CNCF](https://www.cncf.io/) principles using minimal-cost services from major providers ([GCP](https://cloud.google.com/), [Terraform](https://www.terraform.io/), [Cloudflare](https://www.cloudflare.com/)) to deliver:
 
@@ -10,6 +14,8 @@ This platform applies [CNCF](https://www.cncf.io/) principles using minimal-cost
 - Industry-aligned security and operational practices with documented tradeoffs
 - Reproducible environments managed as code
 - Clear separation between platform and application concerns
+
+For the full rationale, see the [`Golden path`](golden-path.md) write-up.
 
 ### Pragmatic tradeoffs for cost/complexity
 
@@ -50,11 +56,6 @@ This platform is designed to be forked and adapted for other organizations:
     **Prerequisites:** Solid understanding of Linux, Terraform, GCP IAM, and CI/CD required. Not for infrastructure beginners.
     
     **Re-deployment:** ~1 hour for teams familiar with this pattern.
-
-!!! note
-    **Cost:** ~$15-18/month for platform (GCP, Cloudflare domain, GitHub Team), plus ~$110/month for VMs. See [Cost Model](architecture/cost-model.md) for details.
-
-For the full rationale, see the [`Golden path`](golden-path.md) write-up.
 
 ## Scope
 
