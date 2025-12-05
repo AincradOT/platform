@@ -55,3 +55,4 @@ temp.sh
 # .coverage
 cloud/
 platform/0-bootstrap/example.terraform.tfvars
+.github/site/
