@@ -28,7 +28,7 @@ resource "cloudflare_record" "game" {
     Platform provides zone_id and API token.
     DNS records lifecycle-managed with the stack.
 
-### Benefits
+### Why this works
 
 * No manual DNS updates or platform repo PRs
 * Stack destroy automatically removes DNS records

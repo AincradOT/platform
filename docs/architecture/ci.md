@@ -69,17 +69,12 @@ The organization-level secrets are:
 
 ## GitHub Apps for automation
 
-For automation workflows (Renovate, auto-merge, etc.), GitHub Apps are preferred over Personal Access Tokens (PATs):
+Use GitHub Apps instead of PATs for CI automation (Renovate, etc.):
 
-**Why GitHub Apps:**
-
-- Scoped permissions (only what the app needs)
-- Not tied to a specific user account
-- Better audit trails (shows as bot, not a user)
-- Rate limits are separate from user accounts
-- Tokens are short-lived (1 hour) and generated on-demand
-
-**Usage pattern:**
+- Short-lived tokens (1 hour)
+- Scoped permissions
+- Better audit trails
+- Not tied to user accounts
 
 ```yaml
 - name: Create GitHub App token
@@ -95,17 +90,8 @@ For automation workflows (Renovate, auto-merge, etc.), GitHub Apps are preferred
     token: ${{ steps.app-token.outputs.token }}
 ```
 
-**Setup:**
-
-1. Create a GitHub App in your organization settings
-2. Grant only required permissions (e.g., Contents: Read/Write, Pull Requests: Read/Write)
-3. Generate a private key and store as `GITHUB_APP_PEM` org secret
-4. Store the App ID as `GITHUB_APP_ID` org secret
-5. Install the app on the organization or specific repositories
-
 !!! note
-    Use different GitHub Apps for different purposes (e.g., separate apps for Renovate vs terraform automation).
-    This limits blast radius if a key is compromised.
+    Create separate GitHub Apps for different purposes (Renovate, terraform) to limit blast radius.
 
 ## Local development
 

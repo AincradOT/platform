@@ -13,28 +13,28 @@ Application-specific DR (databases, VMs, application data) is the responsibility
 
 ## Threat Model
 
-**What we're protecting against:**
+### What we're protecting against
 
 - Accidental deletion of state bucket
 - Corrupted terraform state
 - Accidental destruction of platform resources
 - Loss of access to GCP organization
 
-**What we're NOT protecting against:**
+### What we're NOT protecting against
 
 - GCP region failure (not using multi-region for cost reasons)
 - Complete GCP account compromise (requires manual recovery via Google support)
 
 ## State Bucket Protection
 
-**Prevention:**
+### Prevention
 
 1. Versioning is enabled to keep the last 50 versions of each state file
 2. Lifecycle rule `prevent_destroy = true` in terraform prevents accidental deletion
 3. IAM restrictions ensure only org administrators can modify bucket
 4. Public access prevention is enforced via `public_access_prevention = "enforced"`
 
-**Recovery from state corruption:**
+### Recovery from state corruption
 
 ```bash
 # List available versions
@@ -45,7 +45,7 @@ gsutil cp gs://sao-tfstate/terraform/foundation/default.tfstate#<version> \
           gs://sao-tfstate/terraform/foundation/default.tfstate
 ```
 
-**Recovery from state bucket deletion:**
+### Recovery from state bucket deletion
 
 If the bucket is deleted (despite prevent_destroy):
 
@@ -57,7 +57,7 @@ If the bucket is deleted (despite prevent_destroy):
 
 ## Secret Manager Recovery
 
-**Secrets are versioned:** Secret Manager keeps all versions of secrets. Accidentally overwritten secrets can be restored.
+Secret Manager keeps all versions of secrets. Accidentally overwritten secrets can be restored.
 
 ```bash
 # List secret versions
@@ -67,16 +67,18 @@ gcloud secrets versions list secret-name --project=sao-shared-logging
 gcloud secrets versions access <version> --secret=secret-name
 ```
 
-**If Secret Manager resource is deleted:** Re-create via terraform, then manually re-populate secret values (terraform creates the container, not the value).
+### If Secret Manager resource is deleted
+
+Re-create via terraform, then manually re-populate secret values (terraform creates the container, not the value).
 
 ## Project and Folder Recovery
 
-**Prevention:**
+### Prevention
 
 - Production projects have `deletion_policy = "PREVENT"` (requires manual unlinking from billing before deletion)
 - Folders cannot be deleted if they contain projects
 
-**Recovery:**
+### Recovery
 
 - GCP has a 30-day soft delete period for projects
 - Deleted projects can be restored via console or API within 30 days
@@ -92,7 +94,9 @@ gcloud projects undelete <project-id>
 
 ## Organization-Level IAM
 
-**Backup:** Export IAM policy regularly:
+### Backup
+
+Export IAM policy regularly:
 
 ```bash
 gcloud organizations get-iam-policy <org-id> > org-iam-backup.json
@@ -100,7 +104,9 @@ gcloud organizations get-iam-policy <org-id> > org-iam-backup.json
 
 Store this backup outside GCP (GitHub private repo, local encrypted storage).
 
-**Recovery:** Re-apply from backup:
+### Recovery
+
+Re-apply from backup:
 
 ```bash
 gcloud organizations set-iam-policy <org-id> org-iam-backup.json
@@ -117,17 +123,18 @@ If everything is lost (state, projects, bucket), here's the recovery order:
 5. Re-populate Secret Manager (values must be re-entered manually)
 6. Notify application teams to verify their state and infrastructure
 
-**Time estimate:** 2-4 hours for platform rebuild, assuming no application data loss.
+!!! note
+    Time estimate: 2-4 hours for platform rebuild, assuming no application data loss.
 
 ## Testing DR Procedures
 
-**Quarterly drill:**
+### Quarterly drill
 
 1. Restore a previous state version in a test scenario
 2. Verify terraform plan shows no unexpected changes
 3. Document any issues encountered
 
-**Annual drill:**
+### Annual drill
 
 1. Create a test organization
 2. Run full bootstrap process from documentation
@@ -135,13 +142,13 @@ If everything is lost (state, projects, bucket), here's the recovery order:
 
 ## Backup Responsibilities
 
-**Platform team:**
+### Platform team
 
 - Maintain state bucket versioning
 - Export org IAM policy monthly
 - Keep local copies of terraform state from recent applies
 
-**Application teams:**
+### Application teams
 
 - Responsible for their own application data backups
 - Database backups should go to GCS (cheap, reliable)

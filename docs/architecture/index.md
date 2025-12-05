@@ -1,89 +1,62 @@
-# Platform platform
+# Architecture
 
-This section describes how we the architecture and how we manage platform responsibilities for both Google Cloud Platform (GCP) and GitHub.
+Platform architecture for Open Tibia services using GCP, GitHub, and Cloudflare.
 
-The goal is to:
+## Design goals
 
-- keep organisation and platform concerns out of individual application repositories
-- make bootstrap and day to day operations reproducible and low friction
-- stay cheap to run while still following sane patterns
+- Separation of platform and application concerns
+- Reproducible bootstrap with minimal manual steps
+- Cheap to operate (cents per month for platform)
+- Simple enough for another engineer to own
+- Explicit security boundaries
 
-The platform has two main pillars:
+!!! note
+    Read the [Golden path](../golden-path.md) first for rationale and context.
 
-- **GCP platform** for organisation, projects, state, secrets and CI identities
-- **GitHub platform** for organisation settings, core repositories, teams and branch protections
+## Platform components
 
-Application and service repositories consume these platform but do not modify them.
+The platform is organized into terraform roots in a single `platform` repository:
 
-If you have not read the [Golden path](../golden-path.md) yet, start there. It explains the rationale and the problems this platform is designed to solve.
+- `0-bootstrap` creates bootstrap project and GCS state bucket
+- `1-org` creates organizational folders (shared, dev, prod) and shared services project
+- `2-environments` creates dev and prod environment projects
 
-## What this section covers
+All roots use shared GCS backend with separate state prefixes.
 
-The architecture documentation focuses on:
+Application repositories use the same backend and target environment projects created by platform. They never modify organisation level resources.
 
-- how the platform is structured across GCP and GitHub
-- which repository owns which responsibilities
-- how Terraform, Ansible, Docker and CI fit together
-- where state and secrets live
-- how CI identities are created and consumed
+## Bootstrap lifecycle
 
-This is not a full tutorial for Terraform, GCP or GitHub. It assumes you are comfortable reading infrastructure as code and want to understand how this specific platform hangs together.
+### 1. Manual setup
 
-## How the pieces fit together
+- Create GitHub organisation
+- Create GCP organisation and billing account
+- Create domain in Cloudflare
+- Install and configure gcloud SDK
 
-At a high level the platform is made up of:
+### 2. Platform provisioning
 
-- a single platform repository that owns organisation level decisions
-- one or more environment projects in GCP for dev, prod and similar stages
-- a shared Terraform state bucket with clear prefixes per root module
-- GitHub organisation settings and teams defined as code
-- CI identities and Workload Identity Federation linking GitHub Actions to GCP
-- application and service repositories that live inside the boundaries this platform creates
+- Clone `platform` repository
+- Run `0-bootstrap` terraform
+- Migrate bootstrap state to GCS
+- Run `1-org` terraform
+- Run `2-environments` terraform
+- Configure CI service accounts (Phase 2)
 
-The architecture pages walk through each of these layers so a new engineer can answer questions such as:
+### 3. Application consumption
 
-- where a given resource should live
-- which repository owns a given concern
-- how a change flows from pull request to applied infrastructure
-- how secrets and state are accessed in a safe way
+- Create application repositories
+- Point terraform backends at shared GCS bucket
+- Use org-level GitHub secrets for CI
+- Use Secret Manager for application secrets
+- Manage DNS via Cloudflare provider in application terraform
 
-## When to read this
+## Architecture pages
 
-You should read this section when you:
-
-- are onboarding as a new engineer and want a mental model for the platform
-- are about to change the platform repository itself
-- are creating a new application or service repository and want to align with the existing patterns
-- are debugging a problem that crosses GCP, GitHub and CI boundaries
-
-If you are only changing application code and not touching infrastructure, you rarely need to read this section in full.
-
-## Sections
-
-- [Overview](index.md)
-
-      High level summary of platform responsibilities and how they are split between GCP and GitHub.
-
-- [Platforming](platforming.md)
-
-      Detailed view of platform responsibilities, repository layout and the separation between platform and application concerns.
-
-- [Google Cloud](gcp.md)
-
-      GCP organisation and project structure, Terraform roots, state backend layout, service accounts and environment projects.
-
-- [GitHub Organisation](github.md)
-
-      GitHub organisation settings, core repositories, team structure and branch protection rules.
-
-- [Cloudflare](cloudflare.md)
-
-      DNS management, TLS certificates, edge protection for web services, and architectural decisions around game server TCP exposure.
-
-- [Continuous Integration](ci.md)
-
-      CI patterns for Terraform and Ansible, use of GitHub Actions, GitHub Apps for automation, and how plans and applies are run per environment.
-
-- [Secrets and state management](state.md)
-
-      Terraform state layout in GCS, use of Secret Manager, integration points with CI and Ansible, and rules for how secrets are handled across the platform.
+- [Cloudflare](cloudflare.md) - DNS self-service, TLS certs, game server TCP exposure decision
+- [Google Cloud](gcp.md) - Bootstrap structure, state bucket, projects, service accounts
+- [GitHub Organisation](github.md) - Terraform-managed org settings, teams, branch protections
+- [Continuous Integration](ci.md) - Service account auth, GitHub Apps, workflow patterns
+- [State Management](state-management.md) - GCS backend, versioning, recovery, security
+- [Disaster Recovery](disaster-recovery.md) - Platform rebuild procedures, backup strategies
+- [Cost Model](cost-model.md) - Platform costs ($15-18/month), optimization strategies
