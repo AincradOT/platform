@@ -74,7 +74,7 @@ High-level steps:
 4. Accept the terms and conditions.
 
 !!! note
-        If you are new to Google Cloud and have never created a project before, the organization resource is created automatically a few minutes after you accept the terms in the console. Check the project/organization selector at the top of the console and confirm you see your domain listed as an organization.
+    If you are new to Google Cloud and have never created a project before, the organization resource is created automaticallya few minutes after you accept the terms in the console. Check the project/organization selector at the top of the console and confirm you see your domain listed as an organization.
 
 ### Set Up a Billing Account
 
