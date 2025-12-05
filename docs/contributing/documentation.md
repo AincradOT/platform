@@ -33,11 +33,17 @@ edit_uri: edit/master/docs/
 theme:
   name: material
 
-docs_dir: ../docs
-
 nav:
-  - ...
+  - Platform:
+      - Overview: index.md
+      - Golden Path: golden-path.md
+  - Architecture:
+      - Overview: architecture/index.md
+      ...
 ```
+
+!!! note
+    The configuration uses default `docs_dir` (relative to mkdocs.yml), which resolves to `../docs/` from `.github/mkdocs.yml`. All documentation lives in the `docs/` directory at repository root.
 
 ## Adding New Pages
 
