@@ -43,3 +43,25 @@ Applications consume platform resources:
 - [State Management](state-management.md) - GCS backend, versioning, recovery, security
 - [Disaster Recovery](disaster-recovery.md) - Platform rebuild procedures, backup strategies
 - [Cost Model](cost-model.md) - Platform costs ($15-18/month), optimization strategies
+
+## External Resources
+
+**Terraform:**
+- [Terraform GCP Provider](https://registry.terraform.io/providers/hashicorp/google/latest/docs) - Complete resource reference
+- [Terraform Best Practices](https://www.terraform-best-practices.com/) - Community best practices guide
+- [GCS Backend Configuration](https://developer.hashicorp.com/terraform/language/settings/backends/gcs) - State backend setup
+
+**Google Cloud Platform:**
+- [GCP IAM Documentation](https://cloud.google.com/iam/docs) - Roles, permissions, service accounts
+- [GCS Documentation](https://cloud.google.com/storage/docs) - Cloud Storage features and API
+- [Secret Manager Documentation](https://cloud.google.com/secret-manager/docs) - Managing application secrets
+- [GCP Best Practices](https://cloud.google.com/docs/enterprise/best-practices-for-enterprise-organizations) - Organization structure patterns
+
+**GitHub:**
+- [GitHub Actions Documentation](https://docs.github.com/en/actions) - Workflow automation
+- [GitHub Terraform Provider](https://registry.terraform.io/providers/integrations/github/latest/docs) - Managing GitHub via Terraform
+- [Branch Protection Rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches) - Repository protection
+
+**Cloudflare:**
+- [Cloudflare Terraform Provider](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs) - DNS and edge configuration
+- [Cloudflare API Documentation](https://developers.cloudflare.com/api/) - API reference

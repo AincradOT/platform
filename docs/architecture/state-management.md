@@ -11,9 +11,11 @@ Terraform state is stored in a single GCS bucket created by the bootstrap proces
 ### Bucket features
 
 - [Versioning](https://cloud.google.com/storage/docs/object-versioning) enabled (retains last 50 versions)
+- [Lifecycle policy](https://cloud.google.com/storage/docs/lifecycle) automatically deletes versions older than the 50 most recent
 - [Uniform bucket-level access](https://cloud.google.com/storage/docs/uniform-bucket-level-access) (UBLA)
 - [Public access prevention](https://cloud.google.com/storage/docs/public-access-prevention) enforced
 - Google-managed encryption at rest
+- `prevent_destroy` lifecycle hook prevents accidental bucket deletion
 
 !!! note
     No KMS encryption is used for the state bucket.

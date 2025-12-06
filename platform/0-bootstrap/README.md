@@ -36,29 +36,15 @@ Creates the GCP bootstrap project and GCS bucket for Terraform state.
 
 3. Initialize and apply:
 
-   **Option A - From repository root:**
    ```bash
    terraform -chdir=platform/0-bootstrap init
    terraform -chdir=platform/0-bootstrap apply
    ```
 
-   **Option B - From this directory:**
-   ```bash
-   cd platform/0-bootstrap
-   terraform init
-   terraform apply
-   ```
-
 4. Note the `state_bucket_name` output:
 
-   **From repository root:**
    ```bash
    terraform -chdir=platform/0-bootstrap output state_bucket_name
-   ```
-
-   **From this directory:**
-   ```bash
-   terraform output state_bucket_name
    ```
 
 ## Migrate to Remote State
@@ -73,6 +59,16 @@ Creates the GCP bootstrap project and GCS bucket for Terraform state.
    ```
    Type `yes` when prompted.
 
+!!! note
+    For fresh bootstrap, migration failure is low-risk. If migration fails:
+    
+    1. Check bucket name is correct in backends.tf
+    2. Verify bucket exists: `gsutil ls gs://YOUR-BUCKET-NAME`
+    3. Fix the issue and re-run: `terraform init -migrate-state`
+    4. If still failing, keep local state and migrate later after verifying bucket access
+    
+    The resources are newly created and easy to recreate if needed.
+
 ## Configure Other Roots
 
 Update the `bucket` value in:
@@ -80,7 +76,7 @@ Update the `bucket` value in:
 - `platform/2-environments/development/backends.tf`
 - `platform/2-environments/production/backends.tf`
 
-Then initialize each root (from repository root):
+Then initialize each root:
 ```bash
 terraform -chdir=platform/1-org init
 terraform -chdir=platform/2-environments/development init
@@ -95,13 +91,59 @@ terraform -chdir=platform/2-environments/production init
 | `billing_account_id` | Billing account ID | Yes |
 | `project_name` | Project name (e.g. `sao` generates project ID `sao-bootstrap`) | Yes |
 | `state_bucket_name` | GCS bucket name for state | Yes |
-| `location` | GCS bucket location | No (default: `europe-west3`) |
+| `location` | GCS bucket location (single region for cost optimization) | No (default: `europe-west3`) |
 | `labels` | Resource labels | No |
 
 ## Outputs
 
 - `bootstrap_project_id`: The created project ID
 - `state_bucket_name`: The state bucket name
+
+## Rollback Procedures
+
+### If terraform apply fails partway through
+
+**Scenario**: Apply fails after project creation but before bucket creation
+
+```bash
+# Check what was created
+gcloud projects list --filter="projectId:{project_name}-bootstrap"
+
+# Let terraform retry (safest approach)
+terraform -chdir=platform/0-bootstrap apply
+
+# Or manually clean up and retry
+gcloud projects delete {project_name}-bootstrap --quiet
+rm -f terraform.tfstate*
+terraform -chdir=platform/0-bootstrap apply
+```
+
+### If you need to completely destroy bootstrap
+
+**Warning**: This deletes the state bucket and all terraform state. Only do this if you're starting over.
+
+```bash
+# Disable prevent_destroy in platform/0-bootstrap/main.tf first
+# Change: lifecycle { prevent_destroy = true }
+# To: lifecycle { prevent_destroy = false }
+
+terraform -chdir=platform/0-bootstrap destroy
+
+# Manually delete project if destroy fails
+gcloud projects delete {project_name}-bootstrap --quiet
+```
+
+### If state bucket already exists error
+
+**Cause**: Bucket name is globally taken or recently deleted
+
+```bash
+# Try a different bucket name in terraform.tfvars
+state_bucket_name = "yourorg-tfstate-abc123"  # Add random suffix
+
+# Or restore the bucket if it was recently deleted (within 30 days)
+gsutil ls -p {project_id} -L gs://{bucket_name}
+```
 
 ## Recovery
 

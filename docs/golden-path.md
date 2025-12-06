@@ -332,6 +332,8 @@ Each application or service repository is responsible for:
 * the Ansible playbooks or configuration management needed on its VMs
 * its own CI workflows for plan and apply
 * its own runtime monitoring and alerting configuration
+* database installation, configuration, and lifecycle management
+* application data storage and backup strategies
 
 These repositories do not:
 

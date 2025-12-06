@@ -60,6 +60,7 @@ jobs:
 
 The organization-level secrets are:
 
+- `GCP_PLATFORM_SA_KEY` for platform infrastructure operations (org, folders, projects)
 - `GCP_SA_KEY` for dev environment operations
 - `GCP_SA_KEY_PROD` for production environment operations
 

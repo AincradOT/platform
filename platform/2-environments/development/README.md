@@ -51,6 +51,70 @@ Optional overrides:
 
 - `dev_project_id` - Development project ID
 
+## Rollback Procedures
+
+### If terraform apply fails partway through
+
+**Scenario**: Project created but API enablement fails
+
+```bash
+# Check what was created
+gcloud projects describe {dev_project_id}
+gcloud services list --project={dev_project_id} --enabled
+
+# Retry terraform apply
+terraform -chdir=platform/2-environments/development apply
+
+# Or manually enable failed APIs then retry
+gcloud services enable compute.googleapis.com --project={dev_project_id}
+terraform -chdir=platform/2-environments/development apply
+```
+
+### If you need to destroy the dev environment
+
+**Warning**: This deletes the dev project and all resources within it.
+
+```bash
+terraform -chdir=platform/2-environments/development destroy
+
+# If destroy fails due to resources still in project
+# Manually delete resources via console first, then:
+terraform -chdir=platform/2-environments/development destroy
+```
+
+### If remote state data source fails
+
+**Cause**: 1-org remote state not found or bucket inaccessible
+
+```bash
+# Verify state bucket exists
+gsutil ls gs://{state_bucket_name}/terraform/org/
+
+# Override with explicit values in terraform.tfvars if needed
+folder_id              = "folders/123456789012"
+shared_project_id      = "yourorg-shared"
+dev_ci_service_account = "dev-ci@yourorg-shared.iam.gserviceaccount.com"
+
+terraform -chdir=platform/2-environments/development apply
+```
+
+### If project already exists error
+
+**Cause**: Project ID is taken or recently deleted (30-day retention)
+
+```bash
+# Check if project exists
+gcloud projects describe {dev_project_id}
+
+# Undelete if recently deleted
+gcloud projects undelete {dev_project_id}
+terraform -chdir=platform/2-environments/development import module.dev_environment.google_project.env {dev_project_id}
+
+# Or use different project ID in terraform.tfvars
+dev_project_id = "yourorg-dev-v2"
+terraform -chdir=platform/2-environments/development apply
+```
+
 ## Notes
 
 - IAM is minimal. Add project-specific roles as needed for your application

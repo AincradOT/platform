@@ -23,8 +23,13 @@ platform/
 ## Prerequisites
 
 - GCP organization with billing account ([setup guide](/docs/requirements.md))
-- `gcloud` CLI authenticated as org admin
-- Terraform >= 1.6.0
+- [`gcloud` CLI](https://cloud.google.com/sdk/docs/install) authenticated as org admin
+- [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.6.0
+
+**Additional Resources:**
+- [GCP IAM Overview](https://cloud.google.com/iam/docs/overview) - Understanding roles and permissions
+- [Terraform GCP Provider Docs](https://registry.terraform.io/providers/hashicorp/google/latest/docs) - Resource reference
+- [GCS Backend Configuration](https://developer.hashicorp.com/terraform/language/settings/backends/gcs) - State backend details
 
 ## Bootstrap procedure
 
@@ -48,21 +53,47 @@ Edit `terraform.tfvars` with your org ID, billing account, project name, and buc
 ### 3. Run terraform
 
 ```bash
-cd platform/0-bootstrap
-terraform init
-terraform apply
+terraform -chdir=platform/0-bootstrap init
+terraform -chdir=platform/0-bootstrap apply
 ```
 
 **Verify bootstrap:**
 ```bash
 # Confirm project exists
-gcloud projects describe $(terraform output -raw bootstrap_project_id)
+gcloud projects describe $(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
 
 # Confirm bucket exists with versioning
-gsutil versioning get gs://$(terraform output -raw state_bucket_name)
+gsutil versioning get gs://$(terraform -chdir=platform/0-bootstrap output -raw state_bucket_name)
 ```
 
-### 4. Configure 1-org
+!!! warning "Stop if verification fails"
+    Do not proceed to the next step if the bucket does not exist or versioning is not enabled.
+    Fix the issue and re-run `terraform apply` before continuing.
+
+### 4. Migrate bootstrap state to GCS
+
+**Why:** The bootstrap state is initially stored locally. Migrate it to GCS for consistency.
+
+Edit `platform/0-bootstrap/backends.tf` and uncomment the `terraform` block with GCS backend. Update the `bucket` name:
+
+```hcl
+terraform {
+  backend "gcs" {
+    bucket = "your-state-bucket-name"  # From step 3 output
+    prefix = "terraform/bootstrap"
+  }
+}
+```
+
+Migrate state:
+
+```bash
+terraform -chdir=platform/0-bootstrap init -migrate-state
+```
+
+Type `yes` when prompted. If migration fails, see [0-bootstrap README](0-bootstrap/README.md#migrate-to-remote-state) for troubleshooting.
+
+### 5. Configure 1-org
 
 Copy and edit the example file:
 
@@ -72,12 +103,11 @@ cp platform/1-org/example.terraform.tfvars platform/1-org/terraform.tfvars
 
 Update with your values. The `state_bucket_name` should match the output from 0-bootstrap. See [1-org README](1-org/README.md) for all available variables.
 
-### 5. Run terraform
+### 6. Run terraform for 1-org
 
 ```bash
-cd ../1-org
-terraform init
-terraform apply
+terraform -chdir=platform/1-org init
+terraform -chdir=platform/1-org apply
 ```
 
 **Verify org structure:**
@@ -86,10 +116,14 @@ terraform apply
 gcloud resource-manager folders list --organization=123456789012
 
 # Verify shared services project
-gcloud projects describe $(terraform output -raw shared_project_id)
+gcloud projects describe $(terraform -chdir=platform/1-org output -raw shared_project_id)
 ```
 
-### 6. Configure and deploy environments
+!!! warning "Stop if verification fails"
+    Do not proceed if folders are not created or the shared services project does not exist.
+    Review terraform output for errors and re-run `terraform apply` if needed.
+
+### 7. Configure and deploy environments
 
 Copy and edit example files:
 
@@ -100,19 +134,22 @@ cp platform/2-environments/development/example.terraform.tfvars platform/2-envir
 Update with your values. Only `billing_account_id`, `state_bucket_name`, and `dev_project_id` are required. Values like `folder_id` and `shared_project_id` are **automatically pulled from 1-org remote state**. See [development README](2-environments/development/README.md) for details.
 
 ```bash
-cd ../2-environments/development
-terraform init
-terraform apply
+terraform -chdir=platform/2-environments/development init
+terraform -chdir=platform/2-environments/development apply
 ```
 
 **Verify dev environment:**
 ```bash
 # Verify project
-gcloud projects describe $(terraform output -raw dev_project_id)
+gcloud projects describe $(terraform -chdir=platform/2-environments/development output -raw dev_project_id)
 
 # Verify APIs enabled
-gcloud services list --project=$(terraform output -raw dev_project_id) --enabled
+gcloud services list --project=$(terraform -chdir=platform/2-environments/development output -raw dev_project_id) --enabled
 ```
+
+!!! warning "Stop if verification fails"
+    Do not proceed if the dev project does not exist or required APIs are not enabled.
+    Check terraform output for errors.
 
 ```bash
 cp platform/2-environments/production/example.terraform.tfvars platform/2-environments/production/terraform.tfvars
@@ -121,33 +158,34 @@ cp platform/2-environments/production/example.terraform.tfvars platform/2-enviro
 Update with your values. See [production README](2-environments/production/README.md) for details.
 
 ```bash
-cd ../production
-terraform init
-terraform apply
+terraform -chdir=platform/2-environments/production init
+terraform -chdir=platform/2-environments/production apply
 ```
 
 **Verify prod environment:**
 ```bash
 # Verify project
-gcloud projects describe $(terraform output -raw prod_project_id)
+gcloud projects describe $(terraform -chdir=platform/2-environments/production output -raw prod_project_id)
 
 # Verify APIs enabled
-gcloud services list --project=$(terraform output -raw prod_project_id) --enabled
+gcloud services list --project=$(terraform -chdir=platform/2-environments/production output -raw prod_project_id) --enabled
 ```
 
-### 7. Configure CI Authentication
+!!! warning "Stop if verification fails"
+    Do not proceed if the prod project does not exist or required APIs are not enabled.
+    Check terraform output for errors.
+
+### 8. Configure CI Authentication
 
 Generate service account keys:
 
 ```bash
 # Get service account emails from 1-org outputs
-cd platform/1-org
-PLATFORM_SA=$(terraform output -raw platform_ci_service_account)
-DEV_SA=$(terraform output -raw dev_ci_service_account)
-PROD_SA=$(terraform output -raw prod_ci_service_account)
+PLATFORM_SA=$(terraform -chdir=platform/1-org output -raw platform_ci_service_account)
+DEV_SA=$(terraform -chdir=platform/1-org output -raw dev_ci_service_account)
+PROD_SA=$(terraform -chdir=platform/1-org output -raw prod_ci_service_account)
 
-# Generate keys (run from repository root)
-cd ../..
+# Generate keys
 gcloud iam service-accounts keys create platform-ci-key.json \
   --iam-account=$PLATFORM_SA
 
@@ -160,7 +198,7 @@ gcloud iam service-accounts keys create prod-ci-key.json \
 
 Store in GitHub organization secrets:
 
-1. Navigate to `https://github.com/organizations/<your-org>/settings/secrets/actions` (replace `<your-org>` with your organization name)
+1. Navigate to `https://github.com/organizations/yourorg/settings/secrets/actions` (replace `yourorg` with your organization name)
 2. Create `GCP_PLATFORM_SA_KEY` with contents of `platform-ci-key.json`
 3. Create `GCP_SA_KEY` with contents of `dev-ci-key.json`
 4. Create `GCP_SA_KEY_PROD` with contents of `prod-ci-key.json`
@@ -171,7 +209,6 @@ Delete local key files immediately:
 rm *-ci-key.json
 ```
 
-**Set calendar reminder for quarterly key rotation (90 days).**
 
 ## State management
 
@@ -222,6 +259,86 @@ Verify billing account access: `gcloud billing accounts list`
 2. Not updating backend bucket names after bootstrap
 3. Applying roots out of order (must be: 0-bootstrap, 1-org, 2-environments)
 4. Missing folder_id from 1-org outputs in environment terraform.tfvars
+5. Not migrating bootstrap state before running 1-org
+6. Forgetting to authenticate with `gcloud auth application-default login`
+
+### Remote state data source errors
+
+**Error**: `Error reading remote state: bucket not found`
+
+**Cause**: 1-org or 2-environments trying to read from non-existent state bucket
+
+**Fix**:
+```bash
+# Verify bootstrap state bucket exists
+gsutil ls gs://your-state-bucket-name/terraform/bootstrap/
+
+# Verify 1-org state exists
+gsutil ls gs://your-state-bucket-name/terraform/org/
+
+# Check backends.tf has correct bucket name in all roots
+grep -r "bucket =" platform/*/backends.tf
+```
+
+### Service account key upload errors
+
+**Error**: GitHub Actions fails with "invalid service account key"
+
+**Cause**: Key file corrupted during copy/paste or has extra whitespace
+
+**Fix**:
+```bash
+# Verify key is valid JSON
+cat platform-ci-key.json | jq .
+
+# Use file upload in GitHub UI instead of copy/paste
+# Or use GitHub CLI:
+gh secret set GCP_PLATFORM_SA_KEY < platform-ci-key.json
+```
+
+### Organization policy conflicts
+
+**Error**: `Constraint constraints/compute.skipDefaultNetworkCreation conflicts`
+
+**Cause**: Existing org policy preventing default VPC creation
+
+**Fix**:
+```bash
+# List existing org policies
+gcloud org-policies list --organization=123456789012
+
+# If conflicting policy exists, terraform will override it
+# No manual action needed unless policy is enforced at folder level
+```
+
+### IAM permission propagation delays
+
+**Error**: `Permission denied` immediately after granting IAM role
+
+**Cause**: IAM changes can take up to 2 minutes to propagate
+
+**Fix**:
+```bash
+# Wait 2 minutes and retry
+sleep 120
+terraform apply
+```
+
+### Quota exceeded errors
+
+**Error**: `Quota 'PROJECTS' exceeded`
+
+**Cause**: Organization has project creation quota limit
+
+**Fix**:
+```bash
+# Request quota increase via console:
+# https://console.cloud.google.com/iam-admin/quotas
+
+# Or clean up deleted projects (they count toward quota for 30 days)
+gcloud projects list --filter="lifecycleState:DELETE_REQUESTED"
+gcloud projects delete PROJECT_ID --quiet  # Permanent deletion
+```
 
 ### Recovery
 
@@ -251,13 +368,12 @@ Error: `project ID is not available`
 
 Project was recently deleted (30-day retention period).
 
-Options:
-1. Wait 30 days for permanent deletion
-2. Restore the deleted project:
-   ```bash
-   gcloud projects undelete PROJECT_ID
-   ```
-3. Choose a different project_name in terraform.tfvars
+Wait 30 days for permanent deletion, or restore the deleted project:
+```bash
+gcloud projects undelete PROJECT_ID
+```
+
+Or choose a different project_name in terraform.tfvars.
 
 #### Bucket already exists
 

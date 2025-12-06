@@ -51,6 +51,75 @@ Optional overrides:
 
 - `prod_project_id` - Production project ID
 
+## Rollback Procedures
+
+### If terraform apply fails partway through
+
+**Scenario**: Project created but API enablement fails
+
+```bash
+# Check what was created
+gcloud projects describe {prod_project_id}
+gcloud services list --project={prod_project_id} --enabled
+
+# Retry terraform apply
+terraform -chdir=platform/2-environments/production apply
+
+# Or manually enable failed APIs then retry
+gcloud services enable compute.googleapis.com --project={prod_project_id}
+terraform -chdir=platform/2-environments/production apply
+```
+
+### If you need to destroy the prod environment
+
+**Warning**: This deletes the production project and all resources within it. Only do this if you're certain.
+
+```bash
+# Verify no critical resources exist
+gcloud compute instances list --project={prod_project_id}
+gcloud sql instances list --project={prod_project_id}
+
+# Destroy
+terraform -chdir=platform/2-environments/production destroy
+
+# If destroy fails due to resources still in project
+# Manually delete resources via console first, then:
+terraform -chdir=platform/2-environments/production destroy
+```
+
+### If remote state data source fails
+
+**Cause**: 1-org remote state not found or bucket inaccessible
+
+```bash
+# Verify state bucket exists
+gsutil ls gs://{state_bucket_name}/terraform/org/
+
+# Override with explicit values in terraform.tfvars if needed
+folder_id               = "folders/123456789012"
+shared_project_id       = "yourorg-shared"
+prod_ci_service_account = "prod-ci@yourorg-shared.iam.gserviceaccount.com"
+
+terraform -chdir=platform/2-environments/production apply
+```
+
+### If project already exists error
+
+**Cause**: Project ID is taken or recently deleted (30-day retention)
+
+```bash
+# Check if project exists
+gcloud projects describe {prod_project_id}
+
+# Undelete if recently deleted
+gcloud projects undelete {prod_project_id}
+terraform -chdir=platform/2-environments/production import module.prod_environment.google_project.env {prod_project_id}
+
+# Or use different project ID in terraform.tfvars
+prod_project_id = "yourorg-prod-v2"
+terraform -chdir=platform/2-environments/production apply
+```
+
 ## Notes
 
 - IAM is minimal. Keep production tight - add permissions explicitly as needed
