@@ -6,15 +6,15 @@ GCP organization and environment infrastructure for Open Tibia services.
 
 - Bootstrap project with GCS state bucket
 - Organizational folders (shared, dev, prod)
+- Shared services project (logging, monitoring, service accounts, secrets)
 - Development and production environment projects
-- Central logging project with metrics scope
 
 **Directory structure:**
 
 ```
 platform/
   0-bootstrap/     # Bootstrap project and state bucket
-  1-org/           # Organizational folders and shared logging
+  1-org/           # Organizational folders and shared services
   2-environments/
     development/   # Development environment project
     production/    # Production environment project
@@ -66,6 +66,20 @@ gcloud projects describe $(terraform output -raw bootstrap_project_id)
 gsutil versioning get gs://$(terraform output -raw state_bucket_name)
 ```
 
+### 4. Configure 1-org
+
+Create `platform/1-org/terraform.tfvars`:
+
+```hcl
+org_id                     = "123456789012"
+billing_account_id         = "ABCDEF-123456-ABCDEF"
+shared_project_id          = "sao-shared"
+shared_project_name        = "Shared Services"
+state_bucket_name          = "sao-tfstate"  # From 0-bootstrap output
+```
+
+### 5. Run terraform
+
 ```bash
 cd ../1-org
 terraform init
@@ -74,12 +88,14 @@ terraform apply
 
 **Verify org structure:**
 ```bash
-# List folders
-gcloud resource-manager folders list --organization=YOUR_ORG_ID
+# List folders (replace 123456789012 with your org ID)
+gcloud resource-manager folders list --organization=123456789012
 
 # Verify shared services project
 gcloud projects describe $(terraform output -raw shared_project_id)
 ```
+
+### 6. Configure and deploy environments
 
 ```bash
 cd ../2-environments/development
@@ -111,7 +127,7 @@ gcloud projects describe $(terraform output -raw prod_project_id)
 gcloud services list --project=$(terraform output -raw prod_project_id) --enabled
 ```
 
-### 4. Configure CI Authentication
+### 7. Configure CI Authentication
 
 Generate service account keys:
 
@@ -136,7 +152,7 @@ gcloud iam service-accounts keys create prod-ci-key.json \
 
 Store in GitHub organization secrets:
 
-1. Navigate to `https://github.com/organizations/YOUR-ORG/settings/secrets/actions`
+1. Navigate to `https://github.com/organizations/<your-org>/settings/secrets/actions` (replace `<your-org>` with your organization name)
 2. Create `GCP_PLATFORM_SA_KEY` with contents of `platform-ci-key.json`
 3. Create `GCP_SA_KEY` with contents of `dev-ci-key.json`
 4. Create `GCP_SA_KEY_PROD` with contents of `prod-ci-key.json`

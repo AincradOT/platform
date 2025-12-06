@@ -64,7 +64,7 @@ Secret Manager keeps all versions of secrets. Accidentally overwritten secrets c
 
 ```bash
 # List secret versions
-gcloud secrets versions list secret-name --project=sao-shared-logging
+gcloud secrets versions list secret-name --project=sao-shared
 
 # Access previous version
 gcloud secrets versions access <version> --secret=secret-name

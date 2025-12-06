@@ -9,7 +9,7 @@
 
 This document describes the recommended way to structure:
 
-* the platform platform for Open Tibia services
+* the platform infrastructure for Open Tibia services
 * the application and service infrastructure that runs on top
 
 The goal is to give a clear, opinionated path that:

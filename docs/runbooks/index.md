@@ -20,8 +20,6 @@ Follow the [Platform README](../platform/README.md) for the complete step-by-ste
 - Verification steps
 - CI service account key generation
 
-Expected time: ~30 minutes for terraform applies, plus ~15 minutes for CI configuration.
-
 ## Terraform roots
 
 Each terraform root has its own README with configuration details:

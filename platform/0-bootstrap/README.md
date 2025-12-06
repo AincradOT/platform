@@ -15,6 +15,16 @@ Creates the GCP bootstrap project and GCS bucket for Terraform state.
    ```
    Select your organization account when prompted.
 
+3. Get your organization ID:
+   ```bash
+   gcloud organizations list
+   ```
+
+4. Get your billing account ID:
+   ```bash
+   gcloud billing accounts list
+   ```
+
 ## Setup
 
 1. Copy example tfvars file:

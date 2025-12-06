@@ -55,7 +55,7 @@ We use a three-tier environment layout:
 - Dev project for development workloads
 - Prod project for production workloads
 
-Example naming: `sao-bootstrap`, `sao-shared-logging`, `sao-dev`, `sao-prod`
+Example naming: `sao-bootstrap`, `sao-shared`, `sao-dev`, `sao-prod`
 
 Projects are created by the platform Terraform roots. Application repositories receive the project IDs as inputs and never create projects themselves.
 

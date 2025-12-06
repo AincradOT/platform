@@ -40,7 +40,7 @@ terraform destroy
 
 This removes:
 - Organizational folders
-- Logging project
+- Shared services project
 - CI service accounts
 
 ### 3. Destroy Bootstrap Resources
@@ -75,7 +75,7 @@ To completely remove the GCP organization:
 
 #### GitHub Organization
 
-1. Navigate to organization settings: `https://github.com/organizations/YOUR-ORG/settings`
+1. Navigate to organization settings: `https://github.com/organizations/<your-org>/settings` (replace `<your-org>` with your organization name)
 2. Scroll to "Danger Zone"
 3. Click "Delete this organization"
 4. Confirm by typing the organization name
