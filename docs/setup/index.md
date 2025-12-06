@@ -1,53 +1,45 @@
 # Setup
 
-Bootstrap procedures and terraform configuration for platform deployment.
+Deploying the platform from scratch.
 
-## What this covers
+## Prerequisites
 
-This section walks through deploying the platform from scratch:
+Before starting, complete the [Requirements](../requirements.md):
 
-- Prerequisites (Cloud Identity, billing, domain)
-- Bootstrap terraform roots (projects, state, folders)
-- Platform terraform configuration reference
+- GCP organization with billing account
+- Cloud Identity or Google Workspace
+- Domain registered (for Cloudflare)
+- `gcloud` CLI installed and authenticated
 
-## Deploy order
+## Bootstrap the platform
 
-1. **Manual prerequisites** - One-time setup: GCP org, billing, domain, gcloud CLI
-2. **0-bootstrap** - Creates bootstrap project and GCS state bucket (local backend initially)
-3. **1-org** - Creates organizational folders and shared logging project
-4. **2-environments** - Creates dev and production environment projects
+Follow the [Platform README](../platform/README.md) for complete bootstrap procedure.
 
-Total time: 2-3 hours for experienced engineers.
+**Quick overview:**
 
-!!! note
-    Prerequisites are documented in [Requirements](../requirements.md). Start there if this is your first deployment.
+1. Authenticate with `gcloud`
+2. Configure and apply `0-bootstrap`
+3. Apply `1-org`
+4. Apply `2-environments/development` and `2-environments/production`
 
-## Runbooks
+Time: ~30 minutes
 
-Step-by-step procedures:
+## Terraform roots
 
-- [Bootstrap GCP Foundation](bootstrap-gcp-foundation.md) - Deploy platform terraform roots
+Each terraform root has its own README with configuration details:
+
+- [platform/](../platform/README.md) - Overview and bootstrap procedure
+- [0-bootstrap/](../platform/0-bootstrap/README.md) - Bootstrap project and state bucket
+- [1-org/](../platform/1-org/README.md) - Organizational folders and logging
+- [2-environments/development/](../platform/2-environments/development/README.md) - Dev environment
+- [2-environments/production/](../platform/2-environments/production/README.md) - Prod environment
+
+## Operational runbooks
+
 - [Bootstrap GitHub Foundation](bootstrap-github-foundation.md) - GitHub organization setup
-- [Add Project Repository](add-new-project-repo.md) - Onboard application repositories
+- [Add Project Repository](add-new-project-repo.md) - Onboard application repos
 - [Onboard Developer](onboard-developer.md) - Add team members
-
-## Terraform configuration
-
-Detailed reference for each terraform root:
-
-- [Overview](../platform/README.md) - Platform design and prerequisites
-- [0-bootstrap](../platform/0-bootstrap/README.md) - Bootstrap project and state bucket
-- [1-org](../platform/1-org/README.md) - Organizational structure
-- [2-environments/dev](../platform/2-environments/development/README.md) - Development environment
-- [2-environments/prod](../platform/2-environments/production/README.md) - Production environment
 
 ## After bootstrap
 
-Once platform is deployed:
-
-- Application repos consume the platform (they don't modify it)
-- Use shared GCS state bucket with unique prefixes
-- Target environment projects created by platform
-- Read secrets from Secret Manager (when implemented)
-
-See [Golden Path](../golden-path.md) for application repository patterns.
+Application repos consume the platform - see [Golden Path](../golden-path.md) for patterns.

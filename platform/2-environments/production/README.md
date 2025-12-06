@@ -1,31 +1,45 @@
 # 2-environments: production
 
-Purpose:
+Creates production environment project.
 
-- Create a minimal production project for application teams to deploy into.
-- Attach the project to the central metrics scope (logging project) for observability.
-- Grant only viewer-level access by default to a platform viewers group (tighten or expand as needed).
+## What this creates
 
-Backend:
+- Production project in `prod` folder
+- Minimal APIs enabled (compute, IAM, logging, monitoring, Secret Manager)
+- Project attached to central logging metrics scope
+- Optional IAM bindings for platform viewers
 
-- Uses GCS remote backend configured in `backends.tf`.
-- Update the `bucket` value with your state bucket name from `0-bootstrap` output.
+## Configuration
 
-Inputs (variables):
+Update `backends.tf` with your state bucket from `0-bootstrap` output.
 
-- `billing_account_id`
-- `folder_id` (use the `prod_folder_id` output from `1-foundation`)
-- `logging_project_id` (use the `logging_project_id` output from `1-foundation`)
-- `prod_project_id` (unique, e.g. `sao-prod`)
-- `prod_project_name` (default: `Production`)
-- `gcp_platform_viewers_group` (e.g. `platform-viewers@example.com`)
-- Optional: `labels`
+Create `terraform.tfvars`:
 
-Outputs:
+```hcl
+billing_account_id           = "ABCDEF-123456-ABCDEF"
+folder_id                    = "folders/123456789012"  # From 1-org output
+logging_project_id           = "yourorg-shared-logging"
+prod_project_id              = "yourorg-prod"
+prod_project_name            = "Production"
+gcp_platform_viewers_group   = "platform-viewers@example.com"
+```
 
-- `prod_project_id`
+## Variables
 
-Notes:
+| Name | Description | Required |
+|------|-------------|----------|
+| `billing_account_id` | Billing account ID | Yes |
+| `folder_id` | Parent folder ID (from `1-org` output) | Yes |
+| `logging_project_id` | Central logging project ID (from `1-org` output) | Yes |
+| `prod_project_id` | Unique project ID for production | Yes |
+| `prod_project_name` | Display name for project | No (default: "Production") |
+| `gcp_platform_viewers_group` | Group email for viewer access | No |
+| `labels` | Resource labels | No |
 
-- Keep IAM tighter in production. Start with viewer and explicitly add permissions your ops model needs.
-- No real emails or domains should be committed. Use groups you own in your domain.
+## Outputs
+
+- `prod_project_id` - Production project ID
+
+## Notes
+
+- IAM is minimal. Keep production tight - add permissions explicitly as needed

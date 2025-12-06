@@ -91,16 +91,16 @@ nav:
 
   - Setup:
       - Overview: setup/index.md
-      - Bootstrap GCP: setup/bootstrap-gcp-foundation.md
-      - Bootstrap GitHub: setup/bootstrap-github-foundation.md
-      - Add Project Repository: setup/add-new-project-repo.md
-      - Onboard Developer: setup/onboard-developer.md
-      - Terraform Reference:
-          - Overview: platform/README.md
+      - Platform Terraform: platform/README.md
+      - Terraform Roots:
           - 0-bootstrap: platform/0-bootstrap/README.md
           - 1-org: platform/1-org/README.md
           - 2-environments/dev: platform/2-environments/development/README.md
           - 2-environments/prod: platform/2-environments/production/README.md
+      - Runbooks:
+          - Bootstrap GitHub: setup/bootstrap-github-foundation.md
+          - Add Project Repo: setup/add-new-project-repo.md
+          - Onboard Developer: setup/onboard-developer.md
 
   - Architecture:
       - Overview: architecture/index.md

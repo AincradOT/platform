@@ -1,85 +1,78 @@
-# Platform (GCP) – Minimal, public-safe, two-environment template
+# Platform Terraform
 
-This template provides a clean, minimal Google Cloud “platform” setup for small teams, aligned with the golden-path in `docs/golden-path.md`.
+GCP organization and environment infrastructure for Open Tibia services.
 
-Key design points:
+## What this creates
 
-- Two environments only: development and production.
-- Minimal IAM using groups (no personal emails; no org-specific identifiers).
-- Remote state in GCS for all stages except 0-bootstrap.
-- No secrets or real identifiers in code. Everything sensitive is a variable.
-- Structure is simple and easy to fork.
+- Bootstrap project with GCS state bucket
+- Organizational folders (shared, dev, prod)
+- Development and production environment projects
+- Central logging project with metrics scope
 
-Directory layout:
+## Prerequisites
+
+- GCP organization with billing account ([setup guide](../docs/requirements.md))
+- `gcloud` CLI authenticated as org admin
+- Terraform >= 1.5
+
+## Directory structure
 
 ```
 platform/
-  0-bootstrap/
-    README.md
-    versions.tf
-    providers.tf
-    variables.tf
-    main.tf
-    outputs.tf
-  1-foundation/
-    README.md
-    backends.tf (commented – template)
-    versions.tf
-    providers.tf
-    variables.tf
-    main.tf
-    outputs.tf
+  0-bootstrap/     # Bootstrap project and state bucket
+  1-org/           # Organizational folders and shared logging
   2-environments/
-    development/
-      README.md
-      backends.tf (commented – template)
-      versions.tf
-      providers.tf
-      variables.tf
-      main.tf
-      outputs.tf
-    production/
-      README.md
-      backends.tf (commented – template)
-      versions.tf
-      providers.tf
-      variables.tf
-      main.tf
-      outputs.tf
+    development/   # Development environment project
+    production/    # Production environment project
 ```
 
-Recommended apply order:
+## Bootstrap procedure
 
-1) 0-bootstrap
-2) 1-foundation
-3) 2-environments/development
-4) 2-environments/production
+Time: ~30 minutes total
 
-Notes:
+### 1. Authenticate
 
-- 0-bootstrap uses a local backend to create a GCS bucket for Terraform state. After creation, enable the GCS backend in other stages by editing the commented `backends.tf` templates and setting your state bucket name.
-- IAM is group-based via variables. Replace example group emails with your own group emails (e.g., `platform-admins@example.com`). Do not use personal emails.
-- All identifiers (org_id, billing_account_id, project IDs, domain, etc.) are variables. No real IDs are embedded here.
+```bash
+gcloud auth application-default login
+gcloud auth list  # Confirm correct account
+```
 
-Security and sanitisation:
+### 2. Configure 0-bootstrap
 
-- Never commit real org IDs, billing account IDs, project IDs, user emails, or domain names.
-- If in doubt, parameterize via variables or use placeholders like `example.com`.
-- If you adapt this template, verify you did not accidentally copy any environment-specific or sensitive values.
+Create `platform/0-bootstrap/terraform.tfvars`:
 
-Alignment with the golden path:
+```hcl
+org_id              = "123456789012"
+billing_account_id  = "ABCDEF-123456-ABCDEF"
+project_name        = "yourorg"
+state_bucket_name   = "yourorg-tfstate"
+location            = "europe-west3"
+```
 
-- Single platform repository for organisation and environment scaffolding.
-- Remote state in GCS for everything except bootstrap.
-- Secrets are not stored in Terraform, only secret containers and IAM bindings.
-- Use OIDC/Workload Identity Federation for CI (configure in your CI repository).
+### 3. Run terraform
 
-Before using this template, you MUST set at minimum:
+```bash
+cd platform/0-bootstrap
+terraform init
+terraform apply
 
-- `org_id`
-- `billing_account_id`
-- Group emails (org admins, billing admins, platform devs, logging/monitoring viewers)
-- Project IDs for logging, development and production
-- Remote state bucket (for 1-foundation and 2-environments)
+cd ../1-org
+terraform init
+terraform apply
 
-See the READMEs in each stage for details.
+cd ../2-environments/development
+terraform init
+terraform apply
+
+cd ../production
+terraform init
+terraform apply
+```
+
+## State management
+
+- `0-bootstrap` uses local backend initially
+- After bootstrap, migrate to GCS backend
+- `1-org` and `2-environments` use GCS backend with separate prefixes
+
+See each terraform root's README for detailed configuration.
