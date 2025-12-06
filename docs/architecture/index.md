@@ -39,9 +39,9 @@ Application repositories use the same backend and target environment projects cr
 - Clone `platform` repository
 - Run `0-bootstrap` terraform
 - Migrate bootstrap state to GCS
-- Run `1-org` terraform
+- Run `1-org` terraform (creates CI service accounts)
 - Run `2-environments` terraform
-- Configure CI service accounts (Phase 2)
+- Generate CI service account keys and store in GitHub secrets
 
 ### 3. Application consumption
 

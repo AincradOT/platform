@@ -61,7 +61,7 @@ Projects are created by the platform Terraform roots. Application repositories r
 
 ## Service accounts and roles
 
-The GCP platform will define service accounts for CI operations (Phase 2):
+The GCP platform defines service accounts for CI operations:
 
 - Platform CI service account for Terraform operations on org and projects
 - Dev CI service account for development environment operations

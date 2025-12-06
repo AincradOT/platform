@@ -24,7 +24,7 @@ platform/
 
 - GCP organization with billing account ([setup guide](/docs/requirements.md))
 - `gcloud` CLI authenticated as org admin
-- Terraform >= 1.5
+- Terraform >= 1.6.0
 
 ## Bootstrap procedure
 
