@@ -53,13 +53,12 @@ Creates the GCP bootstrap project and GCS bucket for Terraform state.
 
 ## Migrate to Remote State
 
-1. Edit `platform/0-bootstrap/backend.gcs.example.tf`:
+1. Edit `platform/0-bootstrap/backends.tf`:
+   - Uncomment the `terraform` block at the bottom of the file
    - Update `bucket` with the state bucket name from output
-   - Uncomment the `terraform` block
 
-2. Rename and migrate (from repository root):
+2. Migrate state (from repository root):
    ```bash
-   mv platform/0-bootstrap/backend.gcs.example.tf platform/0-bootstrap/backend.gcs.tf
    terraform -chdir=platform/0-bootstrap init -migrate-state
    ```
    Type `yes` when prompted.

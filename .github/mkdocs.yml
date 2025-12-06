@@ -108,6 +108,8 @@ nav:
           - 1-org: platform/1-org/README.md
           - 2-environments/dev: platform/2-environments/development/README.md
           - 2-environments/prod: platform/2-environments/production/README.md
+          - github: platform/github/README.md
+          - cloudflare: platform/cloudflare/README.md
       - Platform Teardown: runbooks/teardown.md
 
   - Contributing:

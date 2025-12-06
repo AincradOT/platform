@@ -96,11 +96,11 @@ To completely remove the GCP organization:
 After teardown, confirm no resources remain:
 
 ```bash
-# Check for any active projects
-gcloud projects list --organization=YOUR_ORG_ID
+# Check for any active projects (replace <org-id> with your organization ID)
+gcloud projects list --organization=<org-id>
 
-# Check for any storage buckets
-gcloud storage buckets list --project=PROJECT_ID
+# List all projects to verify none remain
+gcloud projects list
 ```
 
 ## Billing
