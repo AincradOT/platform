@@ -87,7 +87,7 @@ Those concerns live in separate application or infrastructure repositories that 
 
       Platform layout including GCP organisation structure, environment projects, [Terraform backends](architecture/state-management.md) and [GitHub organisation](architecture/github.md) wiring.
 
-- [Setup](setup/index.md)
+- [Runbooks](runbooks/index.md)
 
       Bootstrap procedures and terraform configuration reference for deploying the platform from scratch.
 

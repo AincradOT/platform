@@ -34,11 +34,6 @@ Each terraform root has its own README with configuration details:
 - [2-environments/development/](../platform/2-environments/development/README.md) - Dev environment
 - [2-environments/production/](../platform/2-environments/production/README.md) - Prod environment
 
-## Operational runbooks
-
-- [Bootstrap GitHub Foundation](bootstrap-github-foundation.md) - GitHub organization setup
-- [Add Project Repository](add-new-project-repo.md) - Onboard application repos
-- [Onboard Developer](onboard-developer.md) - Add team members
 
 ## After bootstrap
 
