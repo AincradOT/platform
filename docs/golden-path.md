@@ -116,13 +116,14 @@ The platform layer exists to:
     If you are building a short lived prototype, this is optional.
     If you expect your Open Tibia services to live longer than a hackathon, this is strongly recommended.
 
-## Why GCP and GitHub for this golden path
+## Why GCP, GitHub and Cloudflare for this golden path
 
-There are three moving parts in this design:
+There are four moving parts in this design:
 
 * GitHub as the source of truth for code and CI
 * Google Cloud Platform as the control plane for infrastructure
-* Terraform as the orchestration tool between the two
+* Cloudflare for DNS and edge services
+* Terraform as the orchestration tool between them
 
 GCP is not objectively better than AWS or Azure in all cases. It is a good fit here because:
 
@@ -138,6 +139,17 @@ GitHub is used because:
 * it already hosts most Open Tibia code and tooling
 * GitHub Actions provides OIDC tokens that integrate well with GCP
 * the GitHub provider for Terraform lets the organisation layout be managed as code
+
+Cloudflare is used for DNS and edge services because:
+
+* Free tier provides DNS with low-latency global resolution
+* Automatic TLS certificates with renewal (no manual cert management)
+* DDoS protection for web services (game servers exposed directly at TCP layer)
+* API-first design integrates cleanly with Terraform for infrastructure-as-code DNS management
+* Self-service pattern: applications manage their own DNS records via Terraform without platform team bottlenecks
+* Cost: $10-15/year for domain registration, free tier sufficient for DNS and CDN
+
+The self-service DNS pattern is critical: applications create and destroy DNS records as part of their infrastructure lifecycle. This eliminates manual DNS updates and keeps DNS synchronized with actual infrastructure. When an application tears down, its DNS records disappear automatically.
 
 If you ever migrate to another cloud, most of the principles in this document still apply. Only the provider specific pieces need to change.
 
@@ -245,27 +257,32 @@ At a high level the golden path looks like this.
 
 A single platform repository contains the following logical components.
 
-**GCP platform component (current implementation)**
+**GCP platform component**
 
 * creates a bootstrap project for platform administration
 * creates the [GCS state bucket](architecture/state-management.md) with [versioning](https://cloud.google.com/storage/docs/object-versioning) for terraform state
 * creates [organizational folders](https://cloud.google.com/resource-manager/docs/creating-managing-folders) (shared, dev, prod)
 * creates environment [projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects) and shared services project
+* creates [service accounts](https://cloud.google.com/iam/docs/service-accounts) for terraform CI operations with appropriate IAM bindings
+* enables [Secret Manager API](https://cloud.google.com/secret-manager/docs) in environment projects (applications create their own secrets)
 * attaches projects to central logging metrics scope
 
-**Already implemented:**
+**Cloudflare platform component**
 
-* [Service accounts](https://cloud.google.com/iam/docs/service-accounts) for terraform CI operations with appropriate IAM bindings
-* [Secret Manager API](https://cloud.google.com/secret-manager/docs) enabled in environment projects (applications create their own secrets)
+* stores Cloudflare API token in Secret Manager (shared services project)
+* grants application CI service accounts read access to the token via IAM
+* outputs zone ID for application consumption
 
-**GitHub organization component** (optional, can be managed manually)
+Applications use the API token to manage their own DNS records. The platform handles domain registration and nameserver configuration manually (one-time setup).
 
-* configures GitHub organisation settings as a one-time bootstrap
+**GitHub organization component** (optional)
+
+* configures GitHub organisation settings (2FA required, base permissions)
 * creates core repository structure
 * defines teams and their base permissions
-* sets up branch protection rules
+* sets up branch protection rules for main and production branches
 
-For small teams, this can be a one-time terraform apply with drift ignored, or managed entirely via GitHub UI.
+For small teams (<10 people), the GitHub component can be managed manually via GitHub UI. For larger teams or when reproducibility is critical, it can be codified in terraform.
 
 The platform layer is applied rarely. It changes when the organisation shape changes, not every week.
 
@@ -284,8 +301,11 @@ Each repository:
 * targets the appropriate environment project (dev or prod) created by the platform
 * uses GitHub Actions with service account credentials to run terraform
 * reads application secrets from Secret Manager
+* manages DNS records via Cloudflare Terraform provider (self-service, no manual DNS updates)
 
-This separation keeps platform concerns (org structure, projects, state backend) separate from application concerns (VMs, databases, deployments). Application own their infrastructure within the boundaries the platform defines.
+Applications read the Cloudflare API token from Secret Manager to configure the Cloudflare provider. DNS records are created and destroyed as part of the application infrastructure lifecycle. When `terraform destroy` runs, DNS records disappear automatically.
+
+This separation keeps platform concerns (org structure, projects, state backend, credential management) separate from application concerns (VMs, databases, deployments, DNS records). Applications own their infrastructure within the boundaries the platform defines.
 
 ## Responsibilities of the platform repository
 
@@ -297,7 +317,8 @@ The platform repository handles:
 * environment projects and shared services project
 * Secret Manager API enablement (applications create their own secret resources)
 * CI service accounts and their IAM bindings
-* (optionally) GitHub organisation level settings as one-time bootstrap
+* Cloudflare API token storage and IAM bindings for application access
+* GitHub organisation level settings (optional, can be managed manually for small teams)
 
 It does not create application specific infrastructure such as game server VMs, databases or load balancers. Those belong to application repositories.
 
