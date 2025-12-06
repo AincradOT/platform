@@ -22,7 +22,7 @@ platform/
 
 ## Prerequisites
 
-- GCP organization with billing account ([setup guide](../docs/requirements.md))
+- GCP organization with billing account ([setup guide](/docs/requirements.md))
 - `gcloud` CLI authenticated as org admin
 - Terraform >= 1.5
 
