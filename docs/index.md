@@ -34,9 +34,9 @@ Ongoing infrastructure management shouldn't be a full-time job. This platform ha
 
 - [GCP](https://cloud.google.com/) organisation layout and environment [projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
 - Shared [Terraform state backend](architecture/state-management.md)
-- [Secret Manager](https://cloud.google.com/secret-manager/docs) for application secrets
+- [Secret Manager API](https://cloud.google.com/secret-manager/docs) enabled for applications to manage their own secrets
 - CI [service accounts](https://cloud.google.com/iam/docs/service-accounts) for [GitHub Actions](https://docs.github.com/en/actions)
-- [DNS](architecture/cloudflare.md) and TLS certificate automation
+- [DNS](architecture/cloudflare.md) and TLS certificate automation via application repos
 
 !!! note
     Application repositories consume the platform - they don't modify it. Development teams focus on building features for users, not fiddling with platform configuration.
@@ -54,8 +54,6 @@ This platform is designed to be forked and adapted for other organizations:
     **Initial setup:** 2-3 hours for experienced engineers following the runbooks. Includes Cloud Identity, billing, domain setup, terraform bootstrapping, and CI configuration. Longer if debugging or learning.
     
     **Prerequisites:** Solid understanding of Linux, Terraform, GCP IAM, and CI/CD required. Not for infrastructure beginners.
-    
-    **Re-deployment:** ~1 hour for teams familiar with this pattern.
 
 ## Scope
 
@@ -66,7 +64,7 @@ It discusses the management of:
 - GCP organisation level resources
 - Environment projects such as dev and prod
 - Shared [Terraform state storage](architecture/state-management.md)
-- [Secret Manager](https://cloud.google.com/secret-manager/docs) for application secrets
+- [Secret Manager API](https://cloud.google.com/secret-manager/docs) enablement (applications create their own secrets)
 - [CI identities](architecture/ci.md) and their permissions
 
 It does not manage:

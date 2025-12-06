@@ -18,10 +18,11 @@ Create `terraform.tfvars`:
 ```hcl
 billing_account_id           = "ABCDEF-123456-ABCDEF"
 folder_id                    = "folders/123456789012"  # From 1-org output
-logging_project_id           = "yourorg-shared-logging"
-dev_project_id               = "yourorg-dev"
+logging_project_id           = "sao-shared-logging"
+dev_project_id               = "sao-dev"
 dev_project_name             = "Development"
-gcp_platform_viewers_group   = "platform-viewers@example.com"
+dev_ci_service_account       = "dev-ci@sao-shared-logging.iam.gserviceaccount.com"  # From 1-org output
+gcp_platform_devs_group      = "platform-devs@example.com"
 ```
 
 ## Variables
@@ -33,7 +34,8 @@ gcp_platform_viewers_group   = "platform-viewers@example.com"
 | `logging_project_id` | Central logging project ID (from `1-org` output) | Yes |
 | `dev_project_id` | Unique project ID for development | Yes |
 | `dev_project_name` | Display name for project | No (default: "Development") |
-| `gcp_platform_viewers_group` | Group email for viewer access | No |
+| `dev_ci_service_account` | Dev CI service account email (from `1-org` output) for granting editor role | No |
+| `gcp_platform_devs_group` | Group email for platform developers (grants `roles/compute.instanceAdmin.v1`) | No |
 | `labels` | Resource labels | No |
 
 ## Outputs

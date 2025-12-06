@@ -43,3 +43,11 @@ resource "google_project_iam_member" "platform_devs_compute_admin" {
   role    = "roles/compute.instanceAdmin.v1"
   member  = "group:${var.gcp_platform_devs_group}"
 }
+
+# Grant dev CI service account editor role on dev project
+resource "google_project_iam_member" "dev_ci_editor" {
+  count   = var.dev_ci_service_account != null ? 1 : 0
+  project = google_project.dev.project_id
+  role    = "roles/editor"
+  member  = "serviceAccount:${var.dev_ci_service_account}"
+}

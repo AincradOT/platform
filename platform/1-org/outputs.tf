@@ -17,3 +17,18 @@ output "logging_project_id" {
   description = "The central logging/monitoring project id."
   value       = google_project.logging.project_id
 }
+
+output "platform_ci_service_account" {
+  description = "Email of the platform CI service account."
+  value       = google_service_account.platform_ci.email
+}
+
+output "dev_ci_service_account" {
+  description = "Email of the development CI service account."
+  value       = google_service_account.dev_ci.email
+}
+
+output "prod_ci_service_account" {
+  description = "Email of the production CI service account."
+  value       = google_service_account.prod_ci.email
+}

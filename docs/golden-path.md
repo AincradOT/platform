@@ -253,10 +253,10 @@ A single platform repository contains the following logical components.
 * creates environment [projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects) and shared logging project
 * attaches projects to central logging metrics scope
 
-**Planned extensions:**
+**Already implemented:**
 
-* [Secret Manager](https://cloud.google.com/secret-manager/docs) resources for application secrets (containers only, not values)
 * [Service accounts](https://cloud.google.com/iam/docs/service-accounts) for terraform CI operations with appropriate IAM bindings
+* [Secret Manager API](https://cloud.google.com/secret-manager/docs) enabled in environment projects (applications create their own secrets)
 
 **GitHub organization component** (optional, can be managed manually)
 
@@ -295,7 +295,7 @@ The platform repository handles:
 * the bootstrap project and state bucket
 * organizational folders (shared, dev, prod)
 * environment projects and shared services project
-* Secret Manager resources for application secrets
+* Secret Manager API enablement (applications create their own secret resources)
 * CI service accounts and their IAM bindings
 * (optionally) GitHub organisation level settings as one-time bootstrap
 

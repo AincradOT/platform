@@ -11,7 +11,7 @@ GCP organization and environment infrastructure for Open Tibia services.
 
 ## Prerequisites
 
-- GCP organization with billing account ([setup guide](../requirements.md))
+- GCP organization with billing account ([setup guide](../docs/requirements.md))
 - `gcloud` CLI authenticated as org admin
 - Terraform >= 1.5
 
@@ -44,8 +44,8 @@ Create `platform/0-bootstrap/terraform.tfvars`:
 ```hcl
 org_id              = "123456789012"
 billing_account_id  = "ABCDEF-123456-ABCDEF"
-project_name        = "yourorg"
-state_bucket_name   = "yourorg-tfstate"
+project_name        = "sao"
+state_bucket_name   = "sao-tfstate"
 location            = "europe-west3"
 ```
 
@@ -76,3 +76,52 @@ terraform apply
 - `1-org` and `2-environments` use GCS backend with separate prefixes
 
 See each terraform root's README for detailed configuration.
+
+## Troubleshooting
+
+### Authentication issues
+
+Error: `Error getting access token` or `status code 403`
+
+Verify your account has necessary permissions:
+- Check active account: `gcloud auth list`
+- Verify org access: `gcloud organizations list`
+- Required org-level roles: `organizationAdmin`, `projectCreator`, `billing.admin`
+
+### State bucket errors
+
+Error: `backend initialization required`
+
+Backend configuration changed. Get correct bucket name from bootstrap output and update all backends.tf files:
+```bash
+cd platform/0-bootstrap
+terraform output state_bucket_name
+```
+
+Error: `bucket already exists`
+
+Bucket name must be globally unique. Change `state_bucket_name` in terraform.tfvars.
+
+### Project creation failures
+
+Error: `project ID is not available`
+
+Project ID already exists or recently deleted. Wait 30 days or choose different ID.
+
+Error: `billing not enabled`
+
+Verify billing account access: `gcloud billing accounts list`
+
+### Common mistakes
+
+1. Running terraform from wrong directory
+2. Not updating backend bucket names after bootstrap
+3. Applying roots out of order (must be: 0-bootstrap, 1-org, 2-environments)
+4. Missing folder_id from 1-org outputs in environment terraform.tfvars
+
+### Recovery
+
+If bootstrap fails completely:
+1. Remove local state: `rm terraform.tfstate*`
+2. Delete bootstrap project via console
+3. Start over with `terraform init && terraform apply`

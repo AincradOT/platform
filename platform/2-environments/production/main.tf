@@ -43,3 +43,11 @@ resource "google_project_iam_member" "platform_viewers_viewer" {
   role    = "roles/viewer"
   member  = "group:${var.gcp_platform_viewers_group}"
 }
+
+# Grant prod CI service account editor role on prod project
+resource "google_project_iam_member" "prod_ci_editor" {
+  count   = var.prod_ci_service_account != null ? 1 : 0
+  project = google_project.prod.project_id
+  role    = "roles/editor"
+  member  = "serviceAccount:${var.prod_ci_service_account}"
+}

@@ -45,7 +45,7 @@ Each terraform root uses a unique prefix in the bucket:
 ```
 gs://sao-tfstate/
 ├── terraform/bootstrap/           # bootstrap state
-├── terraform/foundation/          # foundation state
+├── terraform/org/                 # organizational structure state
 ├── terraform/environments/dev/    # development environment
 ├── terraform/environments/prod/   # production environment
 └── terraform/apps/{repo-name}/    # application infrastructure repos
@@ -108,7 +108,7 @@ If state is corrupted or lost:
 
 1. Use GCS versioning to restore a previous version
    ```bash
-   gsutil cp gs://sao-tfstate/terraform/foundation/default.tfstate#<version> gs://sao-tfstate/terraform/foundation/default.tfstate
+   gsutil cp gs://sao-tfstate/terraform/org/default.tfstate#<version> gs://sao-tfstate/terraform/org/default.tfstate
    ```
 
 2. If no good version exists, rebuild state via `terraform import`

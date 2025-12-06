@@ -1,7 +1,7 @@
 locals {
   labels = merge({
     environment = "platform",
-    stage       = "foundation",
+    stage       = "org",
   }, var.labels)
 }
 

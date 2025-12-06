@@ -51,12 +51,13 @@ Creates the GCP bootstrap project and GCS bucket for Terraform state.
 ## Configure Other Roots
 
 Update the `bucket` value in:
-- `platform/1-foundation/backends.tf`
-- `platform/2-environments/*/backends.tf`
+- `platform/1-org/backends.tf`
+- `platform/2-environments/development/backends.tf`
+- `platform/2-environments/production/backends.tf`
 
 Then initialize each root:
 ```bash
-terraform -chdir=platform/1-foundation init
+terraform -chdir=platform/1-org init
 terraform -chdir=platform/2-environments/development init
 terraform -chdir=platform/2-environments/production init
 ```

@@ -16,8 +16,9 @@ These manage:
 - Bootstrap project for state storage
 - GCS bucket for Terraform state with versioning
 - Environment projects for dev and prod
-- Shared services project for logging and Secret Manager
-- Service accounts for CI operations (to be added)
+- Shared services project for logging
+- Service accounts for CI operations
+- Secret Manager API enablement (applications create their own secrets)
 
 It does **not** manage individual workloads such as game servers or web applications. Those live in separate repositories and projects.
 
@@ -90,11 +91,12 @@ For small teams, we use service account keys stored as GitHub encrypted secrets:
 
 [Secret Manager](https://cloud.google.com/secret-manager/docs) provides versioned, encrypted storage for application secrets (API keys, database passwords, tokens).
 
-The GCP platform Terraform will be responsible for (Phase 2):
+The GCP platform enables the Secret Manager API in environment projects. **Applications are responsible for**:
 
-- Creating Secret Manager resources with stable names
+- Creating their own Secret Manager resources with application-specific names
 - Configuring IAM bindings for service account access
 - Setting up replication policies
+- Managing secret lifecycle (creation, rotation, deletion)
 
 Secret values are never stored in Terraform. They are set via:
 

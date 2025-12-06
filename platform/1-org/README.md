@@ -6,6 +6,7 @@ Creates organizational structure and shared services.
 
 - Three top-level folders: `shared`, `dev`, `prod`
 - Central logging/monitoring project in `shared` folder
+- CI service accounts for GitHub Actions (platform, dev, prod)
 - Org policy to prevent default VPC creation
 - Optional IAM bindings for logging viewers
 
@@ -18,8 +19,9 @@ Create `terraform.tfvars`:
 ```hcl
 org_id                     = "123456789012"
 billing_account_id         = "ABCDEF-123456-ABCDEF"
-logging_project_id         = "yourorg-shared-logging"
+logging_project_id         = "sao-shared-logging"
 logging_project_name       = "Shared Logging"
+state_bucket_name          = "sao-tfstate"  # From 0-bootstrap output
 gcp_logging_viewers_group  = "logging-viewers@example.com"
 gcp_org_admins_group       = "platform-admins@example.com"
 gcp_billing_admins_group   = "billing-admins@example.com"
@@ -33,6 +35,7 @@ gcp_billing_admins_group   = "billing-admins@example.com"
 | `billing_account_id` | Billing account ID | Yes |
 | `logging_project_id` | Unique project ID for central logging | Yes |
 | `logging_project_name` | Display name for logging project | No (default: "Shared Logging") |
+| `state_bucket_name` | GCS state bucket name (from `0-bootstrap` output) for CI service account IAM | No |
 | `gcp_logging_viewers_group` | Group email for logging read access | No |
 | `gcp_org_admins_group` | Group email for org-level project creation | No |
 | `gcp_billing_admins_group` | Group email for billing admin | No |
@@ -44,9 +47,14 @@ gcp_billing_admins_group   = "billing-admins@example.com"
 - `dev_folder_id` - Development folder ID
 - `prod_folder_id` - Production folder ID
 - `logging_project_id` - Central logging project ID
+- `platform_ci_service_account` - Platform CI service account email
+- `dev_ci_service_account` - Development CI service account email
+- `prod_ci_service_account` - Production CI service account email
 
 ## Notes
 
 - IAM is minimal at org level. Project-level IAM is in `2-environments/`
 - Groups are not created by terraform to avoid domain coupling
 - Provide group emails via variables
+- CI service accounts require key generation via `gcloud iam service-accounts keys create` for GitHub Actions
+- Service account keys should be stored as GitHub organization secrets and rotated quarterly

@@ -38,11 +38,11 @@ Application-specific DR (databases, VMs, application data) is the responsibility
 
 ```bash
 # List available versions
-gsutil ls -a gs://sao-tfstate/terraform/foundation/default.tfstate
+gsutil ls -a gs://sao-tfstate/terraform/org/default.tfstate
 
 # Restore specific version
-gsutil cp gs://sao-tfstate/terraform/foundation/default.tfstate#<version> \
-          gs://sao-tfstate/terraform/foundation/default.tfstate
+gsutil cp gs://sao-tfstate/terraform/org/default.tfstate#<version> \
+          gs://sao-tfstate/terraform/org/default.tfstate
 ```
 
 !!! note
@@ -124,7 +124,7 @@ If everything is lost (state, projects, bucket), here's the recovery order:
 
 1. Verify org and billing still exist (these cannot be terraform-managed)
 2. Re-run 0-bootstrap to create new state bucket and bootstrap project
-3. Import or rebuild 1-foundation resources (folders, shared services project, or recreate from scratch if necessary)
+3. Import or rebuild 1-org resources (folders, shared services project, or recreate from scratch if necessary)
 4. Import or rebuild 2-environments projects
 5. Re-populate Secret Manager (values must be re-entered manually)
 6. Notify application teams to verify their state and infrastructure
