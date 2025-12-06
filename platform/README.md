@@ -28,8 +28,6 @@ platform/
 
 ## Bootstrap procedure
 
-Time: ~30 minutes total
-
 ### 1. Authenticate
 
 ```bash
@@ -39,15 +37,13 @@ gcloud auth list  # Confirm correct account
 
 ### 2. Configure 0-bootstrap
 
-Create `platform/0-bootstrap/terraform.tfvars`:
+Copy and edit the example file:
 
-```hcl
-org_id              = "123456789012"
-billing_account_id  = "ABCDEF-123456-ABCDEF"
-project_name        = "sao"
-state_bucket_name   = "sao-tfstate"
-location            = "europe-west3"
+```bash
+cp platform/0-bootstrap/example.terraform.tfvars platform/0-bootstrap/terraform.tfvars
 ```
+
+Edit `terraform.tfvars` with your org ID, billing account, project name, and bucket name. See [0-bootstrap README](0-bootstrap/README.md) for variable details.
 
 ### 3. Run terraform
 
@@ -68,15 +64,13 @@ gsutil versioning get gs://$(terraform output -raw state_bucket_name)
 
 ### 4. Configure 1-org
 
-Create `platform/1-org/terraform.tfvars`:
+Copy and edit the example file:
 
-```hcl
-org_id                     = "123456789012"
-billing_account_id         = "ABCDEF-123456-ABCDEF"
-shared_project_id          = "sao-shared"
-shared_project_name        = "Shared Services"
-state_bucket_name          = "sao-tfstate"  # From 0-bootstrap output
+```bash
+cp platform/1-org/example.terraform.tfvars platform/1-org/terraform.tfvars
 ```
+
+Update with your values. The `state_bucket_name` should match the output from 0-bootstrap. See [1-org README](1-org/README.md) for all available variables.
 
 ### 5. Run terraform
 
@@ -97,6 +91,14 @@ gcloud projects describe $(terraform output -raw shared_project_id)
 
 ### 6. Configure and deploy environments
 
+Copy and edit example files:
+
+```bash
+cp platform/2-environments/development/example.terraform.tfvars platform/2-environments/development/terraform.tfvars
+```
+
+Update with your values. Only `billing_account_id`, `state_bucket_name`, and `dev_project_id` are required. Values like `folder_id` and `shared_project_id` are **automatically pulled from 1-org remote state**. See [development README](2-environments/development/README.md) for details.
+
 ```bash
 cd ../2-environments/development
 terraform init
@@ -111,6 +113,12 @@ gcloud projects describe $(terraform output -raw dev_project_id)
 # Verify APIs enabled
 gcloud services list --project=$(terraform output -raw dev_project_id) --enabled
 ```
+
+```bash
+cp platform/2-environments/production/example.terraform.tfvars platform/2-environments/production/terraform.tfvars
+```
+
+Update with your values. See [production README](2-environments/production/README.md) for details.
 
 ```bash
 cd ../production

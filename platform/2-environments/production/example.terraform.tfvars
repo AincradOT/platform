@@ -4,26 +4,28 @@
 # Copy this file to terraform.tfvars and update with your actual values.
 #
 # This root creates the production project with basic APIs and IAM.
+# Values like folder_id and shared_project_id are automatically pulled from
+# 1-org remote state, so you only need to specify project ID and state bucket.
 # Keep production IAM tight - add permissions explicitly as needed.
 # ============================================================================
 
 # Billing account ID (same as used in 0-bootstrap)
 billing_account_id = "ABCDEF-123456-ABCDEF"
 
-# Production folder ID from 1-org output
-# Run: terraform -chdir=platform/1-org output prod_folder_id
-folder_id = "folders/123456789012"
-
-# Shared services project ID from 1-org output
-# Run: terraform -chdir=platform/1-org output shared_project_id
-shared_project_id = "sao-shared"
+# State bucket name from 0-bootstrap output (used to read 1-org remote state)
+state_bucket_name = "sao-tfstate"
 
 # Unique project ID for production environment
 prod_project_id = "sao-prod"
 
-# Optional: Prod CI service account email from 1-org output
-# Run: terraform -chdir=platform/1-org output prod_ci_service_account
-# Uncomment to grant editor role on prod project:
+# ============================================================================
+# Optional Overrides
+# ============================================================================
+# The following values are automatically pulled from 1-org remote state.
+# Only uncomment if you need to override the remote state values.
+
+# folder_id = "folders/123456789012"
+# shared_project_id = "sao-shared"
 # prod_ci_service_account = "prod-ci@sao-shared.iam.gserviceaccount.com"
 
 # Optional: Platform viewers group email

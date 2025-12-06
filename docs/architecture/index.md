@@ -2,16 +2,8 @@
 
 Platform architecture for Open Tibia services using GCP, GitHub, and Cloudflare.
 
-## Design goals
-
-- Separation of platform and application concerns
-- Reproducible bootstrap with minimal manual steps
-- Cheap to operate (cents per month for platform)
-- Maintainable by a single dev with novice-intermediate terraform/cloud knowledge
-- Explicit security boundaries
-
 !!! note
-    Read the [Golden path](../golden-path.md) first for rationale and context.
+    Read the [Golden path](../golden-path.md) first for rationale, design goals, and context.
 
 ## Platform components
 
@@ -25,31 +17,22 @@ All roots use shared [GCS backend](https://www.terraform.io/docs/language/settin
 
 Application repositories use the same backend and target environment projects created by platform. They never modify organisation level resources.
 
-## Bootstrap lifecycle
+## Bootstrap and application flow
 
-### 1. Manual setup
+For complete bootstrap procedures, see the [Platform README](../platform/README.md).
 
-- Create GitHub organisation
-- Create GCP organisation and billing account
-- Create domain in Cloudflare
-- Install and configure gcloud SDK
+The platform uses remote state data sources to eliminate manual output copying between terraform roots:
 
-### 2. Platform provisioning
+1. `0-bootstrap` creates state bucket → outputs `state_bucket_name`
+2. `1-org` stores outputs in remote state → `folder_id`, `shared_project_id`, service account emails
+3. `2-environments` automatically reads from `1-org` remote state → no manual copying needed
 
-- Clone `platform` repository
-- Run `0-bootstrap` terraform
-- Migrate bootstrap state to GCS
-- Run `1-org` terraform (creates CI service accounts)
-- Run `2-environments` terraform
-- Generate CI service account keys and store in GitHub secrets
+Applications consume platform resources:
 
-### 3. Application consumption
-
-- Create application repositories
-- Point terraform backends at shared GCS bucket
-- Use org-level GitHub secrets for CI
-- Use [Secret Manager](state-management.md) for application secrets
-- Manage DNS via Cloudflare provider in application terraform
+- Point terraform backends at shared GCS bucket with unique prefixes
+- Use org-level GitHub secrets for CI authentication
+- Read Cloudflare API tokens from Secret Manager
+- Manage application-specific DNS records via Cloudflare provider
 
 ## Architecture pages
 
