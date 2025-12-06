@@ -7,7 +7,7 @@ Platform architecture for Open Tibia services using GCP, GitHub, and Cloudflare.
 - Separation of platform and application concerns
 - Reproducible bootstrap with minimal manual steps
 - Cheap to operate (cents per month for platform)
-- Simple enough for another engineer to own
+- Maintainable by a single dev with novice-intermediate terraform/cloud knowledge
 - Explicit security boundaries
 
 !!! note

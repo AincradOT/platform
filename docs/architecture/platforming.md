@@ -5,7 +5,7 @@
 - Separation of concerns between platform and project.
 - Reproducible bootstrap with minimal manual steps.
 - Cheap to operate. Platform overhead should be measured in cents per month.
-- Simple enough that another senior engineer can own it without reverse engineering.
+- Maintainable by a single dev with basic terraform knowledge.
 - Explicit security boundaries around state, secrets and CI identities.
 
 Platform in this context means everything that exists before any application or service repository:

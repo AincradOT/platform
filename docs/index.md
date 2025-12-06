@@ -91,4 +91,13 @@ Those concerns live in separate application or infrastructure repositories that 
 
 - [Contributing](contributing/index.md)
 
-      Expectations and workflow for making changes to the platform platform, including review requirements and testing strategy.
+      Expectations and workflow for making changes to the platform infrastructure, including review requirements and testing strategy.
+
+## Learning Resources
+
+New to infrastructure as code or Google Cloud Platform?
+
+- [Terraform Introduction](https://www.terraform.io/intro) - Core concepts and getting started guide
+- [Google Cloud IAM Overview](https://cloud.google.com/iam/docs/overview) - Understanding roles, permissions, and service accounts
+- [GCP Organization Best Practices](https://cloud.google.com/docs/enterprise/best-practices-for-enterprise-organizations) - Enterprise organization structure patterns
+- [Infrastructure as Code Principles](https://www.hashicorp.com/resources/what-is-infrastructure-as-code) - Why IaC matters for reliability and repeatability

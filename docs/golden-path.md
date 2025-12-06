@@ -110,7 +110,7 @@ The platform layer exists to:
 * centralise the organisation level decisions
 * give a single source of truth for environments and state
 * avoid every repo reinventing state backends, secrets and CI auth
-* make onboarding a new engineer a documentation exercise, not archaeology
+* maintain a consistent and well-documented infrastructure that can be managed by a single engineer
 
 !!! note
     If you are building a short lived prototype, this is optional.
@@ -126,7 +126,7 @@ There are three moving parts in this design:
 
 GCP is not objectively better than AWS or Azure in all cases. It is a good fit here because:
 
-* GCS is a simple and inexpensive Terraform state backend
+* GCS provides inexpensive Terraform state storage with built-in versioning
 * State versioning is built-in; state locking requires coordination (acceptable for sequential small team workflows)
 * Secret Manager integrates cleanly with Terraform, CI and Ansible
 * Service account keys for CI are simpler than Workload Identity Federation for small teams

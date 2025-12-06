@@ -1,12 +1,12 @@
 # Aincrad Platforming
 
-This repository holds the platform platform for both Google Cloud Platform and the GitHub organisation.
+This repository holds the platform infrastructure for both Google Cloud Platform and the GitHub organisation.
 
 It defines:
 
 - GCP organisation level layout and environment projects
-- Shared Terraform state backend and encryption
-- CI service accounts and Workload Identity Federation for GitHub Actions
+- Shared Terraform state backend with Google-managed encryption
+- CI service accounts with key-based authentication for GitHub Actions
 - GitHub organisation settings, core repositories, teams and branch protections
 
 Application and service repositories consume these platform. They do not modify them.
@@ -20,8 +20,8 @@ This repository is about platforming only.
 It manages:
 
 - GCP organisation level resources
-- environment projects such as dev and prod
-- shared Terraform state storage and encryption
+- Environment projects such as dev and prod
+- Shared Terraform state storage with Google-managed encryption
 - CI identities and their permissions
 - GitHub organisation settings, core repositories, teams and branch protections
 

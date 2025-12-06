@@ -9,13 +9,7 @@ GCP organization and environment infrastructure for Open Tibia services.
 - Development and production environment projects
 - Central logging project with metrics scope
 
-## Prerequisites
-
-- GCP organization with billing account ([setup guide](../docs/requirements.md))
-- `gcloud` CLI authenticated as org admin
-- Terraform >= 1.5
-
-## Directory structure
+**Directory structure:**
 
 ```
 platform/
@@ -25,6 +19,12 @@ platform/
     development/   # Development environment project
     production/    # Production environment project
 ```
+
+## Prerequisites
+
+- GCP organization with billing account ([setup guide](../docs/requirements.md))
+- `gcloud` CLI authenticated as org admin
+- Terraform >= 1.5
 
 ## Bootstrap procedure
 
@@ -55,19 +55,99 @@ location            = "europe-west3"
 cd platform/0-bootstrap
 terraform init
 terraform apply
+```
 
+**Verify bootstrap:**
+```bash
+# Confirm project exists
+gcloud projects describe $(terraform output -raw bootstrap_project_id)
+
+# Confirm bucket exists with versioning
+gsutil versioning get gs://$(terraform output -raw state_bucket_name)
+```
+
+```bash
 cd ../1-org
 terraform init
 terraform apply
+```
 
+**Verify org structure:**
+```bash
+# List folders
+gcloud resource-manager folders list --organization=YOUR_ORG_ID
+
+# Verify logging project
+gcloud projects describe $(terraform output -raw logging_project_id)
+```
+
+```bash
 cd ../2-environments/development
 terraform init
 terraform apply
+```
 
+**Verify dev environment:**
+```bash
+# Verify project
+gcloud projects describe $(terraform output -raw dev_project_id)
+
+# Verify APIs enabled
+gcloud services list --project=$(terraform output -raw dev_project_id) --enabled
+```
+
+```bash
 cd ../production
 terraform init
 terraform apply
 ```
+
+**Verify prod environment:**
+```bash
+# Verify project
+gcloud projects describe $(terraform output -raw prod_project_id)
+
+# Verify APIs enabled
+gcloud services list --project=$(terraform output -raw prod_project_id) --enabled
+```
+
+### 4. Configure CI Authentication
+
+Generate service account keys:
+
+```bash
+# Get service account emails from 1-org outputs
+cd platform/1-org
+PLATFORM_SA=$(terraform output -raw platform_ci_service_account)
+DEV_SA=$(terraform output -raw dev_ci_service_account)
+PROD_SA=$(terraform output -raw prod_ci_service_account)
+
+# Generate keys (run from repository root)
+cd ../..
+gcloud iam service-accounts keys create platform-ci-key.json \
+  --iam-account=$PLATFORM_SA
+
+gcloud iam service-accounts keys create dev-ci-key.json \
+  --iam-account=$DEV_SA
+
+gcloud iam service-accounts keys create prod-ci-key.json \
+  --iam-account=$PROD_SA
+```
+
+Store in GitHub organization secrets:
+
+1. Navigate to `https://github.com/organizations/YOUR-ORG/settings/secrets/actions`
+2. Create `GCP_PLATFORM_SA_KEY` with contents of `platform-ci-key.json`
+3. Create `GCP_SA_KEY` with contents of `dev-ci-key.json`
+4. Create `GCP_SA_KEY_PROD` with contents of `prod-ci-key.json`
+
+Delete local key files immediately:
+
+```bash
+rm *-ci-key.json
+```
+
+**Set calendar reminder for quarterly key rotation (90 days).**
 
 ## State management
 
@@ -121,7 +201,63 @@ Verify billing account access: `gcloud billing accounts list`
 
 ### Recovery
 
-If bootstrap fails completely:
-1. Remove local state: `rm terraform.tfstate*`
-2. Delete bootstrap project via console
-3. Start over with `terraform init && terraform apply`
+#### Complete bootstrap failure
+
+If bootstrap fails after project creation but before bucket is created:
+
+```bash
+# Delete the project
+gcloud projects delete PROJECT_ID --quiet
+
+# Wait for deletion to complete (30 seconds)
+sleep 30
+
+# Remove local state
+cd platform/0-bootstrap
+rm -f terraform.tfstate*
+
+# Start over
+terraform init
+terraform apply
+```
+
+#### Project ID already exists
+
+Error: `project ID is not available`
+
+Project was recently deleted (30-day retention period).
+
+Options:
+1. Wait 30 days for permanent deletion
+2. Restore the deleted project:
+   ```bash
+   gcloud projects undelete PROJECT_ID
+   ```
+3. Choose a different project_name in terraform.tfvars
+
+#### Bucket already exists
+
+Error: `bucket already exists`
+
+Bucket names are globally unique. If someone else owns this name:
+
+```bash
+# Try a different name
+state_bucket_name = "sao-tfstate-abc123"  # Add random suffix
+```
+
+#### Partial state corruption
+
+If terraform.tfstate exists but resources are out of sync:
+
+```bash
+# Backup current state
+cp terraform.tfstate terraform.tfstate.backup
+
+# Try refreshing state
+terraform refresh
+
+# If that fails, reimport resources
+terraform import google_project.bootstrap PROJECT_ID
+terraform import google_storage_bucket.tf_state BUCKET_NAME
+```

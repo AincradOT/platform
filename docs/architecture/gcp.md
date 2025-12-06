@@ -48,7 +48,7 @@ Each Terraform root uses a distinct `prefix` so state files are isolated and bla
 
 ## Environment projects
 
-We use a simple environment layout:
+We use a three-tier environment layout:
 
 - Bootstrap project for state bucket and platform administration
 - Shared services project for logging, monitoring, and Secret Manager

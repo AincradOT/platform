@@ -2,6 +2,8 @@
 
 This section describes how we manage the GitHub organisation as part of the platform.
 
+The GitHub organization is **terraform-managed** but designed to tolerate drift. Terraform bootstraps the organization structure (teams, repositories, branch protections), but manual changes via GitHub UI are not automatically reverted. This allows operational flexibility while maintaining infrastructure as code for reproducibility.
+
 ## Scope
 
 The GitHub platform [Terraform](https://www.terraform.io/docs) root lives under `github/` in the `platform` repository. It manages:

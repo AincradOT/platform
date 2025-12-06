@@ -2,6 +2,21 @@
 
 Cloudflare provides [DNS](https://www.cloudflare.com/learning/dns/what-is-dns/), [TLS certificates](https://www.cloudflare.com/learning/ssl/what-is-ssl/), and edge protection for web services.
 
+## Platform vs Application Responsibility
+
+**Platform provides:**
+- Zone ID (via terraform outputs or documentation)
+- API token stored in Secret Manager
+- Domain registration and nameserver configuration
+
+**Applications manage:**
+- DNS records for their services
+- TLS origin certificates
+- CDN configuration
+- Firewall rules specific to their applications
+
+This document describes application-level Cloudflare usage patterns. The platform does not manage DNS records or application-specific Cloudflare resources.
+
 ## What it provides
 
 * DNS management for primary domain and subdomains

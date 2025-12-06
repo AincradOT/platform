@@ -24,15 +24,31 @@ Creates the GCP bootstrap project and GCS bucket for Terraform state.
 
 2. Edit `platform/0-bootstrap/terraform.tfvars` with your values.
 
-3. Initialize and apply (from repository root):
+3. Initialize and apply:
+
+   **Option A - From repository root:**
    ```bash
    terraform -chdir=platform/0-bootstrap init
    terraform -chdir=platform/0-bootstrap apply
    ```
 
+   **Option B - From this directory:**
+   ```bash
+   cd platform/0-bootstrap
+   terraform init
+   terraform apply
+   ```
+
 4. Note the `state_bucket_name` output:
+
+   **From repository root:**
    ```bash
    terraform -chdir=platform/0-bootstrap output state_bucket_name
+   ```
+
+   **From this directory:**
+   ```bash
+   terraform output state_bucket_name
    ```
 
 ## Migrate to Remote State
@@ -55,7 +71,7 @@ Update the `bucket` value in:
 - `platform/2-environments/development/backends.tf`
 - `platform/2-environments/production/backends.tf`
 
-Then initialize each root:
+Then initialize each root (from repository root):
 ```bash
 terraform -chdir=platform/1-org init
 terraform -chdir=platform/2-environments/development init

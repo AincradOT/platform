@@ -42,9 +42,7 @@ If any command fails, install or fix that tool before continuing.
 
 ### Domain Registration
 
-!!! note
-    You only need one domain for the entire platform (e.g. `example.com`).
-    Subdomains and DNS records are created later by automation.
+You only need one domain for the entire platform (e.g. `example.com`). Subdomains and DNS records are created later by automation.
 
 We use Cloudflare to manage DNS for the platform.
 
@@ -79,9 +77,7 @@ High-level steps:
    [https://console.cloud.google.com/](https://console.cloud.google.com/)
 4. Accept the terms and conditions.
 
-!!! note
-    If you are new to Google Cloud and have never created a project before, the organization resource is created automatically a few minutes after you accept the terms in the console.
-    Check the project/organization selector at the top of the console and confirm you see your domain listed as an organization.
+If you are new to Google Cloud and have never created a project before, the organization resource is created automatically a few minutes after you accept the terms in the console. Check the project/organization selector at the top of the console and confirm you see your domain listed as an organization.
 
 ### Set Up a Billing Account
 
@@ -100,9 +96,7 @@ Minimum steps:
 
 ### Workspace / IAM Roles
 
-!!! note
-    If this is a brand-new organization and you are using the same admin account that created Cloud Identity / the organization and the billing account, you likely already have the necessary permissions and can treat this section as reference.
-    These role assignments are mainly for when you delegate platform setup to another user or group.
+If this is a brand-new organization and you are using the same admin account that created Cloud Identity / the organization and the billing account, you likely already have the necessary permissions and can treat this section as reference. These role assignments are mainly for when you delegate platform setup to another user or group.
 
 !!! danger
     The roles below are high-privilege.
@@ -126,11 +120,7 @@ On the Google Cloud organization:
 
 ### Google Cloud SDK (gcloud)
 
-!!! note
-    All CLI commands in later steps assume:
-    
-    - `gcloud` is installed and on your `PATH`.
-    - You are authenticated as your domain admin (or delegated platform admin).
+All CLI commands in later steps assume `gcloud` is installed and on your `PATH`, and you are authenticated as your domain admin (or delegated platform admin).
 
 Check if the SDK is installed:
 
@@ -164,9 +154,7 @@ This account will create and own the organization (at least initially).
 
 ### Create the GitHub Organization
 
-!!! note
-    You only need one GitHub organization for the platform, even if you add more services later.
-    All repositories and CI/CD pipelines will live under this org.
+You only need one GitHub organization for the platform, even if you add more services later. All repositories and CI/CD pipelines will live under this org.
 
 1. Go to the “New organization” page: <https://github.com/organizations/new>
 2. Choose the **Free** plan (you can upgrade later if needed).
