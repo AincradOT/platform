@@ -6,6 +6,11 @@
 variable "billing_account_id" {
   description = "Billing account ID (from 0-bootstrap outputs)."
   type        = string
+
+  validation {
+    condition     = can(regex("^[A-F0-9]{6}-[A-F0-9]{6}-[A-F0-9]{6}$", var.billing_account_id))
+    error_message = "billing_account_id must be in format ABCDEF-123456-ABCDEF"
+  }
 }
 
 variable "folder_id" {
@@ -16,11 +21,21 @@ variable "folder_id" {
 variable "shared_project_id" {
   description = "Shared services project ID (from 1-org outputs)."
   type        = string
+
+  validation {
+    condition     = can(regex("^[a-z][a-z0-9-]{3,28}[a-z0-9]$", var.shared_project_id))
+    error_message = "shared_project_id must be 5-30 characters, start with lowercase letter, contain only lowercase letters, numbers, and hyphens"
+  }
 }
 
 variable "dev_project_id" {
   description = "Unique project ID for development (e.g. sao-dev)."
   type        = string
+
+  validation {
+    condition     = can(regex("^[a-z][a-z0-9-]{3,28}[a-z0-9]$", var.dev_project_id))
+    error_message = "dev_project_id must be 5-30 characters, start with lowercase letter, contain only lowercase letters, numbers, and hyphens"
+  }
 }
 
 # ============================================================================
