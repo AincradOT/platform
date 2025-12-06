@@ -21,22 +21,22 @@ resource "google_folder" "prod" {
   parent       = "organizations/${var.org_id}"
 }
 
-# Central logging/monitoring project (acts as metrics scope)
-resource "google_project" "logging" {
-  project_id      = var.logging_project_id
-  name            = var.logging_project_name
+# Shared services project (logging, monitoring, service accounts, secrets)
+resource "google_project" "shared" {
+  project_id      = var.shared_project_id
+  name            = var.shared_project_name
   folder_id       = google_folder.shared.name
   billing_account = var.billing_account_id
   labels          = local.labels
 }
 
-resource "google_project_service" "logging_services" {
+resource "google_project_service" "shared_services" {
   for_each = toset([
     "logging.googleapis.com",
     "monitoring.googleapis.com",
     "serviceusage.googleapis.com",
   ])
-  project                    = google_project.logging.project_id
+  project                    = google_project.shared.project_id
   service                    = each.key
   disable_dependent_services = false
   disable_on_destroy         = false
@@ -54,17 +54,17 @@ resource "google_org_policy_policy" "skip_default_network" {
   }
 }
 
-# Optional viewer bindings for the logging project
+# Optional viewer bindings for the shared services project
 resource "google_project_iam_member" "logging_viewers_logging" {
   count   = var.gcp_logging_viewers_group == null ? 0 : 1
-  project = google_project.logging.project_id
+  project = google_project.shared.project_id
   role    = "roles/logging.viewer"
   member  = "group:${var.gcp_logging_viewers_group}"
 }
 
 resource "google_project_iam_member" "logging_viewers_monitoring" {
   count   = var.gcp_logging_viewers_group == null ? 0 : 1
-  project = google_project.logging.project_id
+  project = google_project.shared.project_id
   role    = "roles/monitoring.viewer"
   member  = "group:${var.gcp_logging_viewers_group}"
 }

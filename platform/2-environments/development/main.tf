@@ -3,7 +3,7 @@ module "dev_environment" {
 
   billing_account_id = var.billing_account_id
   folder_id          = var.folder_id
-  logging_project_id = var.logging_project_id
+  shared_project_id  = var.shared_project_id
   project_id         = var.dev_project_id
   environment_name   = "development"
 

@@ -13,8 +13,8 @@ variable "billing_account_id" {
   type        = string
 }
 
-variable "logging_project_id" {
-  description = "Unique project ID for central logging/monitoring (e.g., sao-shared-logging)."
+variable "shared_project_id" {
+  description = "Unique project ID for shared services (e.g., sao-shared)."
   type        = string
 }
 
@@ -52,10 +52,10 @@ variable "gcp_billing_admins_group" {
 # ============================================================================
 # These define the golden path. Override only for testing/development.
 
-variable "logging_project_name" {
-  description = "Display name for logging project."
+variable "shared_project_name" {
+  description = "Display name for shared services project."
   type        = string
-  default     = "Shared Logging"
+  default     = "Shared Services"
 }
 
 variable "labels" {

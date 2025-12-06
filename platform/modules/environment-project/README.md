@@ -18,12 +18,12 @@ module "dev_environment" {
 
   billing_account_id = "ABCDEF-123456-ABCDEF"
   folder_id          = "folders/123456789012"
-  logging_project_id = "sao-shared-logging"
+  shared_project_id  = "sao-shared"
   project_id         = "sao-dev"
   environment_name   = "development"
 
   project_display_name = "Development"
-  ci_service_account   = "dev-ci@sao-shared-logging.iam.gserviceaccount.com"
+  ci_service_account   = "dev-ci@sao-shared.iam.gserviceaccount.com"
 
   iam_bindings = {
     platform_devs = {
@@ -44,7 +44,7 @@ module "dev_environment" {
 |------|-------------|------|----------|---------|
 | `billing_account_id` | Billing account ID | `string` | Yes | - |
 | `folder_id` | Parent folder ID | `string` | Yes | - |
-| `logging_project_id` | Central logging project ID for metrics scope | `string` | Yes | - |
+| `shared_project_id` | Shared services project ID for metrics scope | `string` | Yes | - |
 | `project_id` | Unique project ID | `string` | Yes | - |
 | `environment_name` | Environment name for labeling (development, production, etc.) | `string` | Yes | - |
 | `project_display_name` | Display name for project | `string` | No | Same as `project_id` |

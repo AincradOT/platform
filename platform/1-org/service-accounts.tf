@@ -1,10 +1,10 @@
 # CI Service Accounts for GitHub Actions
 # These service accounts are used by CI pipelines to run terraform and manage infrastructure
-# Service accounts are created in the shared logging project
+# Service accounts are created in the shared services project
 
 # Platform CI service account - manages org-level resources and platform infrastructure
 resource "google_service_account" "platform_ci" {
-  project      = google_project.logging.project_id
+  project      = google_project.shared.project_id
   account_id   = "platform-ci"
   display_name = "Platform CI Service Account"
   description  = "Service account for GitHub Actions to manage platform infrastructure (org, folders, projects)"
@@ -12,7 +12,7 @@ resource "google_service_account" "platform_ci" {
 
 # Development CI service account - manages dev environment infrastructure
 resource "google_service_account" "dev_ci" {
-  project      = google_project.logging.project_id
+  project      = google_project.shared.project_id
   account_id   = "dev-ci"
   display_name = "Development CI Service Account"
   description  = "Service account for GitHub Actions to manage development environment infrastructure"
@@ -20,7 +20,7 @@ resource "google_service_account" "dev_ci" {
 
 # Production CI service account - manages prod environment infrastructure
 resource "google_service_account" "prod_ci" {
-  project      = google_project.logging.project_id
+  project      = google_project.shared.project_id
   account_id   = "prod-ci"
   display_name = "Production CI Service Account"
   description  = "Service account for GitHub Actions to manage production environment infrastructure"

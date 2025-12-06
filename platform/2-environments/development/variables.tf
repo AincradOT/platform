@@ -13,8 +13,8 @@ variable "folder_id" {
   type        = string
 }
 
-variable "logging_project_id" {
-  description = "Central logging project ID (from 1-org outputs)."
+variable "shared_project_id" {
+  description = "Shared services project ID (from 1-org outputs)."
   type        = string
 }
 

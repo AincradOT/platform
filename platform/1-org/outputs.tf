@@ -13,9 +13,9 @@ output "prod_folder_id" {
   value       = google_folder.prod.name
 }
 
-output "logging_project_id" {
-  description = "The central logging/monitoring project id."
-  value       = google_project.logging.project_id
+output "shared_project_id" {
+  description = "The shared services project id."
+  value       = google_project.shared.project_id
 }
 
 output "platform_ci_service_account" {

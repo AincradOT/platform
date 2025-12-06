@@ -13,9 +13,9 @@ org_id = "123456789012"
 # Billing account ID (same as used in 0-bootstrap)
 billing_account_id = "ABCDEF-123456-ABCDEF"
 
-# Unique project ID for central logging/monitoring
+# Unique project ID for shared services
 # This will be created in the 'shared' folder
-logging_project_id = "sao-shared-logging"
+shared_project_id = "sao-shared"
 
 # State bucket name from 0-bootstrap output
 # Used to grant CI service accounts access to terraform state

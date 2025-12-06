@@ -32,7 +32,7 @@ resource "google_project_service" "enabled" {
 
 # Attach project to central metrics scope
 resource "google_monitoring_monitored_project" "env" {
-  metrics_scope = "locations/global/metricsScopes/${var.logging_project_id}"
+  metrics_scope = "locations/global/metricsScopes/${var.shared_project_id}"
   name          = google_project.env.project_id
 }
 

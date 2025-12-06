@@ -15,17 +15,17 @@ Update `backends.tf` with your state bucket from `0-bootstrap` output.
 Create `terraform.tfvars`:
 
 ```hcl
-logging_project_id       = "sao-shared-logging"  # From 1-org output
+shared_project_id        = "sao-shared"  # From 1-org output
 cloudflare_zone_id       = "abc123def456"         # From Cloudflare dashboard
-dev_ci_service_account   = "dev-ci@sao-shared-logging.iam.gserviceaccount.com"
-prod_ci_service_account  = "prod-ci@sao-shared-logging.iam.gserviceaccount.com"
+dev_ci_service_account   = "dev-ci@sao-shared.iam.gserviceaccount.com"
+prod_ci_service_account  = "prod-ci@sao-shared.iam.gserviceaccount.com"
 ```
 
 **After terraform apply:** Populate API token secret:
 
 ```bash
 echo "your-cloudflare-api-token" | gcloud secrets versions add cloudflare-api-token \
-  --project=sao-shared-logging \
+  --project=sao-shared \
   --data-file=-
 ```
 
@@ -33,7 +33,7 @@ echo "your-cloudflare-api-token" | gcloud secrets versions add cloudflare-api-to
 
 | Name | Description | Required |
 |------|-------------|----------|
-| `logging_project_id` | Central logging project ID (from 1-org output) | Yes |
+| `shared_project_id` | Shared services project ID (from 1-org output) | Yes |
 | `cloudflare_zone_id` | Cloudflare zone ID from dashboard | Yes |
 | `dev_ci_service_account` | Dev CI service account email (from 1-org output) | Yes |
 | `prod_ci_service_account` | Prod CI service account email (from 1-org output) | Yes |
@@ -61,7 +61,7 @@ Applications read the token and manage their own DNS:
 # In application repository
 data "google_secret_manager_secret_version" "cloudflare_token" {
   secret  = "cloudflare-api-token"
-  project = var.logging_project_id
+  project = var.shared_project_id
 }
 
 provider "cloudflare" {

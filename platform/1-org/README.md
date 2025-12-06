@@ -5,7 +5,7 @@ Creates organizational structure and shared services.
 ## What this creates
 
 - Three top-level folders: `shared`, `dev`, `prod`
-- Central logging/monitoring project in `shared` folder
+- Shared services project in `shared` folder (logging, monitoring, service accounts, secrets)
 - CI service accounts for GitHub Actions (platform, dev, prod)
 - Org policy to prevent default VPC creation
 - Optional IAM bindings for logging viewers
@@ -19,8 +19,8 @@ Create `terraform.tfvars`:
 ```hcl
 org_id                     = "123456789012"
 billing_account_id         = "ABCDEF-123456-ABCDEF"
-logging_project_id         = "sao-shared-logging"
-logging_project_name       = "Shared Logging"
+shared_project_id          = "sao-shared"
+shared_project_name        = "Shared Services"
 state_bucket_name          = "sao-tfstate"  # From 0-bootstrap output
 gcp_logging_viewers_group  = "logging-viewers@example.com"
 gcp_org_admins_group       = "platform-admins@example.com"
@@ -33,8 +33,8 @@ gcp_billing_admins_group   = "billing-admins@example.com"
 |------|-------------|----------|
 | `org_id` | GCP organization ID | Yes |
 | `billing_account_id` | Billing account ID | Yes |
-| `logging_project_id` | Unique project ID for central logging | Yes |
-| `logging_project_name` | Display name for logging project | No (default: "Shared Logging") |
+| `shared_project_id` | Unique project ID for shared services | Yes |
+| `shared_project_name` | Display name for shared services project | No (default: "Shared Services") |
 | `state_bucket_name` | GCS state bucket name (from `0-bootstrap` output) for CI service account IAM | No |
 | `gcp_logging_viewers_group` | Group email for logging read access | No |
 | `gcp_org_admins_group` | Group email for org-level project creation | No |
@@ -46,7 +46,7 @@ gcp_billing_admins_group   = "billing-admins@example.com"
 - `shared_folder_id` - Shared folder ID
 - `dev_folder_id` - Development folder ID
 - `prod_folder_id` - Production folder ID
-- `logging_project_id` - Central logging project ID
+- `shared_project_id` - Shared services project ID
 - `platform_ci_service_account` - Platform CI service account email
 - `dev_ci_service_account` - Development CI service account email
 - `prod_ci_service_account` - Production CI service account email

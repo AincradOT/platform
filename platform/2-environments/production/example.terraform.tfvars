@@ -14,9 +14,9 @@ billing_account_id = "ABCDEF-123456-ABCDEF"
 # Run: terraform -chdir=platform/1-org output prod_folder_id
 folder_id = "folders/123456789012"
 
-# Central logging project ID from 1-org output
-# Run: terraform -chdir=platform/1-org output logging_project_id
-logging_project_id = "sao-shared-logging"
+# Shared services project ID from 1-org output
+# Run: terraform -chdir=platform/1-org output shared_project_id
+shared_project_id = "sao-shared"
 
 # Unique project ID for production environment
 prod_project_id = "sao-prod"
@@ -24,7 +24,7 @@ prod_project_id = "sao-prod"
 # Optional: Prod CI service account email from 1-org output
 # Run: terraform -chdir=platform/1-org output prod_ci_service_account
 # Uncomment to grant editor role on prod project:
-# prod_ci_service_account = "prod-ci@sao-shared-logging.iam.gserviceaccount.com"
+# prod_ci_service_account = "prod-ci@sao-shared.iam.gserviceaccount.com"
 
 # Optional: Platform viewers group email
 # Grants viewer role for read-only access to production

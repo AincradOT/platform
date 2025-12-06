@@ -77,8 +77,8 @@ terraform apply
 # List folders
 gcloud resource-manager folders list --organization=YOUR_ORG_ID
 
-# Verify logging project
-gcloud projects describe $(terraform output -raw logging_project_id)
+# Verify shared services project
+gcloud projects describe $(terraform output -raw shared_project_id)
 ```
 
 ```bash

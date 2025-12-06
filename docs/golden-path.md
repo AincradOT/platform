@@ -163,7 +163,7 @@ There is one repository for platform infrastructure, for example:
 This repository contains Terraform roots organized by lifecycle:
 
 * `0-bootstrap` - Creates bootstrap project and GCS state bucket (local backend initially)
-* `1-org` - Creates organizational folders and shared logging project
+* `1-org` - Creates organizational folders and shared services project
 * `2-environments` - Creates dev and production environment projects
 * (optional) `github` - GitHub organisation settings, core repositories, teams and branch protections
 
@@ -250,7 +250,7 @@ A single platform repository contains the following logical components.
 * creates a bootstrap project for platform administration
 * creates the [GCS state bucket](architecture/state-management.md) with [versioning](https://cloud.google.com/storage/docs/object-versioning) for terraform state
 * creates [organizational folders](https://cloud.google.com/resource-manager/docs/creating-managing-folders) (shared, dev, prod)
-* creates environment [projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects) and shared logging project
+* creates environment [projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects) and shared services project
 * attaches projects to central logging metrics scope
 
 **Already implemented:**

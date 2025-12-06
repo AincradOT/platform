@@ -18,10 +18,10 @@ Create `terraform.tfvars`:
 ```hcl
 billing_account_id           = "ABCDEF-123456-ABCDEF"
 folder_id                    = "folders/123456789012"  # From 1-org output
-logging_project_id           = "sao-shared-logging"
+shared_project_id            = "sao-shared"
 dev_project_id               = "sao-dev"
 dev_project_name             = "Development"
-dev_ci_service_account       = "dev-ci@sao-shared-logging.iam.gserviceaccount.com"  # From 1-org output
+dev_ci_service_account       = "dev-ci@sao-shared.iam.gserviceaccount.com"  # From 1-org output
 gcp_platform_devs_group      = "platform-devs@example.com"
 ```
 
@@ -31,7 +31,7 @@ gcp_platform_devs_group      = "platform-devs@example.com"
 |------|-------------|----------|
 | `billing_account_id` | Billing account ID | Yes |
 | `folder_id` | Parent folder ID (from `1-org` output) | Yes |
-| `logging_project_id` | Central logging project ID (from `1-org` output) | Yes |
+| `shared_project_id` | Shared services project ID (from `1-org` output) | Yes |
 | `dev_project_id` | Unique project ID for development | Yes |
 | `dev_project_name` | Display name for project | No (default: "Development") |
 | `dev_ci_service_account` | Dev CI service account email (from `1-org` output) for granting editor role | No |
