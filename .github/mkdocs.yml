@@ -89,19 +89,6 @@ nav:
       - Golden Path: golden-path.md
       - Requirements: requirements.md
 
-  - Setup:
-      - Overview: setup/index.md
-      - Platform Terraform: platform/README.md
-      - Terraform Roots:
-          - 0-bootstrap: platform/0-bootstrap/README.md
-          - 1-org: platform/1-org/README.md
-          - 2-environments/dev: platform/2-environments/development/README.md
-          - 2-environments/prod: platform/2-environments/production/README.md
-      - Runbooks:
-          - Bootstrap GitHub: setup/bootstrap-github-foundation.md
-          - Add Project Repo: setup/add-new-project-repo.md
-          - Onboard Developer: setup/onboard-developer.md
-
   - Architecture:
       - Overview: architecture/index.md
       - Platform: architecture/platforming.md
@@ -112,6 +99,15 @@ nav:
       - State Management: architecture/state-management.md
       - Disaster Recovery: architecture/disaster-recovery.md
       - Cost Model: architecture/cost-model.md
+
+  - Runbooks:
+      - Overview: runbooks/index.md
+      - Platform Bootstrap: platform/README.md
+      - Terraform Roots:
+          - 0-bootstrap: platform/0-bootstrap/README.md
+          - 1-org: platform/1-org/README.md
+          - 2-environments/dev: platform/2-environments/development/README.md
+          - 2-environments/prod: platform/2-environments/production/README.md
 
   - Contributing:
       - Overview: contributing/index.md
