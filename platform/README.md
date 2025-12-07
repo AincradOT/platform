@@ -22,11 +22,12 @@ platform/
 
 ## Prerequisites
 
-- GCP organization with billing account ([setup guide](/docs/requirements.md))
+- GCP organization with billing account ([setup guide](https://aincradot.github.io/platform/requirements/)
 - [`gcloud` CLI](https://cloud.google.com/sdk/docs/install) authenticated as org admin
-- [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.6.0
+- [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.5.7 (last MPL version before license change)
 
 **Additional Resources:**
+
 - [GCP IAM Overview](https://cloud.google.com/iam/docs/overview) - Understanding roles and permissions
 - [Terraform GCP Provider Docs](https://registry.terraform.io/providers/hashicorp/google/latest/docs) - Resource reference
 - [GCS Backend Configuration](https://developer.hashicorp.com/terraform/language/settings/backends/gcs) - State backend details
