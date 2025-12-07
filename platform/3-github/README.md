@@ -1,71 +1,82 @@
-# github
+# 3-github
 
-GitHub organization structure, teams, repositories, and branch protections.
+GitHub organization infrastructure managed as code.
 
 ## What this creates
 
-- Organization settings (2FA required, base permission: read)
-- Core teams: platform, game, web, readers with repository permissions
-- Core repositories: platform, game-infra, game-server, web-ui (ensures they exist)
-- Branch protection rules for main and prod branches
-- Standard labels: infra, ops, bug, enhancement, security
+- Organization-level secrets (GitHub App credentials synced from Secret Manager to GitHub)
+- Teams and team memberships
+- Organization settings and policies (excluding billing, which remains manual)
 
-**Drift tolerance:** Terraform bootstraps the structure but does not revert manual changes via GitHub UI. This allows operational flexibility while maintaining infrastructure as code for reproducibility.
+**Note:** This module automatically reads GitHub App credentials from GCP Secret Manager (stored by 1-org) for authentication. No manual credential configuration required.
+
+## Prerequisites
+
+1. Complete [Manual Setup](../../docs/requirements.md) including GitHub App creation
+2. GitHub App credentials stored in Secret Manager via `1-org` (step 9 in platform/README.md)
+3. GitHub App must be installed to your organization
+4. Complete `1-org` terraform apply to ensure secrets exist in Secret Manager
+
+## Additional Resources
+
+- [GitHub Terraform Provider](https://registry.terraform.io/providers/integrations/github/latest/docs) - Provider documentation
+- [GitHub Apps Authentication](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app) - App authentication guide
+- [GitHub Organization Settings](https://docs.github.com/en/organizations/managing-organization-settings) - Organization management
+
+!!! note
+    For step-by-step bootstrap instructions, see the [Platform README](../README.md).
+    This document provides reference information for the 3-github terraform root.
 
 ## Configuration
-
-Update `backends.tf` with your state bucket from `0-bootstrap` output.
 
 Create `terraform.tfvars`:
 
 ```hcl
-github_org_name = "aincradot"
-```
+# Shared services project ID (from 1-org output)
+shared_project_id = "aincrad-shared"
 
-**GitHub token:** Supplied via environment variable `GITHUB_TOKEN`, never committed to repository.
+# GitHub organization name
+github_organization = "aincradot"
+
+# Team configuration
+teams = {
+  developers = {
+    description = "Core developers"
+    members     = ["your-github-username"]
+  }
+  admins = {
+    description = "Organization administrators"
+    members     = ["your-github-username"]
+  }
+}
+
+# Organization settings (optional)
+# Note: billing_email is intentionally excluded - manage billing manually via GitHub UI
+org_settings = {
+  company     = "Your Company"
+  description = "Open Tibia game server infrastructure"
+}
+```
 
 ## Variables
 
 | Name | Description | Required |
 |------|-------------|----------|
-| `github_org_name` | GitHub organization name | Yes |
-| `github_token` | GitHub token (from environment variable) | Yes |
-| `core_repositories` | Core repositories to manage | No (default: ["platform", "game-infra", "game-server", "web-ui"]) |
-| `require_2fa` | Require 2FA for all members | No (default: true) |
-| `default_repository_permission` | Base permission for members | No (default: "read") |
+| `shared_project_id` | Shared services project ID where Secret Manager secrets are stored | Yes |
+| `github_organization` | GitHub organization name | Yes |
+| `teams` | Map of teams with members and descriptions | No (no default - must be provided) |
+| `org_settings` | Organization-wide settings (billing excluded) | No (default: empty) |
+| `default_branch` | Default branch name for repositories | No (default: "master") |
+| `enable_advanced_security` | Enable GitHub Advanced Security features | No (default: false) |
 
 ## Outputs
 
-- `organization_name` - GitHub organization name
-- `team_ids` - Map of team names to team IDs
-- `repository_names` - List of managed repository names
+- None currently exported
 
 ## Notes
 
-- **Drift tolerance:** Manual changes via GitHub UI are not reverted by terraform
-- **Team memberships:** Can be managed manually at first, or codified later if needed
-- **Repository creation:** Non-core repositories can be created manually as needed
-- **Branch protection:** Requires pull requests, status checks, disallows force pushes
-- **Token rotation:** Rotate GitHub token every 6 months
-- **Organization settings:** 2FA required, base permission is read (not write/admin)
-- **Goal:** Codify critical structure and guardrails, not micromanage everything
-
-### Team Permissions
-
-- `platform` team: maintain rights on `platform` repo, read on everything else
-- `game` team: write/maintain rights on `game-infra` and `game-server`
-- `web` team: write/maintain rights on `web-ui`
-- `readers` team: read-only access for visibility without write access
-
-### When to Use
-
-For teams < 10 people, manual GitHub management via UI may be more practical than terraform. Implement when:
-- Team grows beyond 5-10 developers
-- Manual management becomes operational overhead
-- Need for drift detection and reproducible organization structure
-
----
-
-## Implementation Status
-
-**Not yet implemented.** See `TODO.md` for technical and design requirements.
+- **Automatic authentication**: GitHub App credentials are read from Secret Manager automatically - no manual PEM file handling required
+- **Secrets module**: Syncs GitHub App credentials from GCP Secret Manager to GitHub organization secrets for CI/CD
+- **Teams module**: Creates teams with members and permissions
+- **Billing exclusion**: `billing_email` in org_settings is intentionally optional and should be managed manually via GitHub UI
+- **Secret Manager dependency**: Requires Secret Manager secrets created by `1-org` terraform root

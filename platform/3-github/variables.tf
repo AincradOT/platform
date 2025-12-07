@@ -6,29 +6,19 @@
 # appropriate. These variables are passed down to the respective modules.
 # ====================================================================
 
-variable "github_app_id" {
-  description = "GitHub App ID used for authentication"
+variable "shared_project_id" {
+  description = "Shared services project ID where Secret Manager secrets are stored (from 1-org output)"
   type        = string
-  default     = ""
-}
 
-variable "github_app_installation_id" {
-  description = "GitHub App Installation ID for the target organization"
-  type        = string
-  default     = ""
-}
-
-variable "github_app_pem_file" {
-  description = "GitHub App private key in PEM format for authentication"
-  type        = string
-  sensitive   = true
-  default     = ""
+  validation {
+    condition     = can(regex("^[a-z][a-z0-9-]{3,28}[a-z0-9]$", var.shared_project_id))
+    error_message = "shared_project_id must be 5-30 characters, start with lowercase letter, contain only lowercase letters, numbers, and hyphens"
+  }
 }
 
 variable "github_organization" {
   description = "GitHub organization name where resources will be created"
   type        = string
-  default     = ""
 }
 
 variable "default_branch" {
@@ -46,7 +36,7 @@ variable "enable_advanced_security" {
 variable "org_settings" {
   description = "Organization-wide settings and policies"
   type = object({
-    billing_email                                  = string
+    billing_email                                  = optional(string)
     company                                        = optional(string)
     blog                                           = optional(string)
     email                                          = optional(string)
@@ -70,9 +60,7 @@ variable "org_settings" {
     dependency_graph_enabled_for_new_repositories  = optional(bool, true)
     secret_scanning_enabled_for_new_repositories   = optional(bool, false)
   })
-  default = {
-    billing_email = "qaush.gjokaj@gmail.com"
-  }
+  default = {}
 }
 
 variable "teams" {
@@ -83,14 +71,5 @@ variable "teams" {
     members     = optional(list(string), [])
     maintainers = optional(list(string), [])
   }))
-  default = {
-    developers = {
-      description = "Core devs"
-      members     = ["qaushinio", "jordanhoare"]
-    }
-    admins = {
-      description = "Organisation administrators & devs"
-      members     = ["qaushinio", "jordanhoare"]
-    }
-  }
+  # No default - must be provided in terraform.tfvars
 }

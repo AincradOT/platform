@@ -161,10 +161,23 @@ These principles drive the rest of the design.
 
 Platform responsibilities and project responsibilities are kept separate.
 
-* The platform layer owns the organisation shape, shared state and CI identities.
-* Application and service repositories own their own infrastructure inside the boundaries the platform defines.
+**Platform layer owns:**
+* Organization structure (folders, projects)
+* Shared state bucket and CI identities
+* Secret Manager API enablement
+* GitHub organization settings (optional)
+
+**Application repositories own:**
+* Application-specific compute resources (VMs, containers)
+* Database infrastructure (Cloud SQL instances, self-hosted databases)
+* Backup buckets for application data
+* DNS records for their services
+* Application secrets (created in Secret Manager)
+* Application-specific networking and storage
 
 This reduces blast radius and stops every repo from becoming a second platform implementation.
+
+The platform provides projects and Secret Manager API enablement. Applications provision their own databases, backup buckets, and manage the complete lifecycle including credentials and retention policies.
 
 ### Single platform repository
 

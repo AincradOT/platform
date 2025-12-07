@@ -21,7 +21,7 @@ shared_project_id = "aincrad-shared"
 # Used to grant CI service accounts access to terraform state
 state_bucket_name = "aincrad-tfstate"
 
-cloudflare_api_token = "YOUR_CLOUDFLARE_API_TOKEN"
+cloudflare_api_token = "abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"  # Replace with your actual token
 
 # GitHub App credentials for dual storage (GitHub org secrets + GCP Secret Manager)
 # Only needed for initial bootstrap to sync to Secret Manager

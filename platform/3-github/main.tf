@@ -15,15 +15,35 @@ terraform {
       source  = "integrations/github"
       version = "~> 6.0"
     }
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 5.0"
+    }
   }
 }
 
-# Configure the GitHub Provider using GitHub App
+# Read GitHub App credentials from Secret Manager
+data "google_secret_manager_secret_version" "github_app_id" {
+  project = var.shared_project_id
+  secret  = "github-app-id"
+}
+
+data "google_secret_manager_secret_version" "github_app_installation_id" {
+  project = var.shared_project_id
+  secret  = "github-app-installation-id"
+}
+
+data "google_secret_manager_secret_version" "github_app_private_key" {
+  project = var.shared_project_id
+  secret  = "github-app-private-key"
+}
+
+# Configure the GitHub Provider using GitHub App credentials from Secret Manager
 provider "github" {
   app_auth {
-    id              = var.github_app_id
-    installation_id = var.github_app_installation_id
-    pem_file        = var.github_app_pem_file
+    id              = data.google_secret_manager_secret_version.github_app_id.secret_data
+    installation_id = data.google_secret_manager_secret_version.github_app_installation_id.secret_data
+    pem_file        = data.google_secret_manager_secret_version.github_app_private_key.secret_data
   }
   owner = var.github_organization
 }
@@ -34,9 +54,9 @@ data "github_organization" "org" {
 }
 
 data "github_app_token" "installation" {
-  app_id          = var.github_app_id
-  installation_id = var.github_app_installation_id
-  pem_file        = var.github_app_pem_file
+  app_id          = data.google_secret_manager_secret_version.github_app_id.secret_data
+  installation_id = data.google_secret_manager_secret_version.github_app_installation_id.secret_data
+  pem_file        = data.google_secret_manager_secret_version.github_app_private_key.secret_data
 }
 
 # Common repository settings shared across all repositories
@@ -86,7 +106,7 @@ module "teams" {
 # Secrets Module
 module "secrets" {
   source                     = "./modules/secrets"
-  github_app_id              = var.github_app_id
-  github_app_installation_id = var.github_app_installation_id
-  github_app_pem_file        = var.github_app_pem_file
+  github_app_id              = data.google_secret_manager_secret_version.github_app_id.secret_data
+  github_app_installation_id = data.google_secret_manager_secret_version.github_app_installation_id.secret_data
+  github_app_pem_file        = data.google_secret_manager_secret_version.github_app_private_key.secret_data
 }

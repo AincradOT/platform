@@ -42,6 +42,8 @@ See the complete [Manual Setup Guide](https://aincradot.github.io/platform/requi
 
 ## Bootstrap procedure
 
+**Time estimate**: ~30-45 minutes for complete bootstrap (assumes prerequisites completed)
+
 ### 1. Authenticate
 
 ```bash
@@ -93,12 +95,23 @@ gcloud auth application-default set-quota-project $(terraform -chdir=platform/0-
 
 The bootstrap state is initially stored locally. Migrate it to GCS for consistency.
 
-Edit `platform/0-bootstrap/backends.tf` and uncomment/replace the `terraform` block with GCS backend. Update the `bucket` name:
+Edit `platform/0-bootstrap/backends.tf` and uncomment the GCS backend block:
 
+**Before (commented out):**
+```hcl
+# terraform {
+#   backend "gcs" {
+#     bucket = "your-state-bucket-name"
+#     prefix = "terraform/bootstrap"
+#   }
+# }
+```
+
+**After (uncommented with your bucket name):**
 ```hcl
 terraform {
   backend "gcs" {
-    bucket = "your-state-bucket-name"  # From step 3 output
+    bucket = "aincrad-tfstate"  # Use your bucket name from step 3 output
     prefix = "terraform/bootstrap"
   }
 }
@@ -108,6 +121,7 @@ Migrate state:
 
 ```bash
 terraform -chdir=platform/0-bootstrap init -migrate-state
+# Type 'yes' when prompted to copy state from local to GCS
 ```
 
 Type `yes` when prompted. If migration fails, see [0-bootstrap README](0-bootstrap/README.md) for troubleshooting.
@@ -124,9 +138,9 @@ Update with your values. The `state_bucket_name` should match the output from 0-
 
 ### 7. Enable required APIs
 
-**Why:** The Organization Policy API is required to manage organization policies (such as skipping default network creation).
+**Why:** Terraform uses Application Default Credentials (ADC) which bill API calls to the quota project. Even though `1-org` creates resources at the organization level, these APIs must be enabled in the bootstrap project (the quota project) for the API calls to succeed.
 
-Enable the API in the bootstrap project:
+Enable the APIs in the bootstrap project:
 
 ```bash
 gcloud services enable orgpolicy.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
@@ -166,7 +180,7 @@ gcloud projects describe $(terraform -chdir=platform/1-org output -raw shared_pr
     API credentials (GitHub App, Cloudflare) are stored in GCP Secret Manager.
     Platform and application modules will read from Secret Manager to manage infrastructure.
 
-Add the credentials to `platform/1-org/terraform.tfvars` using the values you noted during [manual setup](https://aincradot.github.io/platform/requirements):
+Add the credentials to `platform/1-org/terraform.tfvars` using the values you noted during [manual setup](../docs/requirements.md):
 
 ```hcl
 # GitHub App credentials (use values from manual setup)
@@ -308,10 +322,52 @@ Delete local key files immediately:
 rm *-ci-key.json
 ```
 
+### 12. Deploy GitHub Organization Infrastructure (Optional)
+
+!!! note
+    This step is optional. For small teams (<10 people), manual GitHub management via UI may be more practical.
+    Deploy this when you need reproducible GitHub org structure or as team grows.
+
+Copy and edit the example file:
+
+```bash
+cp platform/3-github/example.terraform.tfvars platform/3-github/terraform.tfvars
+```
+
+Edit `terraform.tfvars` with:
+- `shared_project_id` (from step 8 output)
+- `github_organization` (your GitHub organization name)
+- `teams` (your team members)
+- `org_settings` (optional - exclude `billing_email`, manage billing manually via GitHub UI)
+
+See [3-github README](3-github/README.md) for variable details.
+
+```bash
+terraform -chdir=platform/3-github init
+terraform -chdir=platform/3-github apply
+```
+
+**Verify GitHub organization settings:**
+- Check organization secrets exist: `https://github.com/organizations/yourorg/settings/secrets/actions`
+- Verify teams created: `https://github.com/orgs/yourorg/teams`
+
+!!! note
+    GitHub App credentials are automatically read from Secret Manager (created in step 9). No manual PEM file configuration required.
+
 ## State management
 
 - `0-bootstrap` uses local backend initially
 - After bootstrap, migrate to GCS backend
 - `1-org` and `2-environments` use GCS backend with separate prefixes
+
+!!! warning "No state locking"
+    GCS does NOT provide native state locking. To avoid state corruption:
+    
+    - **Only one person should run terraform at a time**
+    - Coordinate terraform runs via team chat before applying changes
+    - CI workflows run sequentially per repository (GitHub Actions queues jobs)
+    - If you encounter "state locked" errors, wait for the other operation to complete
+    
+    For small teams (3-10 developers) running terraform sequentially, this is acceptable. If concurrent applies become necessary, consider migrating to Terraform Cloud (free tier) or AWS S3 with DynamoDB locking.
 
 See each terraform root's README for detailed configuration.
