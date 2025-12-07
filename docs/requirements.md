@@ -365,7 +365,145 @@ You'll need three values from the GitHub App you just created:
 
 !!! note
     During the bootstrap procedure (after deploying `platform/1-org`), you'll upload these credentials to GCP Secret Manager.
-    See the [Platform Bootstrap](../platform/README.md) guide for the complete procedure.
+    See the [Platform Bootstrap](platform/README.md) guide for the complete procedure.
+
+See: [Installing GitHub Apps](https://docs.github.com/en/apps/using-github-apps/installing-your-own-github-app)
+
+---
+
+At this point you should have:
+
+- A GitHub organization with at least one **Owner**
+- A single `platform` repository under that organization
+- GitHub Actions enabled and ready for your infrastructure and application pipelines
+- A GitHub App with the private key for Terraform automation
+leave.
+    This is a **manual process** - GitHub Apps cannot be created via Terraform itself.
+
+The GitHub App will be used by Terraform to manage your organization's infrastructure as code, including repositories, teams, branch protection, and secrets.
+
+#### Why GitHub Apps vs Personal Access Tokens?
+
+- **Fine-grained permissions**: Only grant the exact permissions needed
+- **Organization-scoped**: Not tied to a specific user account
+- **Audit trail**: All actions appear as coming from the app, not an individual
+- **No expiration**: Unlike PATs, GitHub Apps don't expire after 1 year
+- **Revocable**: Can be uninstalled without affecting user accounts
+
+See: [GitHub Apps documentation](https://docs.github.com/en/apps/creating-github-apps/about-creating-github-apps/about-creating-github-apps)
+
+#### Create the App
+
+1. Navigate to your organization's GitHub Apps settings:
+   ```
+   https://github.com/organizations/YOUR-ORG-NAME/settings/apps
+   ```
+
+2. Click **New GitHub App**
+
+3. Configure basic information:
+   - **GitHub App name**: `terraform` (or `terraform-automation`)
+   - **Description**: `Terraform infrastructure management for GitHub organization`
+   - **Homepage URL**: `https://app.terraform.io` (or your internal docs URL)
+   - **Webhook**: ❌ Uncheck "Active" (Terraform doesn't need webhooks)
+
+4. Set **Repository permissions** (these allow managing individual repositories):
+   - **Actions**: Read & Write
+   - **Administration**: Read & Write (required for repository settings, branch protection)
+   - **Contents**: Read & Write
+   - **Environments**: Read & Write
+   - **Metadata**: Read (automatically required)
+   - **Pages**: Read & Write
+   - **Pull requests**: Read & Write
+   - **Secrets**: Read & Write
+   - **Variables**: Read & Write
+   - **Workflows**: Read & Write
+
+5. Set **Organization permissions** (these allow managing the organization itself):
+   - **Administration**: Read & Write (for org settings)
+   - **Members**: Read & Write (for team/member management)
+   - **Secrets**: Read & Write (for organization secrets)
+   - **Self-hosted runners**: Read & Write (if using self-hosted runners)
+
+6. Set **Where can this GitHub App be installed?**
+   - Select **Only on this account** (your organization name)
+
+7. Click **Create GitHub App**
+
+!!! warning
+    These permissions are extensive by design - they allow Terraform to manage your entire GitHub organization as code.
+    Only authorized platform administrators should have access to the private key.
+
+See: [GitHub Apps permissions](https://docs.github.com/en/apps/creating-github-apps/setting-permissions-for-github-apps/choosing-permissions-for-a-github-app)
+
+#### Generate and Secure the Private Key
+
+1. After creating the app, scroll to the **Private keys** section
+2. Click **Generate a private key**
+3. A `.pem` file will download (e.g., `terraform.2024-12-07.private-key.pem`)
+4. **Store this file securely** - you'll need it for Terraform authentication
+
+!!! danger
+    The private key cannot be recovered if lost. You'll need to generate a new one.
+    Never commit this file to version control. Add `*.pem` to your `.gitignore`.
+
+5. Note the **App ID** at the top of the page (e.g., `123456`)
+
+#### Install the App to Your Organization
+
+1. In the left sidebar, click **Install App**
+2. Click **Install** next to your organization name
+3. Choose **All repositories** (recommended) or select specific repos
+4. Click **Install**
+
+5. After installation, note the **Installation ID** from the URL:
+   ```
+   https://github.com/organizations/YOUR-ORG/settings/installations/12345678
+                                                                      ^^^^^^^^^
+                                                                      Installation ID
+   ```
+
+#### Store Credentials for Terraform
+
+You'll need three values for Terraform:
+- **App ID**: From the app settings page
+- **Installation ID**: From the installation URL
+- **Private key (PEM file)**: The downloaded `.pem` file
+
+These will be configured in `platform/3-github/terraform.tfvars` during the bootstrap procedure.
+
+See: [Installing GitHub Apps](https://docs.github.com/en/apps/using-github-apps/installing-your-own-github-app)
+
+---
+
+At this point you should have:
+
+- A GitHub organization with at least one **Owner**
+- A single `platform` repository under that organization
+- GitHub Actions enabled and ready for your infrastructure and application pipelines
+- A GitHub App with the private key for Terraform automation
+
+
+1. In the left sidebar, click **Install App**
+2. Click **Install** next to your organization name
+3. Choose **All repositories** (recommended) or select specific repos
+4. Click **Install**
+
+5. After installation, note the **Installation ID** from the URL:
+   ```
+   https://github.com/organizations/YOUR-ORG/settings/installations/12345678
+                                                                      ^^^^^^^^^
+                                                                      Installation ID
+   ```
+
+#### Store Credentials for Terraform
+
+You'll need three values for Terraform:
+- **App ID**: From the app settings page
+- **Installation ID**: From the installation URL
+- **Private key (PEM file)**: The downloaded `.pem` file
+
+These will be configured in `platform/3-github/terraform.tfvars` during the bootstrap procedure.
 
 See: [Installing GitHub Apps](https://docs.github.com/en/apps/using-github-apps/installing-your-own-github-app)
 

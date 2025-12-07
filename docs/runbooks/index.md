@@ -20,17 +20,6 @@ Follow the [Platform README](../platform/README.md) for the complete step-by-ste
 - Verification steps
 - CI service account key generation
 
-## Terraform roots
-
-Each terraform root has its own README with configuration details:
-
-- [platform/](../platform/README.md) - Overview and bootstrap procedure
-- [0-bootstrap/](../platform/0-bootstrap/README.md) - Bootstrap project and state bucket
-- [1-org/](../platform/1-org/README.md) - Organizational folders and logging
-- [2-environments/development/](../platform/2-environments/development/README.md) - Dev environment
-- [2-environments/production/](../platform/2-environments/production/README.md) - Prod environment
-
-
 ## After bootstrap
 
 Application repos consume the platform - see [Golden Path](../golden-path.md) for patterns.

@@ -81,7 +81,7 @@ gsutil versioning get gs://$(terraform -chdir=platform/0-bootstrap output -raw s
 
 ### 4. Set quota project for ADC
 
-**Why:** Application Default Credentials need a quota project for API calls.
+Application default credentials need a quota project for API calls.
 
 Set the bootstrap project as the quota project:
 
@@ -89,11 +89,9 @@ Set the bootstrap project as the quota project:
 gcloud auth application-default set-quota-project $(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
 ```
 
-This prevents "quota project not set" errors when terraform makes API calls.
-
 ### 5. Migrate bootstrap state to GCS
 
-**Why:** The bootstrap state is initially stored locally. Migrate it to GCS for consistency.
+The bootstrap state is initially stored locally. Migrate it to GCS for consistency.
 
 Edit `platform/0-bootstrap/backends.tf` and uncomment/replace the `terraform` block with GCS backend. Update the `bucket` name:
 
@@ -112,7 +110,7 @@ Migrate state:
 terraform -chdir=platform/0-bootstrap init -migrate-state
 ```
 
-Type `yes` when prompted. If migration fails, see [0-bootstrap README](0-bootstrap/README.md#migrate-to-remote-state) for troubleshooting.
+Type `yes` when prompted. If migration fails, see [0-bootstrap README](0-bootstrap/README.md) for troubleshooting.
 
 ### 6. Configure 1-org
 
@@ -164,7 +162,7 @@ gcloud projects describe $(terraform -chdir=platform/1-org output -raw shared_pr
 
 ### 9. Add GitHub App credentials
 
-Add the GitHub App credentials from [Manual Setup](../docs/requirements.md#create-github-app-for-terraform) to your `platform/1-org/terraform.tfvars`:
+Add the GitHub App credentials from **Manual Setup** to your `platform/1-org/terraform.tfvars`:
 
 ```hcl
 # GitHub App credentials for platform automation

@@ -103,14 +103,14 @@ nav:
   - Runbooks:
       - Overview: runbooks/index.md
       - Platform Bootstrap: platform/README.md
-      - Terraform Roots:
+      - Platform Teardown: runbooks/teardown.md
+      - Terraform Modules:
           - 0-bootstrap: platform/0-bootstrap/README.md
           - 1-org: platform/1-org/README.md
           - 2-environments/dev: platform/2-environments/development/README.md
           - 2-environments/prod: platform/2-environments/production/README.md
-          # - github: platform/github/README.md  # Not yet implemented
-          # - cloudflare: platform/cloudflare/README.md  # Application-managed, not platform
-      - Platform Teardown: runbooks/teardown.md
+          - 3-github: platform/3-github/README.md
+          - 4-cloudflare: platform/4-cloudflare/README.md
 
   - Contributing:
       - Overview: contributing/index.md
