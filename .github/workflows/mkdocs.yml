@@ -46,6 +46,8 @@ jobs:
           mkdir -p docs/platform/1-org
           mkdir -p docs/platform/2-environments/development
           mkdir -p docs/platform/2-environments/production
+          mkdir -p docs/platform/3-github
+          mkdir -p docs/platform/4-cloudflare
           cp platform/README.md docs/platform/
           cp platform/0-bootstrap/README.md docs/platform/0-bootstrap/
           cp platform/1-org/README.md docs/platform/1-org/
