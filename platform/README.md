@@ -22,9 +22,10 @@ platform/
 
 ## Prerequisites
 
-- GCP organization with billing account ([setup guide](https://aincradot.github.io/platform/requirements/)
-- [`gcloud` CLI](https://cloud.google.com/sdk/docs/install) authenticated as org admin
+- GCP organization with billing account ([setup guide](https://aincradot.github.io/platform/requirements/))
+- [`gcloud` CLI](https://cloud.google.com/sdk/docs/install) installed
 - [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.5.7 (last MPL version before license change)
+- Organization admin permissions in GCP
 
 **Additional Resources:**
 
