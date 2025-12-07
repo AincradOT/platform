@@ -10,6 +10,24 @@ GitHub organization infrastructure managed as code.
 
 **Note:** This module automatically reads GitHub App credentials from GCP Secret Manager (stored by 1-org) for authentication. No manual credential configuration required.
 
+## Drift Tolerance
+
+**Bootstrap pattern:** This module creates initial GitHub organization structure but **will not override manual changes** made via the GitHub UI.
+
+**What this module does NOT manage:**
+- Repositories (existing repos are completely unaffected)
+- Branch protection rules
+- Repository settings
+- Organization webhooks
+
+**Full drift tolerance (all changes in UI are preserved):**
+- Organization settings (billing_email, company, blog, email, twitter_username, location, description)
+- Teams (name, description, privacy)
+- Team memberships (members, maintainers, roles)
+- Organization secrets (values, visibility)
+
+**Use case:** Run terraform once to bootstrap your GitHub organization structure, then manage everything through the GitHub UI without fear of terraform overwriting your changes. Subsequent `terraform apply` runs will only create missing resources, not modify existing ones.
+
 ## Prerequisites
 
 1. Complete [Manual Setup](../../docs/requirements.md) including GitHub App creation

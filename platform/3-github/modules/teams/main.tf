@@ -13,6 +13,14 @@ resource "github_team" "teams" {
   name        = each.key
   description = each.value.description
   privacy     = each.value.privacy
+
+  lifecycle {
+    ignore_changes = [
+      name,
+      description,
+      privacy
+    ]
+  }
 }
 
 # Assign team members with member role
@@ -30,6 +38,13 @@ resource "github_team_membership" "members" {
   team_id  = each.value.team_id
   username = each.value.username
   role     = each.value.role
+
+  lifecycle {
+    ignore_changes = [
+      username,
+      role
+    ]
+  }
 }
 
 # Assign team maintainers with maintainer role
@@ -47,4 +62,11 @@ resource "github_team_membership" "maintainers" {
   team_id  = each.value.team_id
   username = each.value.username
   role     = each.value.role
+
+  lifecycle {
+    ignore_changes = [
+      username,
+      role
+    ]
+  }
 }

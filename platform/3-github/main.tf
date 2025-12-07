@@ -1,5 +1,5 @@
 # ====================================================================
-# Main Terraform Configuration - GitHub Infrastructure Management
+# GitHub Infrastructure Management
 # This is the top-level configuration that orchestrates all GitHub
 # infrastructure modules including organization settings, teams,
 # repositories, secrets, and branch protection policies.
@@ -63,7 +63,7 @@ data "github_app_token" "installation" {
 locals {
   common_repo_settings = {
     topics                 = []
-    visibility             = "private" # TODO: switch to private
+    visibility             = "private"
     has_issues             = true
     has_projects           = false
     has_wiki               = false

@@ -1,35 +1,45 @@
 # ====================================================================
 # GitHub Organization Secrets Management Configuration
 # This module manages organization-level GitHub Actions secrets
-# including Renovate token for automated dependency updates and
-# GitHub Container Registry (GHCR) token for private registry access.
+# including GitHub App ID, Installation ID, and Private Key (PEM)
 # These secrets are available to all repositories in the organization.
 # ====================================================================
 
-# Generate GitHub App token for organization-level operations
-data "github_app_token" "org" {
-  app_id          = var.github_app_id
-  installation_id = var.github_app_installation_id
-  pem_file        = var.github_app_pem_file
+resource "github_actions_organization_secret" "gh_app_id" {
+  secret_name     = "AINCRAD_APP_ID"
+  plaintext_value = var.github_app_id
+  visibility      = "all"
+
+  lifecycle {
+    ignore_changes = [
+      plaintext_value,
+      visibility
+    ]
+  }
 }
 
-# Organization-level Renovate token for automated dependency updates
-resource "github_actions_organization_secret" "renovate_token" {
-  secret_name     = "RENOVATE_TOKEN"
-  plaintext_value = data.github_app_token.org.token
+resource "github_actions_organization_secret" "gh_app_installation_id" {
+  secret_name     = "AINCRAD_APP_INSTALLATION_ID"
+  plaintext_value = var.github_app_installation_id
   visibility      = "all"
+
+  lifecycle {
+    ignore_changes = [
+      plaintext_value,
+      visibility
+    ]
+  }
 }
 
-# Organization-level GHCR token for private registry access
-resource "github_actions_organization_secret" "ghcr_token_private" {
-  secret_name     = "GHCR_TOKEN_PRIVATE"
-  plaintext_value = data.github_app_token.org.token
+resource "github_actions_organization_secret" "gh_app_pem" {
+  secret_name     = "AINCRAD_APP_PEM"
+  plaintext_value = var.github_app_pem_file
   visibility      = "all"
-}
 
-# Organization-level GitHub Pages token for  repository page deployments
-resource "github_actions_organization_secret" "pages_token" {
-  secret_name     = "PAGES_TOKEN"
-  plaintext_value = data.github_app_token.org.token
-  visibility      = "all"
+  lifecycle {
+    ignore_changes = [
+      plaintext_value,
+      visibility
+    ]
+  }
 }

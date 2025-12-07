@@ -28,6 +28,8 @@ teams = {
   }
 }
 
+default_branch = "master"
+
 # ============================================================================
 # Optional Variables
 # ============================================================================
@@ -40,7 +42,5 @@ teams = {
 # }
 
 # Default branch name for repositories
-# default_branch = "master"
-
 # Enable GitHub Advanced Security features
 # enable_advanced_security = false
