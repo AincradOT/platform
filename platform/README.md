@@ -249,7 +249,6 @@ Delete local key files immediately:
 rm *-ci-key.json
 ```
 
-
 ## State management
 
 - `0-bootstrap` uses local backend initially
