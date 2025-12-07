@@ -212,8 +212,168 @@ GitHub Actions will run the platform’s CI/CD pipelines from the `platform` rep
 3. If prompted, enable GitHub Actions for the organization.
 4. Add a simple workflow (e.g. a basic CI file) to confirm that workflows can run.
 
+### Create GitHub App for Terraform
+
+!!! note
+    GitHub Apps provide fine-grained, revocable access for automation tools like Terraform.
+    They are more secure than personal access tokens and don't expire when team members leave.
+    This is a **manual process** - GitHub Apps cannot be created via Terraform itself.
+
+The GitHub App will be used by Terraform to manage your organization's infrastructure as code, including repositories, teams, branch protection, and secrets.
+
+#### Why GitHub Apps vs Personal Access Tokens?
+
+- **Fine-grained permissions**: Only grant the exact permissions needed
+- **Organization-scoped**: Not tied to a specific user account
+- **Audit trail**: All actions appear as coming from the app, not an individual
+- **No expiration**: Unlike PATs, GitHub Apps don't expire after 1 year
+- **Revocable**: Can be uninstalled without affecting user accounts
+
+See: [GitHub Apps documentation](https://docs.github.com/en/apps/creating-github-apps/about-creating-github-apps/about-creating-github-apps)
+
+#### Create the App
+
+1. Navigate to your organization's GitHub Apps settings:
+   ```
+   https://github.com/organizations/YOUR-ORG-NAME/settings/apps
+   ```
+
+2. Click **New GitHub App**
+
+3. Configure the app with the following settings:
+
+   ```
+   GitHub App name: platform-automation
+   Description: Organization automation for GitHub and Terraform infrastructure
+   Homepage URL: https://github.com/YOUR-ORG-NAME
+
+   Webhook:
+   [ ] Active (leave unchecked)
+
+   Repository permissions:
+   Actions: Read & write
+   Actions variables: Read & write
+   Administration: Read & write
+   Checks: Read & write
+   Code (Contents): Read & write
+   Commit statuses: Read
+   Dependabot alerts: Read
+   Dependabot secrets: Read
+   Deployments: Read
+   Environments: Read & write
+   Issue fields: Read & write
+   Issue types: Read & write
+   Issues: Read & write
+   Metadata: Read
+   Packages: Read & write
+   Pages: Read & write
+   Pull requests: Read & write
+   Repository advisories: Read & write
+   Repository hooks: Read & write
+   Secret scanning alert dismissal requests: Read
+   Secret scanning alerts: Read & write
+   Secret scanning push protection bypass requests: Read
+   Secrets: Read & write
+   Security events: Read & write
+   Workflows: Read & write
+
+   Organization permissions:
+   Actions variables: Read & write
+   Administration: Read & write
+   Custom organization roles: Read & write
+   Custom repository roles: Read & write
+   Dependabot secrets: Read & write
+   Events: Read
+   Knowledge bases: Read & write
+   Members: Read & write
+   Organization administration: Read & write
+   Organization code scanning dismissal requests: Read
+   Organization custom properties for repositories: Read & write
+   Organization personal access token requests: Read & write
+   Organization personal access tokens: Read & write
+   Organization plan: Read
+   Organization private registries: Read & write
+   Organization projects: Read & write
+   Organization secrets: Read & write
+   Organization self hosted runners: Read & write
+   Organization user blocking: Read & write
+
+   Repository access:
+   (*) All repositories (applies to current and future repositories)
+
+   Where can this GitHub App be installed?
+   (*) Only on this account (YOUR-ORG-NAME)
+   ```
+
+4. Click **Create GitHub App**
+
+!!! warning
+    These permissions are extensive by design - they allow Terraform to manage your entire GitHub organization as code.
+    Only authorized platform administrators should have access to the private key.
+
+See: [GitHub Apps permissions](https://docs.github.com/en/apps/creating-github-apps/setting-permissions-for-github-apps/choosing-permissions-for-a-github-app)
+
+#### Generate and Secure the Private Key
+
+1. After creating the app, scroll to the **Private keys** section
+2. Click **Generate a private key**
+3. A `.pem` file will download (e.g., `terraform.2024-12-07.private-key.pem`)
+4. **Store this file securely** - you'll need it for Terraform authentication
+
+!!! danger
+    The private key cannot be recovered if lost. You'll need to generate a new one.
+    Never commit this file to version control. Add `*.pem` to your `.gitignore`.
+
+5. Note the **App ID** at the top of the page (e.g., `123456`)
+
+#### Install the App to Your Organization
+
+1. In the left sidebar, click **Install App**
+2. Click **Install** next to your organization name
+3. Choose **All repositories** (recommended) or select specific repos
+4. Click **Install**
+
+5. After installation, note the **Installation ID** from the URL:
+   ```
+   https://github.com/organizations/YOUR-ORG/settings/installations/12345678
+                                                                      ^^^^^^^^^
+                                                                      Installation ID
+   ```
+
+#### Secure the Credentials
+
+!!! danger
+    Keep these values secure until you complete the platform bootstrap procedure.
+    They will be uploaded to GCP Secret Manager after `platform/1-org` is deployed.
+
+You'll need three values from the GitHub App you just created:
+
+- **App ID**: From the app settings page (e.g., `123456`)
+- **Installation ID**: From the installation URL (e.g., `12345678`)
+- **Private key (PEM file)**: The downloaded `.pem` file (e.g., `platform-automation.2024-12-07.private-key.pem`)
+
+**Store these securely:**
+
+1. Move the `.pem` file to a secure location:
+   ```bash
+   mkdir -p ~/.config/github-apps
+   mv ~/Downloads/platform-automation.*.private-key.pem ~/.config/github-apps/
+   chmod 600 ~/.config/github-apps/*.pem
+   ```
+
+2. Note the App ID and Installation ID somewhere secure (password manager, encrypted notes, etc.)
+
+!!! note
+    During the bootstrap procedure (after deploying `platform/1-org`), you'll upload these credentials to GCP Secret Manager.
+    See the [Platform Bootstrap](../platform/README.md) guide for the complete procedure.
+
+See: [Installing GitHub Apps](https://docs.github.com/en/apps/using-github-apps/installing-your-own-github-app)
+
+---
+
 At this point you should have:
 
 - A GitHub organization with at least one **Owner**
 - A single `platform` repository under that organization
 - GitHub Actions enabled and ready for your infrastructure and application pipelines
+- A GitHub App with the private key for Terraform automation

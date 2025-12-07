@@ -83,7 +83,7 @@ gcloud billing accounts list
 | Team Size | Environments | Monthly Platform Cost |
 |-----------|--------------|----------------------|
 | 1-3 devs | dev, prod | $14-17 |
-| 3+ devs | dev, nonprod, prod | $28-35 |
+| 4+ devs | dev, staging, prod | $28-35 |
 
 ### VM/Application infrastructure costs
 

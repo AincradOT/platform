@@ -10,9 +10,18 @@ Creates organizational structure and shared services.
 - Org policy to prevent default VPC creation
 - Optional IAM bindings for logging viewers
 
-## Configuration
+## Additional Resources
 
-Update `backends.tf` with your state bucket from `0-bootstrap` output.
+- [GCP Organization Structure](https://cloud.google.com/resource-manager/docs/creating-managing-organization) - Organization and folder hierarchy
+- [Organization Policies](https://cloud.google.com/resource-manager/docs/organization-policy/overview) - Centralized policy management
+- [Service Accounts Best Practices](https://cloud.google.com/iam/docs/best-practices-service-accounts) - IAM for automation
+- [GCP Folders](https://cloud.google.com/resource-manager/docs/creating-managing-folders) - Organizing resources
+
+!!! note
+    For step-by-step bootstrap instructions, see the [Platform README](../README.md).
+    This document provides reference information for the 1-org terraform root.
+
+## Configuration
 
 Create `terraform.tfvars`:
 
@@ -25,6 +34,11 @@ state_bucket_name          = "aincrad-tfstate"  # From 0-bootstrap output
 gcp_logging_viewers_group  = "logging-viewers@example.com"
 gcp_org_admins_group       = "platform-admins@example.com"
 gcp_billing_admins_group   = "billing-admins@example.com"
+
+# GitHub App credentials (see docs/requirements.md for setup)
+github_app_id              = "123456"
+github_app_installation_id = "12345678"
+github_app_private_key     = file("~/.config/github-apps/platform-automation.2024-12-07.private-key.pem")
 ```
 
 ## Variables
@@ -40,6 +54,9 @@ gcp_billing_admins_group   = "billing-admins@example.com"
 | `gcp_org_admins_group` | Group email for org-level project creation | No |
 | `gcp_billing_admins_group` | Group email for billing admin | No |
 | `labels` | Resource labels | No |
+| `github_app_id` | GitHub App ID for Terraform automation | Yes |
+| `github_app_installation_id` | GitHub App Installation ID | Yes |
+| `github_app_private_key` | GitHub App private key (PEM file contents) | Yes |
 
 ## Outputs
 

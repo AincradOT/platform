@@ -89,7 +89,26 @@ variable "shared_project_name" {
 }
 
 variable "labels" {
-  description = "Additional labels to apply to created resources."
+  description = "Additional labels to apply to resources."
   type        = map(string)
   default     = {}
+}
+
+# GitHub App credentials for platform automation
+variable "github_app_id" {
+  description = "GitHub App ID for Terraform automation."
+  type        = string
+  sensitive   = false
+}
+
+variable "github_app_installation_id" {
+  description = "GitHub App Installation ID."
+  type        = string
+  sensitive   = false
+}
+
+variable "github_app_private_key" {
+  description = "GitHub App private key (PEM file contents)."
+  type        = string
+  sensitive   = true
 }

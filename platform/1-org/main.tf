@@ -34,6 +34,7 @@ resource "google_project_service" "shared_services" {
   for_each = toset([
     "logging.googleapis.com",
     "monitoring.googleapis.com",
+    "secretmanager.googleapis.com",
     "serviceusage.googleapis.com",
   ])
   project                    = google_project.shared.project_id
@@ -83,4 +84,54 @@ resource "google_billing_account_iam_member" "billing_admin" {
   billing_account_id  = var.billing_account_id
   role                = "roles/billing.admin"
   member              = "group:${var.gcp_billing_admins_group}"
+}
+
+# GitHub App credentials stored in Secret Manager
+# These are used by the 3-github terraform module to manage GitHub organization
+resource "google_secret_manager_secret" "github_app_id" {
+  project   = google_project.shared.project_id
+  secret_id = "github-app-id"
+
+  replication {
+    auto {}
+  }
+
+  depends_on = [google_project_service.shared_services]
+}
+
+resource "google_secret_manager_secret_version" "github_app_id" {
+  secret      = google_secret_manager_secret.github_app_id.id
+  secret_data = var.github_app_id
+}
+
+resource "google_secret_manager_secret" "github_app_installation_id" {
+  project   = google_project.shared.project_id
+  secret_id = "github-app-installation-id"
+
+  replication {
+    auto {}
+  }
+
+  depends_on = [google_project_service.shared_services]
+}
+
+resource "google_secret_manager_secret_version" "github_app_installation_id" {
+  secret      = google_secret_manager_secret.github_app_installation_id.id
+  secret_data = var.github_app_installation_id
+}
+
+resource "google_secret_manager_secret" "github_app_private_key" {
+  project   = google_project.shared.project_id
+  secret_id = "github-app-private-key"
+
+  replication {
+    auto {}
+  }
+
+  depends_on = [google_project_service.shared_services]
+}
+
+resource "google_secret_manager_secret_version" "github_app_private_key" {
+  secret      = google_secret_manager_secret.github_app_private_key.id
+  secret_data = var.github_app_private_key
 }

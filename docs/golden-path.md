@@ -128,7 +128,7 @@ There are four moving parts in this design:
 GCP is not objectively better than AWS or Azure in all cases. It is a good fit here because:
 
 * GCS provides inexpensive Terraform state storage with built-in versioning
-* State versioning is built-in; state locking requires coordination (acceptable for sequential small team workflows)
+* GCS does not support state locking - avoid concurrent applies
 * Secret Manager integrates cleanly with Terraform, CI and Ansible
 * Service account keys for CI are simpler than Workload Identity Federation for small teams
 * The organisation and project model is relatively simple for small teams
@@ -231,7 +231,7 @@ This platform design is deliberately portable and forkable:
 * [Terraform state](architecture/state-management.md) can be migrated to different backends ([S3](https://www.terraform.io/docs/language/settings/backends/s3.html), [Azure Storage](https://www.terraform.io/docs/language/settings/backends/azurerm.html), [Terraform Cloud](https://www.terraform.io/cloud)) with minimal changes
 * The folder structure and separation of concerns transfers directly to AWS (replace folders with [OUs](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_ous.html)) or Azure (replace with [management groups](https://docs.microsoft.com/en-us/azure/governance/management-groups/))
 
-The entire platform can be forked, re-parameterized, and deployed to a new organization in 2-3 hours. This makes the pattern:
+The entire platform can be forked, re-parameterized, and deployed to a new organization. This makes the pattern:
 
 * Easy to replicate for multiple Open Tibia communities
 * Recoverable if starting fresh after a catastrophic failure

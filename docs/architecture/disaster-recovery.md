@@ -129,9 +129,6 @@ If everything is lost (state, projects, bucket), here's the recovery order:
 5. Re-populate Secret Manager (values must be re-entered manually)
 6. Notify application teams to verify their state and infrastructure
 
-!!! note
-    Time estimate: 2-4 hours for platform rebuild, assuming no application data loss.
-
 ## Testing DR Procedures
 
 ### Quarterly drill

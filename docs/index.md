@@ -19,7 +19,7 @@ For the full rationale, see the [`Golden path`](golden-path.md) write-up.
 
 ### Pragmatic tradeoffs for cost/complexity
 
-- No native state locking (GCS limitation, mitigated by small team sequential workflows)
+- No state locking (GCS does not support this - avoid concurrent applies)
 - Service account keys with rotation instead of Workload Identity Federation (simpler ops)
 - Game servers exposed directly to internet (cost optimization, common in gaming industry)
 - Single region deployment (multi-region is enterprise-grade, not startup-grade)
@@ -51,9 +51,8 @@ This platform is designed to be forked and adapted for other organizations:
 - Suitable for other Open Tibia communities or similar small game server projects
 
 !!! warning
-    **Initial setup:** 2-3 hours for experienced engineers following the runbooks. Includes Cloud Identity, billing, domain setup, terraform bootstrapping, and CI configuration. Longer if debugging or learning.
-    
     **Prerequisites:** Solid understanding of Linux, Terraform, GCP IAM, and CI/CD required. Not for infrastructure beginners.
+    **Initial setup** includes Cloud Identity, billing, domain setup, terraform bootstrapping, and CI configuration.
 
 ## Scope
 

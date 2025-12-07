@@ -9,9 +9,18 @@ Creates production environment project.
 - Project attached to central logging metrics scope
 - Optional IAM bindings for platform viewers
 
-## Configuration
+## Additional Resources
 
-Update `backends.tf` with your state bucket from `0-bootstrap` output.
+- [Remote State Data Sources](https://developer.hashicorp.com/terraform/language/state/remote-state-data) - Consuming outputs from other roots
+- [GCP API Enablement](https://cloud.google.com/service-usage/docs/enable-disable) - Managing project APIs
+- [Secret Manager Overview](https://cloud.google.com/secret-manager/docs) - Application secrets management
+- [Cloud Monitoring Metrics Scopes](https://cloud.google.com/monitoring/settings) - Cross-project monitoring
+
+!!! note
+    For step-by-step bootstrap instructions, see the [Platform README](../../README.md).
+    This document provides reference information for the production terraform root.
+
+## Configuration
 
 Create `terraform.tfvars`:
 

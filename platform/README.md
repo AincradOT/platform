@@ -11,7 +11,7 @@ GCP organization and environment infrastructure for Open Tibia services.
 
 **Directory structure:**
 
-```
+```text
 platform/
   0-bootstrap/     # Bootstrap project and state bucket
   1-org/           # Organizational folders and shared services
@@ -135,7 +135,6 @@ gcloud services enable orgpolicy.googleapis.com --project=$(terraform -chdir=pla
 gcloud services enable cloudresourcemanager.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
 gcloud services enable cloudbilling.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
 gcloud services enable iam.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
-gcloud services enable cloudkms.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
 gcloud services enable servicenetworking.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
 ```
 
@@ -163,7 +162,39 @@ gcloud projects describe $(terraform -chdir=platform/1-org output -raw shared_pr
     Do not proceed if folders are not created or the shared services project does not exist.
     Review terraform output for errors and re-run `terraform apply` if needed.
 
-### 9. Configure and deploy environments
+### 9. Add GitHub App credentials
+
+Add the GitHub App credentials from [Manual Setup](../docs/requirements.md#create-github-app-for-terraform) to your `platform/1-org/terraform.tfvars`:
+
+```hcl
+# GitHub App credentials for platform automation
+github_app_id              = "123456"
+github_app_installation_id = "12345678"
+github_app_private_key     = file("~/.config/github-apps/platform-automation.2024-12-07.private-key.pem")
+```
+
+Then re-run terraform to create the secrets:
+
+```bash
+terraform -chdir=platform/1-org apply
+```
+
+**Verify secrets were created:**
+```bash
+gcloud secrets list --project=$(terraform -chdir=platform/1-org output -raw shared_project_id)
+```
+
+You should see:
+- `github-app-id`
+- `github-app-installation-id`
+- `github-app-private-key`
+
+**Clean up local PEM file:**
+```bash
+rm ~/.config/github-apps/platform-automation.*.private-key.pem
+```
+
+### 10. Configure and deploy environments
 
 Copy and edit example files:
 
@@ -215,7 +246,7 @@ gcloud services list --project=$(terraform -chdir=platform/2-environments/produc
     Do not proceed if the prod project does not exist or required APIs are not enabled.
     Check terraform output for errors.
 
-### 9. Configure CI Authentication
+### 11. Configure CI Authentication
 
 Generate service account keys:
 

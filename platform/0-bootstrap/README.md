@@ -25,62 +25,26 @@ Creates the GCP bootstrap project and GCS bucket for Terraform state.
    gcloud billing accounts list
    ```
 
-## Setup
+## Additional Resources
 
-1. Copy example tfvars file:
-   ```bash
-   cp platform/0-bootstrap/example.terraform.tfvars platform/0-bootstrap/terraform.tfvars
-   ```
-
-2. Edit `platform/0-bootstrap/terraform.tfvars` with your values.
-
-3. Initialize and apply:
-
-   ```bash
-   terraform -chdir=platform/0-bootstrap init
-   terraform -chdir=platform/0-bootstrap apply
-   ```
-
-4. Note the `state_bucket_name` output:
-
-   ```bash
-   terraform -chdir=platform/0-bootstrap output state_bucket_name
-   ```
-
-## Migrate to Remote State
-
-1. Edit `platform/0-bootstrap/backends.tf`:
-   - Uncomment the `terraform` block at the bottom of the file
-   - Update `bucket` with the state bucket name from output
-
-2. Migrate state (from repository root):
-   ```bash
-   terraform -chdir=platform/0-bootstrap init -migrate-state
-   ```
-   Type `yes` when prompted.
+- [GCS Bucket Versioning](https://cloud.google.com/storage/docs/object-versioning) - Understanding state versioning
+- [Terraform State Management](https://developer.hashicorp.com/terraform/language/state) - State concepts and best practices
+- [GCS Backend Configuration](https://developer.hashicorp.com/terraform/language/settings/backends/gcs) - Backend setup details
+- [GCP Project Creation](https://cloud.google.com/resource-manager/docs/creating-managing-projects) - Project lifecycle management
 
 !!! note
-    For fresh bootstrap, migration failure is low-risk. If migration fails:
-    
-    1. Check bucket name is correct in backends.tf
-    2. Verify bucket exists: `gsutil ls gs://YOUR-BUCKET-NAME`
-    3. Fix the issue and re-run: `terraform init -migrate-state`
-    4. If still failing, keep local state and migrate later after verifying bucket access
-    
-    The resources are newly created and easy to recreate if needed.
+    For step-by-step bootstrap instructions, see the [Platform README](../README.md).
+    This document provides reference information for the 0-bootstrap terraform root.
 
-## Configure Other Roots
+## Configuration
 
-Update the `bucket` value in:
-- `platform/1-org/backends.tf`
-- `platform/2-environments/development/backends.tf`
-- `platform/2-environments/production/backends.tf`
+Create `terraform.tfvars` with your values:
 
-Then initialize each root:
-```bash
-terraform -chdir=platform/1-org init
-terraform -chdir=platform/2-environments/development init
-terraform -chdir=platform/2-environments/production init
+```hcl
+org_id              = "123456789012"
+billing_account_id  = "ABCDEF-123456-ABCDEF"
+project_name        = "yourorg"
+state_bucket_name   = "yourorg-tfstate"
 ```
 
 ## Variables
