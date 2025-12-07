@@ -22,10 +22,17 @@ platform/
 
 ## Prerequisites
 
-- GCP organization with billing account ([setup guide](https://aincradot.github.io/platform/requirements/))
-- [`gcloud` CLI](https://cloud.google.com/sdk/docs/install) installed
+**Before starting the bootstrap, complete the manual setup:**
+- GCP organization with billing account
+- GitHub organization
+- Domain and DNS in Cloudflare
+- Organization-level IAM roles granted to your account
+
+See the complete [Manual Setup Guide](https://aincradot.github.io/platform/requirements/) for step-by-step instructions.
+
+**Local tools:**
+- [`gcloud` CLI](https://cloud.google.com/sdk/docs/install) installed and authenticated
 - [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.5.7 (last MPL version before license change)
-- Organization admin permissions in GCP
 
 **Additional Resources:**
 
@@ -52,7 +59,7 @@ cp platform/0-bootstrap/example.terraform.tfvars platform/0-bootstrap/terraform.
 
 Edit `terraform.tfvars` with your org ID, billing account, project name, and bucket name. See [0-bootstrap README](0-bootstrap/README.md) for variable details.
 
-### 3. Run terraform
+### 3. Run terraform for bootstrap
 
 ```bash
 terraform -chdir=platform/0-bootstrap init
@@ -72,11 +79,23 @@ gsutil versioning get gs://$(terraform -chdir=platform/0-bootstrap output -raw s
     Do not proceed to the next step if the bucket does not exist or versioning is not enabled.
     Fix the issue and re-run `terraform apply` before continuing.
 
-### 4. Migrate bootstrap state to GCS
+### 4. Set quota project for ADC
+
+**Why:** Application Default Credentials need a quota project for API calls.
+
+Set the bootstrap project as the quota project:
+
+```bash
+gcloud auth application-default set-quota-project $(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
+```
+
+This prevents "quota project not set" errors when terraform makes API calls.
+
+### 5. Migrate bootstrap state to GCS
 
 **Why:** The bootstrap state is initially stored locally. Migrate it to GCS for consistency.
 
-Edit `platform/0-bootstrap/backends.tf` and uncomment the `terraform` block with GCS backend. Update the `bucket` name:
+Edit `platform/0-bootstrap/backends.tf` and uncomment/replace the `terraform` block with GCS backend. Update the `bucket` name:
 
 ```hcl
 terraform {
@@ -95,7 +114,7 @@ terraform -chdir=platform/0-bootstrap init -migrate-state
 
 Type `yes` when prompted. If migration fails, see [0-bootstrap README](0-bootstrap/README.md#migrate-to-remote-state) for troubleshooting.
 
-### 5. Configure 1-org
+### 6. Configure 1-org
 
 Copy and edit the example file:
 
@@ -105,7 +124,7 @@ cp platform/1-org/example.terraform.tfvars platform/1-org/terraform.tfvars
 
 Update with your values. The `state_bucket_name` should match the output from 0-bootstrap. See [1-org README](1-org/README.md) for all available variables.
 
-### 6. Run terraform for 1-org
+### 7. Run terraform for 1-org
 
 ```bash
 terraform -chdir=platform/1-org init
@@ -125,7 +144,7 @@ gcloud projects describe $(terraform -chdir=platform/1-org output -raw shared_pr
     Do not proceed if folders are not created or the shared services project does not exist.
     Review terraform output for errors and re-run `terraform apply` if needed.
 
-### 7. Configure and deploy environments
+### 8. Configure and deploy environments
 
 Copy and edit example files:
 
@@ -177,7 +196,7 @@ gcloud services list --project=$(terraform -chdir=platform/2-environments/produc
     Do not proceed if the prod project does not exist or required APIs are not enabled.
     Check terraform output for errors.
 
-### 8. Configure CI Authentication
+### 9. Configure CI Authentication
 
 Generate service account keys:
 
@@ -257,12 +276,51 @@ Verify billing account access: `gcloud billing accounts list`
 
 ### Common mistakes
 
-1. Running terraform from wrong directory
-2. Not updating backend bucket names after bootstrap
-3. Applying roots out of order (must be: 0-bootstrap, 1-org, 2-environments)
-4. Missing folder_id from 1-org outputs in environment terraform.tfvars
-5. Not migrating bootstrap state before running 1-org
-6. Forgetting to authenticate with `gcloud auth application-default login`
+1. Not having organization-level IAM permissions before starting
+2. Not setting quota project after bootstrap
+3. Running terraform from wrong directory
+4. Not updating backend bucket names after bootstrap
+5. Applying roots out of order (must be: 0-bootstrap, 1-org, 2-environments)
+6. Missing folder_id from 1-org outputs in environment terraform.tfvars
+7. Not migrating bootstrap state before running 1-org
+8. Forgetting to authenticate with `gcloud auth application-default login`
+
+### Permission denied errors
+
+**Error**: `Permission 'resourcemanager.folders.create' denied`
+
+**Cause**: Account lacks organization-level permissions
+
+**Fix**:
+```bash
+# Get your organization ID
+gcloud organizations list
+
+# Have an org admin grant you Organization Admin role
+ORG_ID="your-org-id"
+USER_EMAIL=$(gcloud config get-value account)
+
+gcloud organizations add-iam-policy-binding $ORG_ID \
+  --member="user:$USER_EMAIL" \
+  --role="roles/resourcemanager.organizationAdmin"
+
+# Wait 2 minutes for IAM propagation
+sleep 120
+terraform -chdir=platform/1-org apply
+```
+
+**Error**: `API requires a quota project, which is not set by default`
+
+**Cause**: Application Default Credentials don't have a quota project configured
+
+**Fix**:
+```bash
+# Set bootstrap project as quota project
+gcloud auth application-default set-quota-project $(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
+
+# Retry the failed terraform command
+terraform -chdir=platform/1-org apply
+```
 
 ### Remote state data source errors
 

@@ -42,7 +42,9 @@ If any command fails, install or fix that tool before continuing.
 
 ### Domain Registration
 
-You only need one domain for the entire platform (e.g. `example.com`). Subdomains and DNS records are created later by automation.
+!!! note
+    You only need one domain for the entire platform (e.g. `example.com`).
+    Subdomains and DNS records are created later by automation.
 
 We use Cloudflare to manage DNS for the platform.
 
@@ -77,7 +79,9 @@ High-level steps:
    [https://console.cloud.google.com/](https://console.cloud.google.com/)
 4. Accept the terms and conditions.
 
-If you are new to Google Cloud and have never created a project before, the organization resource is created automatically a few minutes after you accept the terms in the console. Check the project/organization selector at the top of the console and confirm you see your domain listed as an organization.
+!!! note
+    If you are new to Google Cloud and have never created a project before, the organization resource is created automatically a few minutes after you accept the terms in the console.
+    Check the project/organization selector at the top of the console and confirm you see your domain listed as an organization.
 
 ### Set Up a Billing Account
 
@@ -94,13 +98,14 @@ Minimum steps:
 3. Add a payment method.
 4. Link your initial project to this billing account.
 
+
 ### Workspace / IAM Roles
 
-If this is a brand-new organization and you are using the same admin account that created Cloud Identity / the organization and the billing account, you likely already have the necessary permissions and can treat this section as reference. These role assignments are mainly for when you delegate platform setup to another user or group.
-
 !!! danger
-    The roles below are high-privilege.
-    Only grant them to trusted administrators or admin groups - never to general developers.
+    Even if you created the organization, you must explicitly grant these roles.
+    Google Cloud does not automatically give org creators all the permissions needed for bootstrap.
+    The roles below are high-privilege. Only grant them to trusted administrators or admin groups - never to general developers.
+
 
 Go to the [IAM admin page](https://console.cloud.google.com/iam-admin/):
 
@@ -110,17 +115,33 @@ For the user (or group) that will run the procedures in this document
 On the Google Cloud organization:
 
 * `roles/resourcemanager.organizationAdmin`
-* `roles/orgpolicy.policyAdmin`
 * `roles/resourcemanager.projectCreator`
 * `roles/resourcemanager.folderCreator`
 * `roles/resourcemanager.folderEditor`
-* `roles/resourcemanager.capabilities.update`
 * `roles/resourcemanager.lienModifier`
+* `roles/orgpolicy.policyAdmin`
 * `roles/securitycenter.admin`
+
+**Verify permissions were granted:**
+```bash
+# Get your org ID
+gcloud organizations list
+
+# Check your roles (replace with your org ID and email)
+gcloud organizations get-iam-policy YOUR_ORG_ID \
+  --flatten="bindings[].members" \
+  --filter="bindings.members:user:your-email@example.com"
+```
+
+You should see both `organizationAdmin` and `billing.user` in the output.
 
 ### Google Cloud SDK (gcloud)
 
-All CLI commands in later steps assume `gcloud` is installed and on your `PATH`, and you are authenticated as your domain admin (or delegated platform admin).
+!!! note
+    All CLI commands in later steps assume:
+    
+    - `gcloud` is installed and on your `PATH`.
+    - You are authenticated as your domain admin (or delegated platform admin).
 
 Check if the SDK is installed:
 
@@ -154,7 +175,9 @@ This account will create and own the organization (at least initially).
 
 ### Create the GitHub Organization
 
-You only need one GitHub organization for the platform, even if you add more services later. All repositories and CI/CD pipelines will live under this org.
+!!! note
+    You only need one GitHub organization for the platform, even if you add more services later.
+    All repositories and CI/CD pipelines will live under this org.
 
 1. Go to the “New organization” page: <https://github.com/organizations/new>
 2. Choose the **Free** plan (you can upgrade later if needed).

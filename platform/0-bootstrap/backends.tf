@@ -12,7 +12,7 @@
 #
 # 2. Note the output: state_bucket_name
 #
-# 3. Uncomment the backend block below
+# 3. Uncomment/replace the backend block below
 #
 # 4. Migrate state to GCS:
 #    terraform init -migrate-state
@@ -22,11 +22,9 @@
 #
 # ============================================================================
 
-# Uncomment after first apply to migrate to remote state:
-#
-# terraform {
-#   backend "gcs" {
-#     bucket = "aincrad-tfstate"  # Use actual bucket name from output
-#     prefix = "terraform/bootstrap"
-#   }
-# }
+terraform {
+  backend "gcs" {
+    bucket = "aincrad-tfstate"
+    prefix = "terraform/bootstrap"
+  }
+}
