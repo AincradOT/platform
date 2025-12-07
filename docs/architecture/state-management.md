@@ -45,7 +45,7 @@ roles/storage.objectViewer - (optional) audit/monitoring tools
 Each terraform root uses a unique prefix in the bucket:
 
 ```
-gs://sao-tfstate/
+gs://aincrad-tfstate/
 ├── terraform/bootstrap/           # bootstrap state
 ├── terraform/org/                 # organizational structure state
 ├── terraform/environments/dev/    # development environment
@@ -110,7 +110,7 @@ If state is corrupted or lost:
 
 1. Use GCS versioning to restore a previous version
    ```bash
-   gsutil cp gs://sao-tfstate/terraform/org/default.tfstate#<version> gs://sao-tfstate/terraform/org/default.tfstate
+   gsutil cp gs://aincrad-tfstate/terraform/org/default.tfstate#<version> gs://aincrad-tfstate/terraform/org/default.tfstate
    ```
 
 2. If no good version exists, rebuild state via `terraform import`

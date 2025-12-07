@@ -15,17 +15,17 @@ Update `backends.tf` with your state bucket from `0-bootstrap` output.
 Create `terraform.tfvars`:
 
 ```hcl
-shared_project_id        = "sao-shared"  # From 1-org output
+shared_project_id        = "aincrad-shared"  # From 1-org output
 cloudflare_zone_id       = "abc123def456"         # From Cloudflare dashboard
-dev_ci_service_account   = "dev-ci@sao-shared.iam.gserviceaccount.com"
-prod_ci_service_account  = "prod-ci@sao-shared.iam.gserviceaccount.com"
+dev_ci_service_account   = "dev-ci@aincrad-shared.iam.gserviceaccount.com"
+prod_ci_service_account  = "prod-ci@aincrad-shared.iam.gserviceaccount.com"
 ```
 
 **After terraform apply:** Populate API token secret:
 
 ```bash
 echo "your-cloudflare-api-token" | gcloud secrets versions add cloudflare-api-token \
-  --project=sao-shared \
+  --project=aincrad-shared \
   --data-file=-
 ```
 

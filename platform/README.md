@@ -385,7 +385,7 @@ Bucket names are globally unique. If someone else owns this name:
 
 ```bash
 # Try a different name
-state_bucket_name = "sao-tfstate-abc123"  # Add random suffix
+state_bucket_name = "aincrad-tfstate-abc123"  # Add random suffix
 ```
 
 #### Partial state corruption

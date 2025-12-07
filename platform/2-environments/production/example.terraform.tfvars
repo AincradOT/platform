@@ -13,10 +13,10 @@
 billing_account_id = "ABCDEF-123456-ABCDEF"
 
 # State bucket name from 0-bootstrap output (used to read 1-org remote state)
-state_bucket_name = "sao-tfstate"
+state_bucket_name = "aincrad-tfstate"
 
 # Unique project ID for production environment
-prod_project_id = "sao-prod"
+prod_project_id = "aincrad-prod"
 
 # ============================================================================
 # Optional Overrides
@@ -25,8 +25,8 @@ prod_project_id = "sao-prod"
 # Only uncomment if you need to override the remote state values.
 
 # folder_id = "folders/123456789012"
-# shared_project_id = "sao-shared"
-# prod_ci_service_account = "prod-ci@sao-shared.iam.gserviceaccount.com"
+# shared_project_id = "aincrad-shared"
+# prod_ci_service_account = "prod-ci@aincrad-shared.iam.gserviceaccount.com"
 
 # Optional: Platform viewers group email
 # Grants viewer role for read-only access to production

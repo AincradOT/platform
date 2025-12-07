@@ -26,7 +26,7 @@
 #
 # terraform {
 #   backend "gcs" {
-#     bucket = "sao-tfstate"  # Use actual bucket name from output
+#     bucket = "aincrad-tfstate"  # Use actual bucket name from output
 #     prefix = "terraform/bootstrap"
 #   }
 # }

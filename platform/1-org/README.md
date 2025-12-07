@@ -19,9 +19,9 @@ Create `terraform.tfvars`:
 ```hcl
 org_id                     = "123456789012"
 billing_account_id         = "ABCDEF-123456-ABCDEF"
-shared_project_id          = "sao-shared"
+shared_project_id          = "aincrad-shared"
 shared_project_name        = "Shared Services"
-state_bucket_name          = "sao-tfstate"  # From 0-bootstrap output
+state_bucket_name          = "aincrad-tfstate"  # From 0-bootstrap output
 gcp_logging_viewers_group  = "logging-viewers@example.com"
 gcp_org_admins_group       = "platform-admins@example.com"
 gcp_billing_admins_group   = "billing-admins@example.com"

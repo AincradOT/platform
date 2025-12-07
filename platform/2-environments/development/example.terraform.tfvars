@@ -12,10 +12,10 @@
 billing_account_id = "ABCDEF-123456-ABCDEF"
 
 # State bucket name from 0-bootstrap output (used to read 1-org remote state)
-state_bucket_name = "sao-tfstate"
+state_bucket_name = "aincrad-tfstate"
 
 # Unique project ID for development environment
-dev_project_id = "sao-dev"
+dev_project_id = "aincrad-dev"
 
 # ============================================================================
 # Optional Overrides
@@ -24,8 +24,8 @@ dev_project_id = "sao-dev"
 # Only uncomment if you need to override the remote state values.
 
 # folder_id = "folders/123456789012"
-# shared_project_id = "sao-shared"
-# dev_ci_service_account = "dev-ci@sao-shared.iam.gserviceaccount.com"
+# shared_project_id = "aincrad-shared"
+# dev_ci_service_account = "dev-ci@aincrad-shared.iam.gserviceaccount.com"
 
 # Optional: Platform developers group email
 # Grants compute.instanceAdmin.v1 role for managing VMs

@@ -22,7 +22,7 @@
 
 terraform {
   backend "gcs" {
-    bucket = "sao-tfstate"  # Update with actual bucket name from 0-bootstrap output
+    bucket = "aincrad-tfstate"  # Update with actual bucket name from 0-bootstrap output
     prefix = "terraform/environments/production"
   }
 }

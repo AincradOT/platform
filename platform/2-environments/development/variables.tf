@@ -31,7 +31,7 @@ variable "shared_project_id" {
 }
 
 variable "dev_project_id" {
-  description = "Unique project ID for development (e.g. sao-dev)."
+  description = "Unique project ID for development (e.g. aincrad-dev)."
   type        = string
 
   validation {

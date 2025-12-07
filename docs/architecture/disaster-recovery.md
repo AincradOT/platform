@@ -38,11 +38,11 @@ Application-specific DR (databases, VMs, application data) is the responsibility
 
 ```bash
 # List available versions
-gsutil ls -a gs://sao-tfstate/terraform/org/default.tfstate
+gsutil ls -a gs://aincrad-tfstate/terraform/org/default.tfstate
 
 # Restore specific version
-gsutil cp gs://sao-tfstate/terraform/org/default.tfstate#<version> \
-          gs://sao-tfstate/terraform/org/default.tfstate
+gsutil cp gs://aincrad-tfstate/terraform/org/default.tfstate#<version> \
+          gs://aincrad-tfstate/terraform/org/default.tfstate
 ```
 
 !!! note
@@ -64,7 +64,7 @@ Secret Manager keeps all versions of secrets. Accidentally overwritten secrets c
 
 ```bash
 # List secret versions
-gcloud secrets versions list secret-name --project=sao-shared
+gcloud secrets versions list secret-name --project=aincrad-shared
 
 # Access previous version
 gcloud secrets versions access <version> --secret=secret-name

@@ -17,8 +17,8 @@ Create `terraform.tfvars`:
 
 ```hcl
 billing_account_id = "ABCDEF-123456-ABCDEF"
-state_bucket_name  = "sao-tfstate"  # From 0-bootstrap output
-dev_project_id     = "sao-dev"
+state_bucket_name  = "aincrad-tfstate"  # From 0-bootstrap output
+dev_project_id     = "aincrad-dev"
 ```
 
 Values like `folder_id`, `shared_project_id`, and `dev_ci_service_account` are **automatically pulled from 1-org remote state**. You only need to override them if you need non-standard values.
@@ -28,8 +28,8 @@ Optional overrides:
 ```hcl
 # Only uncomment if you need to override remote state values
 # folder_id              = "folders/123456789012"
-# shared_project_id      = "sao-shared"
-# dev_ci_service_account = "dev-ci@sao-shared.iam.gserviceaccount.com"
+# shared_project_id      = "aincrad-shared"
+# dev_ci_service_account = "dev-ci@aincrad-shared.iam.gserviceaccount.com"
 # gcp_platform_devs_group = "platform-devs@example.com"
 ```
 

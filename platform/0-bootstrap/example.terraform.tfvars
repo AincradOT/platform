@@ -12,9 +12,9 @@ org_id = "123456789012"
 # Billing account ID (find at: https://console.cloud.google.com/billing)
 billing_account_id = "XXXXXX-YYYYYY-ZZZZZZ"
 
-# Project name (e.g., "sao")
-# This generates project_id: "sao-bootstrap"
-project_name = "sao"
+# Project name (e.g., "aincrad")
+# This generates project_id: "aincrad-bootstrap"
+project_name = "aincrad"
 
 # Globally-unique GCS bucket name for Terraform state
-state_bucket_name = "sao-tfstate"
+state_bucket_name = "aincrad-tfstate"

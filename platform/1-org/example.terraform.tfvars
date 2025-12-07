@@ -15,11 +15,11 @@ billing_account_id = "ABCDEF-123456-ABCDEF"
 
 # Unique project ID for shared services
 # This will be created in the 'shared' folder
-shared_project_id = "sao-shared"
+shared_project_id = "aincrad-shared"
 
 # State bucket name from 0-bootstrap output
 # Used to grant CI service accounts access to terraform state
-state_bucket_name = "sao-tfstate"
+state_bucket_name = "aincrad-tfstate"
 
 # Optional: Group emails for IAM bindings
 # Uncomment and set these if you have Google Workspace / Cloud Identity groups

@@ -24,7 +24,7 @@ variable "billing_account_id" {
 }
 
 variable "project_name" {
-  description = "Project name (e.g., sao). Used to generate project ID: {project_name}-bootstrap."
+  description = "Project name (e.g., aincrad). Used to generate project ID: {project_name}-bootstrap."
   type        = string
 
   validation {

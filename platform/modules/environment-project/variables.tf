@@ -18,7 +18,7 @@ variable "shared_project_id" {
 }
 
 variable "project_id" {
-  description = "Unique project ID for this environment (e.g. sao-dev)."
+  description = "Unique project ID for this environment (e.g. aincrad-dev)."
   type        = string
 }
 

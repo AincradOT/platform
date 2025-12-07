@@ -89,7 +89,7 @@ terraform -chdir=platform/2-environments/production init
 |------|-------------|----------|
 | `org_id` | GCP organization ID | Yes |
 | `billing_account_id` | Billing account ID | Yes |
-| `project_name` | Project name (e.g. `sao` generates project ID `sao-bootstrap`) | Yes |
+| `project_name` | Project name (e.g. `aincrad` generates project ID `aincrad-bootstrap`) | Yes |
 | `state_bucket_name` | GCS bucket name for state | Yes |
 | `location` | GCS bucket location (single region for cost optimization) | No (default: `europe-west3`) |
 | `labels` | Resource labels | No |

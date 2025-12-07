@@ -18,12 +18,12 @@ module "dev_environment" {
 
   billing_account_id = "ABCDEF-123456-ABCDEF"
   folder_id          = "folders/123456789012"
-  shared_project_id  = "sao-shared"
-  project_id         = "sao-dev"
+  shared_project_id  = "aincrad-shared"
+  project_id         = "aincrad-dev"
   environment_name   = "development"
 
   project_display_name = "Development"
-  ci_service_account   = "dev-ci@sao-shared.iam.gserviceaccount.com"
+  ci_service_account   = "dev-ci@aincrad-shared.iam.gserviceaccount.com"
 
   iam_bindings = {
     platform_devs = {

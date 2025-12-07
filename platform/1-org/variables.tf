@@ -24,7 +24,7 @@ variable "billing_account_id" {
 }
 
 variable "shared_project_id" {
-  description = "Unique project ID for shared services (e.g., sao-shared)."
+  description = "Unique project ID for shared services (e.g., aincrad-shared)."
   type        = string
 
   validation {
