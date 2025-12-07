@@ -150,3 +150,25 @@ resource "google_secret_manager_secret_version" "github_app_private_key" {
     ignore_changes = [secret_data]
   }
 }
+
+# Cloudflare API token in Secret Manager (for application infrastructure modules)
+resource "google_secret_manager_secret" "cloudflare_api_token" {
+  project   = google_project.shared.project_id
+  secret_id = "cloudflare-api-token"
+
+  replication {
+    auto {}
+  }
+
+  depends_on = [google_project_service.shared_services]
+}
+
+resource "google_secret_manager_secret_version" "cloudflare_api_token" {
+  count       = var.cloudflare_api_token != null && var.cloudflare_api_token != "" ? 1 : 0
+  secret      = google_secret_manager_secret.cloudflare_api_token.id
+  secret_data = var.cloudflare_api_token
+
+  lifecycle {
+    ignore_changes = [secret_data]
+  }
+}

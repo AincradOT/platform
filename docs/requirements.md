@@ -359,7 +359,93 @@ PEM file: ~/Downloads/platform-automation.2024-12-07.private-key.pem
 
 See: [Installing GitHub Apps](https://docs.github.com/en/apps/using-github-apps/installing-your-own-github-app) | [GitHub Organization Secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-an-organization)
 
----
+## Cloudflare
+
+### Create Cloudflare API Token
+
+!!! note
+    Cloudflare API tokens provide secure access for Terraform to manage DNS, routing, and application infrastructure.
+    This token will be used by the `4-cloudflare` module and application infrastructure modules.
+
+#### Why API Tokens vs API Keys?
+
+- **Fine-grained permissions**: Only grant the exact permissions needed
+- **Token-scoped**: Can be restricted to specific zones and resources
+- **Audit trail**: All actions logged with token identification
+- **Revocable**: Can be rotated without affecting other tokens
+- **No email/key pair**: More secure than legacy API keys
+
+See: [Cloudflare API Tokens](https://developers.cloudflare.com/fundamentals/api/get-started/create-token/)
+
+#### Create the Token
+
+1. Navigate to Cloudflare API Tokens:
+   ```
+   https://dash.cloudflare.com/profile/api-tokens
+   ```
+
+2. Click **Create Token**
+
+3. Choose **Create Custom Token**
+
+4. Configure token settings:
+
+   ```
+   Token name: terraform-platform
+
+   Permissions:
+   Account | Account Settings | Read
+   Account | Account Rulesets | Edit
+   Zone | DNS | Edit
+   Zone | Zone | Read
+   Zone | Zone Settings | Edit
+   Zone | Page Rules | Edit
+   Zone | Cache Purge | Purge
+   Zone | Workers Routes | Edit
+
+   Account Resources:
+   Include | All accounts
+
+   Zone Resources:
+   Include | All zones
+
+   IP Address Filtering:
+   (Optional - leave blank for access from anywhere)
+
+   TTL:
+   Start Date: (now)
+   End Date: (leave blank - never expire)
+   ```
+
+   !!! important "Use account-scoped token"
+       Create this as an **account-scoped token** (default), not a user-scoped token.
+       Account-scoped tokens survive user lifecycle changes and are Cloudflare's recommendation for automation.
+       For small projects, setting TTL to never expire is acceptable - the token is secured in GCP Secret Manager with IAM controls.
+
+5. Click **Continue to summary**
+
+6. Review permissions and click **Create Token**
+
+7. **Copy the token** - it will only be shown once
+
+#### Save Token for Bootstrap
+
+Save the API token securely:
+
+```bash
+# Save this somewhere secure (password manager, encrypted file, etc.)
+Cloudflare API Token: YOUR_API_TOKEN_HERE
+```
+
+!!! danger
+    The API token cannot be retrieved after initial creation. If lost, you'll need to create a new token.
+    Never commit this token to version control.
+
+!!! note
+    You'll use this token during platform bootstrap (step 9) to store in GCP Secret Manager.
+    Application and infrastructure modules will read from Secret Manager to manage Cloudflare resources.
+
+See: [Cloudflare API Token Permissions](https://developers.cloudflare.com/fundamentals/api/reference/permissions/)
 
 At this point you should have:
 
@@ -367,6 +453,7 @@ At this point you should have:
 - A single `platform` repository under that organization
 - GitHub Actions enabled and ready for your infrastructure and application pipelines
 - A GitHub App with the private key for Terraform automation
+- A Cloudflare API token for infrastructure management
 leave.
     This is a **manual process** - GitHub Apps cannot be created via Terraform itself.
 
@@ -463,8 +550,6 @@ You'll need three values for Terraform:
 These will be configured in `platform/3-github/terraform.tfvars` during the bootstrap procedure.
 
 See: [Installing GitHub Apps](https://docs.github.com/en/apps/using-github-apps/installing-your-own-github-app)
-
----
 
 At this point you should have:
 

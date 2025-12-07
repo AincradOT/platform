@@ -117,3 +117,12 @@ variable "github_app_private_key" {
   sensitive   = true
   default     = null
 }
+
+# Cloudflare API token for infrastructure management
+# Only required for initial bootstrap to populate GCP Secret Manager
+variable "cloudflare_api_token" {
+  description = "Cloudflare API token. Only needed for initial bootstrap to sync to Secret Manager."
+  type        = string
+  sensitive   = true
+  default     = null
+}

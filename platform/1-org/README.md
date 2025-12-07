@@ -35,7 +35,7 @@ gcp_logging_viewers_group  = "logging-viewers@example.com"
 gcp_org_admins_group       = "platform-admins@example.com"
 gcp_billing_admins_group   = "billing-admins@example.com"
 
-# GitHub App credentials (only for initial bootstrap - see platform/README.md step 9)
+# API credentials (only for initial bootstrap - see platform/README.md step 9)
 github_app_id              = "123456"
 github_app_installation_id = "12345678"
 github_app_private_key     = <<-EOT
@@ -43,6 +43,7 @@ github_app_private_key     = <<-EOT
 ...
 -----END RSA PRIVATE KEY-----
 EOT
+cloudflare_api_token       = "YOUR_CLOUDFLARE_API_TOKEN"
 ```
 
 ## Variables
@@ -61,6 +62,7 @@ EOT
 | `github_app_id` | GitHub App ID (for initial Secret Manager sync only) | No (default: null) |
 | `github_app_installation_id` | GitHub App Installation ID (for initial Secret Manager sync only) | No (default: null) |
 | `github_app_private_key` | GitHub App private key PEM contents (for initial Secret Manager sync only) | No (default: null) |
+| `cloudflare_api_token` | Cloudflare API token (for initial Secret Manager sync only) | No (default: null) |
 
 ## Outputs
 

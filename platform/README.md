@@ -160,13 +160,13 @@ gcloud projects describe $(terraform -chdir=platform/1-org output -raw shared_pr
     Do not proceed if folders are not created or the shared services project does not exist.
     Review terraform output for errors and re-run `terraform apply` if needed.
 
-### 9. Store GitHub App credentials in Secret Manager
+### 9. Store API credentials in Secret Manager
 
 !!! note "Single source of truth"
-    GitHub App credentials are stored in GCP Secret Manager.
-    The `3-github` terraform module will read from Secret Manager and automatically create GitHub organization secrets for CI/CD.
+    API credentials (GitHub App, Cloudflare) are stored in GCP Secret Manager.
+    Platform and application modules will read from Secret Manager to manage infrastructure.
 
-Add the GitHub App credentials to `platform/1-org/terraform.tfvars` using the values you noted during [manual setup](../docs/requirements.md#save-credentials-for-bootstrap):
+Add the credentials to `platform/1-org/terraform.tfvars` using the values you noted during [manual setup](../docs/requirements.md):
 
 ```hcl
 # GitHub App credentials (use values from manual setup)
@@ -177,6 +177,9 @@ github_app_private_key     = <<-EOT
 [paste contents of your .pem file]
 -----END RSA PRIVATE KEY-----
 EOT
+
+# Cloudflare API token
+cloudflare_api_token = "YOUR_CLOUDFLARE_API_TOKEN"
 ```
 
 Run terraform to create the secrets:
@@ -194,17 +197,19 @@ You should see:
 - `github-app-id`
 - `github-app-installation-id`
 - `github-app-private-key`
+- `cloudflare-api-token`
 
 **Clean up:**
 
 After the initial sync:
 
-1. Remove the GitHub App variables from your `terraform.tfvars` file:
+1. Remove the API credentials from your `terraform.tfvars` file:
    ```hcl
    # Remove these lines after initial sync
    # github_app_id              = "123456"
    # github_app_installation_id = "12345678"
    # github_app_private_key     = <<-EOT ...
+   # cloudflare_api_token       = "..."
    ```
 
 2. Delete the local PEM file:
@@ -212,7 +217,10 @@ After the initial sync:
    rm ~/Downloads/platform-automation.*.private-key.pem
    ```
 
-Secret Manager is now the single source of truth. The `lifecycle { ignore_changes }` policy ensures terraform won't try to update them on subsequent applies. When you deploy the `3-github` module later, it will read from Secret Manager and create GitHub organization secrets automatically.
+Secret Manager is now the single source of truth. The `lifecycle { ignore_changes }` policy ensures terraform won't try to update them on subsequent applies.
+
+- The `3-github` module will read from Secret Manager and create GitHub organization secrets automatically
+- The `4-cloudflare` module and application modules will read the Cloudflare token from Secret Manager
 
 ### 10. Configure and deploy environments
 
