@@ -280,13 +280,15 @@ A single platform repository contains the following logical components.
 * enables [Secret Manager API](https://cloud.google.com/secret-manager/docs) in environment projects (applications create their own secrets)
 * attaches projects to central logging metrics scope
 
-**Cloudflare platform component**
+**Cloudflare token storage**
 
-* stores Cloudflare API token in Secret Manager (shared services project)
-* grants application CI service accounts read access to the token via IAM
-* outputs zone ID for application consumption
+The `1-org` platform root stores the Cloudflare API token in Secret Manager (shared services project) for application consumption. Applications manage their own:
 
-Applications use the API token to manage their own DNS records. The platform handles domain registration and nameserver configuration manually (one-time setup).
+* DNS records via Cloudflare Terraform provider
+* TLS origin certificates
+* CDN and firewall configuration
+
+Domain registration and nameserver configuration are manual one-time setup steps (see [Requirements](requirements.md)).
 
 **GitHub organization component** (optional)
 

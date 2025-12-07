@@ -234,7 +234,7 @@ After the initial sync:
 Secret Manager is now the single source of truth. The `lifecycle { ignore_changes }` policy ensures terraform won't try to update them on subsequent applies.
 
 - The `3-github` module will read from Secret Manager and create GitHub organization secrets automatically
-- The `4-cloudflare` module and application modules will read the Cloudflare token from Secret Manager
+- Application modules will read the Cloudflare token from Secret Manager to manage their own DNS records
 
 ### 10. Configure and deploy environments
 

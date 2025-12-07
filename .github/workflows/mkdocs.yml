@@ -47,14 +47,12 @@ jobs:
           mkdir -p docs/platform/2-environments/development
           mkdir -p docs/platform/2-environments/production
           mkdir -p docs/platform/3-github
-          mkdir -p docs/platform/4-cloudflare
           cp platform/README.md docs/platform/
           cp platform/0-bootstrap/README.md docs/platform/0-bootstrap/
           cp platform/1-org/README.md docs/platform/1-org/
           cp platform/2-environments/development/README.md docs/platform/2-environments/development/
           cp platform/2-environments/production/README.md docs/platform/2-environments/production/
           cp platform/3-github/README.md docs/platform/3-github/
-          cp platform/4-cloudflare/README.md docs/platform/4-cloudflare/
 
       - name: Build site
         run: mkdocs build -f .github/mkdocs.yml --strict

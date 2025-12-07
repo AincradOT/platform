@@ -109,7 +109,6 @@ nav:
           - Organization: platform/1-org/README.md
           - Development: platform/2-environments/development/README.md
           - Production: platform/2-environments/production/README.md
-          - Cloudflare: platform/4-cloudflare/README.md
           - GitHub: platform/3-github/README.md
 
   - Contributing:
