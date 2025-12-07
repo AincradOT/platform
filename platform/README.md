@@ -160,18 +160,26 @@ gcloud projects describe $(terraform -chdir=platform/1-org output -raw shared_pr
     Do not proceed if folders are not created or the shared services project does not exist.
     Review terraform output for errors and re-run `terraform apply` if needed.
 
-### 9. Add GitHub App credentials
+### 9. Store GitHub App credentials in Secret Manager
 
-Add the GitHub App credentials from **Manual Setup** to your `platform/1-org/terraform.tfvars`:
+!!! note "Single source of truth"
+    GitHub App credentials are stored in GCP Secret Manager.
+    The `3-github` terraform module will read from Secret Manager and automatically create GitHub organization secrets for CI/CD.
+
+Add the GitHub App credentials to `platform/1-org/terraform.tfvars` using the values you noted during [manual setup](../docs/requirements.md#save-credentials-for-bootstrap):
 
 ```hcl
-# GitHub App credentials for platform automation
-github_app_id              = "123456"
-github_app_installation_id = "12345678"
-github_app_private_key     = file("~/.config/github-apps/platform-automation.2024-12-07.private-key.pem")
+# GitHub App credentials (use values from manual setup)
+github_app_id              = "123456"  # Your App ID
+github_app_installation_id = "12345678"  # Your Installation ID
+github_app_private_key     = <<-EOT
+-----BEGIN RSA PRIVATE KEY-----
+[paste contents of your .pem file]
+-----END RSA PRIVATE KEY-----
+EOT
 ```
 
-Then re-run terraform to create the secrets:
+Run terraform to create the secrets:
 
 ```bash
 terraform -chdir=platform/1-org apply
@@ -187,10 +195,24 @@ You should see:
 - `github-app-installation-id`
 - `github-app-private-key`
 
-**Clean up local PEM file:**
-```bash
-rm ~/.config/github-apps/platform-automation.*.private-key.pem
-```
+**Clean up:**
+
+After the initial sync:
+
+1. Remove the GitHub App variables from your `terraform.tfvars` file:
+   ```hcl
+   # Remove these lines after initial sync
+   # github_app_id              = "123456"
+   # github_app_installation_id = "12345678"
+   # github_app_private_key     = <<-EOT ...
+   ```
+
+2. Delete the local PEM file:
+   ```bash
+   rm ~/Downloads/platform-automation.*.private-key.pem
+   ```
+
+Secret Manager is now the single source of truth. The `lifecycle { ignore_changes }` policy ensures terraform won't try to update them on subsequent applies. When you deploy the `3-github` module later, it will read from Secret Manager and create GitHub organization secrets automatically.
 
 ### 10. Configure and deploy environments
 

@@ -21,15 +21,23 @@ shared_project_id = "aincrad-shared"
 # Used to grant CI service accounts access to terraform state
 state_bucket_name = "aincrad-tfstate"
 
-# GitHub App credentials for platform automation
-# See docs/requirements.md for instructions on creating the GitHub App
-github_app_id              = "123456"
-github_app_installation_id = "12345678"
-github_app_private_key     = file("~/.config/github-apps/platform-automation.2024-12-07.private-key.pem")
-
 # Optional: Group emails for IAM bindings
 # Uncomment and set these if you have Google Workspace / Cloud Identity groups
 
 # gcp_logging_viewers_group  = "logging-viewers@example.com"
 # gcp_org_admins_group       = "platform-admins@example.com"
 # gcp_billing_admins_group   = "billing-admins@example.com"
+
+# GitHub App credentials for dual storage (GitHub org secrets + GCP Secret Manager)
+# Only needed for initial bootstrap to sync to Secret Manager
+# See platform/README.md step 9 for details
+# After initial sync, remove these lines from terraform.tfvars
+
+github_app_id              = "123456"
+github_app_installation_id = "12345678"
+github_app_private_key     = <<-EOT
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEA...
+...
+-----END RSA PRIVATE KEY-----
+EOT

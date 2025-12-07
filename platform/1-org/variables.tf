@@ -94,21 +94,26 @@ variable "labels" {
   default     = {}
 }
 
-# GitHub App credentials for platform automation
+# GitHub App credentials for dual storage (GitHub org secrets + GCP Secret Manager)
+# Only required for initial bootstrap to populate GCP Secret Manager
+# After initial sync, these can be omitted from terraform.tfvars
 variable "github_app_id" {
-  description = "GitHub App ID for Terraform automation."
+  description = "GitHub App ID. Only needed for initial bootstrap to sync to Secret Manager."
   type        = string
   sensitive   = false
+  default     = null
 }
 
 variable "github_app_installation_id" {
-  description = "GitHub App Installation ID."
+  description = "GitHub App Installation ID. Only needed for initial bootstrap to sync to Secret Manager."
   type        = string
   sensitive   = false
+  default     = null
 }
 
 variable "github_app_private_key" {
-  description = "GitHub App private key (PEM file contents)."
+  description = "GitHub App private key (PEM file contents). Only needed for initial bootstrap to sync to Secret Manager."
   type        = string
   sensitive   = true
+  default     = null
 }

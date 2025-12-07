@@ -252,17 +252,16 @@ See: [GitHub Apps documentation](https://docs.github.com/en/apps/creating-github
 
    Repository permissions:
    Actions: Read & write
-   Actions variables: Read & write
    Administration: Read & write
    Checks: Read & write
-   Code (Contents): Read & write
+   Code scanning alerts: Read & write
    Commit statuses: Read
+   Contents: Read & write
    Dependabot alerts: Read
    Dependabot secrets: Read
-   Deployments: Read
+   Discussions: Read & write
+   Deployments: Read & write
    Environments: Read & write
-   Issue fields: Read & write
-   Issue types: Read & write
    Issues: Read & write
    Metadata: Read
    Packages: Read & write
@@ -275,28 +274,25 @@ See: [GitHub Apps documentation](https://docs.github.com/en/apps/creating-github
    Secret scanning push protection bypass requests: Read
    Secrets: Read & write
    Security events: Read & write
+   Variables: Read & write
    Workflows: Read & write
 
    Organization permissions:
-   Actions variables: Read & write
    Administration: Read & write
    Custom organization roles: Read & write
+   Custom properties: Read & write
    Custom repository roles: Read & write
-   Dependabot secrets: Read & write
    Events: Read
+   Issue Fields: Read & write
+   Issue Types: Read & write
    Knowledge bases: Read & write
    Members: Read & write
-   Organization administration: Read & write
-   Organization code scanning dismissal requests: Read
-   Organization custom properties for repositories: Read & write
-   Organization personal access token requests: Read & write
-   Organization personal access tokens: Read & write
-   Organization plan: Read
    Organization private registries: Read & write
-   Organization projects: Read & write
-   Organization secrets: Read & write
-   Organization self hosted runners: Read & write
-   Organization user blocking: Read & write
+   Personal access token requests: Read & write
+   Personal access tokens: Read & write
+   Projects: Read & write
+   Secrets: Read & write
+   Variables: Read & write
 
    Repository access:
    (*) All repositories (applies to current and future repositories)
@@ -340,34 +336,28 @@ See: [GitHub Apps permissions](https://docs.github.com/en/apps/creating-github-a
                                                                       Installation ID
    ```
 
-#### Secure the Credentials
+#### Save Credentials for Bootstrap
 
-!!! danger
-    Keep these values secure until you complete the platform bootstrap procedure.
-    They will be uploaded to GCP Secret Manager after `platform/1-org` is deployed.
-
-You'll need three values from the GitHub App you just created:
-
+You now have three values from the GitHub App:
 - **App ID**: From the app settings page (e.g., `123456`)
 - **Installation ID**: From the installation URL (e.g., `12345678`)
 - **Private key (PEM file)**: The downloaded `.pem` file (e.g., `platform-automation.2024-12-07.private-key.pem`)
 
-**Store these securely:**
+Keep these values ready for the platform bootstrap procedure:
 
-1. Move the `.pem` file to a secure location:
-   ```bash
-   mkdir -p ~/.config/github-apps
-   mv ~/Downloads/platform-automation.*.private-key.pem ~/.config/github-apps/
-   chmod 600 ~/.config/github-apps/*.pem
-   ```
-
-2. Note the App ID and Installation ID somewhere secure (password manager, encrypted notes, etc.)
+```bash
+# Save these somewhere secure (password manager, encrypted file, etc.)
+App ID: 123456
+Installation ID: 12345678
+PEM file: ~/Downloads/platform-automation.2024-12-07.private-key.pem
+```
 
 !!! note
-    During the bootstrap procedure (after deploying `platform/1-org`), you'll upload these credentials to GCP Secret Manager.
-    See the [Platform Bootstrap](platform/README.md) guide for the complete procedure.
+    **Do NOT delete the PEM file yet.** You'll need it during platform bootstrap (step 9) to store in GCP Secret Manager.
+    The `3-github` terraform module will automatically create GitHub organization secrets from Secret Manager.
+    After the bootstrap sync is complete, you can safely delete it.
 
-See: [Installing GitHub Apps](https://docs.github.com/en/apps/using-github-apps/installing-your-own-github-app)
+See: [Installing GitHub Apps](https://docs.github.com/en/apps/using-github-apps/installing-your-own-github-app) | [GitHub Organization Secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-an-organization)
 
 ---
 

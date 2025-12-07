@@ -86,8 +86,8 @@ resource "google_billing_account_iam_member" "billing_admin" {
   member              = "group:${var.gcp_billing_admins_group}"
 }
 
-# GitHub App credentials stored in Secret Manager
-# These are used by the 3-github terraform module to manage GitHub organization
+# GitHub App credentials in Secret Manager (mirrors GitHub org secrets for local dev)
+# These are synced once during initial bootstrap, then managed via lifecycle ignore_changes
 resource "google_secret_manager_secret" "github_app_id" {
   project   = google_project.shared.project_id
   secret_id = "github-app-id"
@@ -100,8 +100,13 @@ resource "google_secret_manager_secret" "github_app_id" {
 }
 
 resource "google_secret_manager_secret_version" "github_app_id" {
+  count       = var.github_app_id != null && var.github_app_id != "" ? 1 : 0
   secret      = google_secret_manager_secret.github_app_id.id
   secret_data = var.github_app_id
+
+  lifecycle {
+    ignore_changes = [secret_data]
+  }
 }
 
 resource "google_secret_manager_secret" "github_app_installation_id" {
@@ -116,8 +121,13 @@ resource "google_secret_manager_secret" "github_app_installation_id" {
 }
 
 resource "google_secret_manager_secret_version" "github_app_installation_id" {
+  count       = var.github_app_installation_id != null && var.github_app_installation_id != "" ? 1 : 0
   secret      = google_secret_manager_secret.github_app_installation_id.id
   secret_data = var.github_app_installation_id
+
+  lifecycle {
+    ignore_changes = [secret_data]
+  }
 }
 
 resource "google_secret_manager_secret" "github_app_private_key" {
@@ -132,6 +142,11 @@ resource "google_secret_manager_secret" "github_app_private_key" {
 }
 
 resource "google_secret_manager_secret_version" "github_app_private_key" {
+  count       = var.github_app_private_key != null && var.github_app_private_key != "" ? 1 : 0
   secret      = google_secret_manager_secret.github_app_private_key.id
   secret_data = var.github_app_private_key
+
+  lifecycle {
+    ignore_changes = [secret_data]
+  }
 }

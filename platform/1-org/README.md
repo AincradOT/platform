@@ -35,10 +35,14 @@ gcp_logging_viewers_group  = "logging-viewers@example.com"
 gcp_org_admins_group       = "platform-admins@example.com"
 gcp_billing_admins_group   = "billing-admins@example.com"
 
-# GitHub App credentials (see docs/requirements.md for setup)
+# GitHub App credentials (only for initial bootstrap - see platform/README.md step 9)
 github_app_id              = "123456"
 github_app_installation_id = "12345678"
-github_app_private_key     = file("~/.config/github-apps/platform-automation.2024-12-07.private-key.pem")
+github_app_private_key     = <<-EOT
+-----BEGIN RSA PRIVATE KEY-----
+...
+-----END RSA PRIVATE KEY-----
+EOT
 ```
 
 ## Variables
@@ -54,9 +58,9 @@ github_app_private_key     = file("~/.config/github-apps/platform-automation.202
 | `gcp_org_admins_group` | Group email for org-level project creation | No |
 | `gcp_billing_admins_group` | Group email for billing admin | No |
 | `labels` | Resource labels | No |
-| `github_app_id` | GitHub App ID for Terraform automation | Yes |
-| `github_app_installation_id` | GitHub App Installation ID | Yes |
-| `github_app_private_key` | GitHub App private key (PEM file contents) | Yes |
+| `github_app_id` | GitHub App ID (for initial Secret Manager sync only) | No (default: null) |
+| `github_app_installation_id` | GitHub App Installation ID (for initial Secret Manager sync only) | No (default: null) |
+| `github_app_private_key` | GitHub App private key PEM contents (for initial Secret Manager sync only) | No (default: null) |
 
 ## Outputs
 
