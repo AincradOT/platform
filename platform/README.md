@@ -166,7 +166,7 @@ gcloud projects describe $(terraform -chdir=platform/1-org output -raw shared_pr
     API credentials (GitHub App, Cloudflare) are stored in GCP Secret Manager.
     Platform and application modules will read from Secret Manager to manage infrastructure.
 
-Add the credentials to `platform/1-org/terraform.tfvars` using the values you noted during [manual setup](../docs/requirements.md):
+Add the credentials to `platform/1-org/terraform.tfvars` using the values you noted during [manual setup](https://aincradot.github.io/platform/requirements):
 
 ```hcl
 # GitHub App credentials (use values from manual setup)
