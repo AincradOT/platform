@@ -98,43 +98,6 @@ Minimum steps:
 3. Add a payment method.
 4. Link your initial project to this billing account.
 
-
-### Workspace / IAM Roles
-
-!!! danger
-    Even if you created the organization, you must explicitly grant these roles.
-    Google Cloud does not automatically give org creators all the permissions needed for bootstrap.
-    The roles below are high-privilege. Only grant them to trusted administrators or admin groups - never to general developers.
-
-
-Go to the [IAM admin page](https://console.cloud.google.com/iam-admin/):
-
-For the user (or group) that will run the procedures in this document
-(typically your platform admin), grant the following roles.
-
-On the Google Cloud organization:
-
-* `roles/resourcemanager.organizationAdmin`
-* `roles/resourcemanager.projectCreator`
-* `roles/resourcemanager.folderCreator`
-* `roles/resourcemanager.folderEditor`
-* `roles/resourcemanager.lienModifier`
-* `roles/orgpolicy.policyAdmin`
-* `roles/securitycenter.admin`
-
-**Verify permissions were granted:**
-```bash
-# Get your org ID
-gcloud organizations list
-
-# Check your roles (replace with your org ID and email)
-gcloud organizations get-iam-policy YOUR_ORG_ID \
-  --flatten="bindings[].members" \
-  --filter="bindings.members:user:your-email@example.com"
-```
-
-You should see both `organizationAdmin` and `billing.user` in the output.
-
 ### Google Cloud SDK (gcloud)
 
 !!! note
@@ -159,6 +122,29 @@ gcloud init
 ```
 
 You are now ready to proceed with bootstrapping the platform using Terraform. The bootstrap project and required APIs will be created by the Terraform code in the next steps.
+
+### Workspace / IAM Roles
+
+!!! danger
+    Even if you created the organization, you must explicitly grant these roles.
+    Google Cloud does not automatically give org creators all the permissions needed to bootstrap an entire platform.
+    The roles below are high-privilege. If they are not being granted directly to the organisation owner, only grant them to trusted administrators or admin groups - never to general developers.
+
+For the user (or group) that will run the procedures in this document
+(typically your platform admin or organisation owner), grant the following roles.
+
+Go to the [IAM admin page](https://console.cloud.google.com/iam-admin/):
+
+On the user in the view by principals list, edit the roles via the "Edit" button and add the following roles:
+
+* `roles/serviceusage.serviceUsageConsumer`
+* `roles/resourcemanager.organizationAdmin`
+* `roles/resourcemanager.projectCreator`
+* `roles/resourcemanager.folderCreator`
+* `roles/resourcemanager.folderEditor`
+* `roles/resourcemanager.lienModifier`
+* `roles/orgpolicy.policyAdmin`
+* `roles/securitycenter.admin`
 
 ## GitHub
 

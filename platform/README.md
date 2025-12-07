@@ -124,7 +124,26 @@ cp platform/1-org/example.terraform.tfvars platform/1-org/terraform.tfvars
 
 Update with your values. The `state_bucket_name` should match the output from 0-bootstrap. See [1-org README](1-org/README.md) for all available variables.
 
-### 7. Run terraform for 1-org
+### 7. Enable required APIs
+
+**Why:** The Organization Policy API is required to manage organization policies (such as skipping default network creation).
+
+Enable the API in the bootstrap project:
+
+```bash
+gcloud services enable orgpolicy.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
+gcloud services enable cloudresourcemanager.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
+gcloud services enable cloudbilling.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
+gcloud services enable iam.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
+gcloud services enable cloudkms.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
+gcloud services enable servicenetworking.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
+```
+
+!!! note
+    The API may take a few seconds to propagate after enabling.
+    If you encounter API-related errors during the next step, wait 30 seconds and try again.
+
+### 8. Run terraform for 1-org
 
 ```bash
 terraform -chdir=platform/1-org init
@@ -144,7 +163,7 @@ gcloud projects describe $(terraform -chdir=platform/1-org output -raw shared_pr
     Do not proceed if folders are not created or the shared services project does not exist.
     Review terraform output for errors and re-run `terraform apply` if needed.
 
-### 8. Configure and deploy environments
+### 9. Configure and deploy environments
 
 Copy and edit example files:
 
