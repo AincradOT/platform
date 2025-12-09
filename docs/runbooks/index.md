@@ -1,28 +1,21 @@
-# Setup
+# Platform Bootstrap
 
-Deploying the platform from scratch.
+Complete step-by-step procedures for deploying the platform from scratch.
 
-## Prerequisites
+## Bootstrap Procedure
 
-Before starting, complete the [Requirements](../requirements.md):
+The complete bootstrap procedure is documented in the [Platform README](platform/README.md), which includes:
 
-- GCP organization with billing account
-- Cloud Identity or Google Workspace
-- Domain registered (for Cloudflare)
-- `gcloud` CLI installed and authenticated
-
-## Bootstrap the platform
-
-Follow the [Platform README](../platform/README.md) for the complete step-by-step bootstrap procedure including:
-
+- Prerequisites verification
 - Authentication setup
-- Terraform configuration and apply sequence
-- Verification steps
-- CI service account key generation
+- Terraform configuration and apply sequence for all roots (0-bootstrap, 1-org, 2-environments, 3-github)
+- Verification steps after each stage
+- CI service account key generation and GitHub secrets configuration
+- Troubleshooting common issues
 
-## After bootstrap
+**Before starting**: Complete the [Requirements](../requirements.md) to set up GCP organization, GitHub organization, and Cloudflare domain.
 
-Application repos consume the platform - see [Golden Path](../golden-path.md) for patterns.
+**After bootstrap**: Application repositories consume the platform boundaries - see the [Golden Path](../golden-path.md) for application patterns and responsibilities.
 
 ## Teardown
 

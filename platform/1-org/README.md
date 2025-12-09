@@ -7,8 +7,9 @@ Creates organizational structure and shared services.
 - Three top-level folders: `shared`, `dev`, `prod`
 - Shared services project in `shared` folder (logging, monitoring, service accounts, secrets)
 - CI service accounts for GitHub Actions (platform, dev, prod)
+- Cloud Identity groups (logging-viewers, platform-admins, billing-admins)
+- IAM bindings for groups (logging viewer access, platform admin access, billing admin access)
 - Org policy to prevent default VPC creation
-- Optional IAM bindings for logging viewers
 
 ## Additional Resources
 

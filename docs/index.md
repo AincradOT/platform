@@ -2,8 +2,6 @@
 
 This repository defines the platform infrastructure for the Aincrad Open Tibia community, but is **designed to be lifted and shifted** for other projects.
 
-**⏱️ Time to complete:** ~2-3 hours for full bootstrap from scratch (including manual prerequisites)
-
 ## Purpose
 
 !!! note

@@ -2,10 +2,6 @@
 
 [Terraform state](https://www.terraform.io/docs/language/state/index.html) is stored in a [GCS bucket](https://cloud.google.com/storage/docs) with [versioning](https://cloud.google.com/storage/docs/object-versioning) enabled by the bootstrap process. All terraform roots (except bootstrap itself initially) use this bucket with unique prefixes for state isolation.
 
-## Overview
-
-Terraform state is stored in a single GCS bucket created by the bootstrap process. All terraform roots (except bootstrap itself initially) use this bucket with unique prefixes for state isolation.
-
 ## State Bucket Configuration
 
 ### Bucket features
@@ -46,11 +42,11 @@ Each terraform root uses a unique prefix in the bucket:
 
 ```
 gs://aincrad-tfstate/
-├── terraform/bootstrap/           # bootstrap state
-├── terraform/1-org/               # organizational structure state
-├── terraform/environments/dev/    # development environment
-├── terraform/environments/prod/   # production environment
-└── terraform/apps/{repo-name}/    # application infrastructure repos
+├── terraform/bootstrap            # bootstrap state
+├── terraform/org                  # organizational structure state
+├── terraform/environments/dev     # development environment
+├── terraform/environments/prod    # production environment
+└── terraform/apps/{repo-name}     # application infrastructure repos
 ```
 
 Application repositories use their repository name as part of the prefix to avoid conflicts.

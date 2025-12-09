@@ -43,8 +43,8 @@ Create `terraform.tfvars` with your values:
 ```hcl
 org_id              = "123456789012"
 billing_account_id  = "ABCDEF-123456-ABCDEF"
-project_name        = "yourorg"
-state_bucket_name   = "yourorg-tfstate"
+project_name        = "aincrad"
+state_bucket_name   = "aincrad-tfstate"
 ```
 
 ## Variables
@@ -103,7 +103,7 @@ gcloud projects delete {project_name}-bootstrap --quiet
 
 ```bash
 # Try a different bucket name in terraform.tfvars
-state_bucket_name = "yourorg-tfstate-abc123"  # Add random suffix
+state_bucket_name = "aincrad-tfstate-abc123"  # Add random suffix
 
 # Or restore the bucket if it was recently deleted (within 30 days)
 gsutil ls -p {project_id} -L gs://{bucket_name}

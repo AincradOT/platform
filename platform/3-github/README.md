@@ -30,7 +30,7 @@ This module uses terraform to enforce organization-level governance while allowi
 
 ## Prerequisites
 
-1. Complete [Requirements](../../docs/requirements.md) including GitHub App creation
+1. Complete [Requirements](https://aincradot.github.io/platform/requirements/) including GitHub App creation
 2. GitHub App credentials stored in Secret Manager via `1-org` (step 9 in platform/README.md)
 3. GitHub App must be installed to your organization
 4. Complete `1-org` terraform apply to ensure secrets exist in Secret Manager

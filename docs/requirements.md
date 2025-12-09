@@ -101,9 +101,9 @@ Minimum steps:
 ### Cloud Identity Groups
 
 !!! tip
-    Terraform creates the groups and manages IAM bindings. You manage group membership manually via Google Admin console.
+    **Two-step process:** Terraform creates the groups during `1-org` bootstrap and assigns IAM roles. After bootstrap completes, you add members to the groups via Google Admin console.
 
-The platform uses Cloud Identity groups to manage human access. **Terraform automatically creates these three groups** during `1-org` bootstrap:
+The platform uses Cloud Identity groups to manage human access. **No manual group creation required** - Terraform automatically creates these three groups during `1-org` bootstrap:
 
 1. **`logging-viewers@yourdomain.com`** - Read-only access to logs and monitoring
    - IAM roles: `roles/logging.viewer`, `roles/monitoring.viewer` on shared project
@@ -214,7 +214,7 @@ Regular developers should later be added as **Members**, not Owners.
 For this setup, you only need a single repository called `platform`.  
 This repository will host:
 
-- Platform infrastructure code (e.g. Terraform, bootstrap scripts)
+- Platform infrastructure code (Terraform roots for bootstrap, org, environments, GitHub)
 - Shared configuration and documentation for the platform
 
 To create it:

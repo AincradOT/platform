@@ -99,8 +99,8 @@ gsutil ls gs://{state_bucket_name}/terraform/org/
 
 # Override with explicit values in terraform.tfvars if needed
 folder_id              = "folders/123456789012"
-shared_project_id      = "yourorg-shared"
-dev_ci_service_account = "dev-ci@yourorg-shared.iam.gserviceaccount.com"
+shared_project_id      = "aincrad-shared"
+dev_ci_service_account = "dev-ci@aincrad-shared.iam.gserviceaccount.com"
 
 terraform -chdir=platform/2-environments/development apply
 ```
@@ -118,7 +118,7 @@ gcloud projects undelete {dev_project_id}
 terraform -chdir=platform/2-environments/development import module.dev_environment.google_project.env {dev_project_id}
 
 # Or use different project ID in terraform.tfvars
-dev_project_id = "yourorg-dev-v2"
+dev_project_id = "aincrad-dev-v2"
 terraform -chdir=platform/2-environments/development apply
 ```
 

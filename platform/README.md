@@ -193,7 +193,7 @@ gcloud identity groups search --organization=$(terraform -chdir=platform/1-org o
     API credentials (GitHub App, Cloudflare) are stored in GCP Secret Manager.
     Platform and application modules will read from Secret Manager to manage infrastructure.
 
-Add the credentials to `platform/1-org/terraform.tfvars` using the values you noted during [manual setup](../docs/requirements.md):
+Add the credentials to `platform/1-org/terraform.tfvars` using the values you noted during [manual setup](https://aincradot.github.io/platform/requirements/):
 
 ```hcl
 # GitHub App credentials (use values from manual setup)
@@ -327,7 +327,7 @@ gcloud iam service-accounts keys create prod-ci-key.json \
 
 Store in GitHub organization secrets:
 
-1. Navigate to `https://github.com/organizations/yourorg/settings/secrets/actions` (replace `yourorg` with your organization name)
+1. Navigate to `https://github.com/organizations/aincradot/settings/secrets/actions` (replace `aincradot` with your organization name)
 2. Create `GCP_PLATFORM_SA_KEY` with contents of `platform-ci-key.json`
 3. Create `GCP_SA_KEY` with contents of `dev-ci-key.json`
 4. Create `GCP_SA_KEY_PROD` with contents of `prod-ci-key.json`
@@ -364,8 +364,8 @@ terraform -chdir=platform/3-github apply
 ```
 
 **Verify GitHub organization settings:**
-- Check organization secrets exist: `https://github.com/organizations/yourorg/settings/secrets/actions`
-- Verify teams created: `https://github.com/orgs/yourorg/teams`
+- Check organization secrets exist: `https://github.com/organizations/aincradot/settings/secrets/actions`
+- Verify teams created: `https://github.com/orgs/aincradot/teams`
 
 !!! note
     GitHub App credentials are automatically read from Secret Manager (created in step 9). No manual PEM file configuration required.

@@ -1,3 +1,8 @@
+output "org_id" {
+  description = "Organization ID."
+  value       = var.org_id
+}
+
 output "shared_folder_id" {
   description = "Folder ID for shared services."
   value       = google_folder.shared.name
