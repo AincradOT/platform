@@ -26,14 +26,10 @@ Creates organizational structure and shared services.
 Create `terraform.tfvars`:
 
 ```hcl
-org_id                     = "123456789012"
-billing_account_id         = "ABCDEF-123456-ABCDEF"
-shared_project_id          = "aincrad-shared"
-shared_project_name        = "Shared Services"
-state_bucket_name          = "aincrad-tfstate"  # From 0-bootstrap output
-gcp_logging_viewers_group  = "logging-viewers@example.com"
-gcp_org_admins_group       = "platform-admins@example.com"
-gcp_billing_admins_group   = "billing-admins@example.com"
+org_id              = "123456789012"
+billing_account_id  = "ABCDEF-123456-ABCDEF"
+shared_project_id   = "aincrad-shared"
+state_bucket_name   = "aincrad-tfstate"  # From 0-bootstrap output
 
 # API credentials (only for initial bootstrap - see platform/README.md step 9)
 github_app_id              = "123456"
@@ -43,7 +39,8 @@ github_app_private_key     = <<-EOT
 ...
 -----END RSA PRIVATE KEY-----
 EOT
-cloudflare_api_token       = "YOUR_CLOUDFLARE_API_TOKEN"
+cloudflare_api_token       = "abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
+cloudflare_zone_id         = "1234567890abcdef1234567890abcdef"
 ```
 
 ## Variables
@@ -54,15 +51,13 @@ cloudflare_api_token       = "YOUR_CLOUDFLARE_API_TOKEN"
 | `billing_account_id` | Billing account ID | Yes |
 | `shared_project_id` | Unique project ID for shared services | Yes |
 | `shared_project_name` | Display name for shared services project | No (default: "Shared Services") |
-| `state_bucket_name` | GCS state bucket name (from `0-bootstrap` output) for CI service account IAM | No (default: `null`) |
-| `gcp_logging_viewers_group` | Group email for logging read access | No |
-| `gcp_org_admins_group` | Group email for org-level project creation | No |
-| `gcp_billing_admins_group` | Group email for billing admin | No |
+| `state_bucket_name` | State bucket name from 0-bootstrap | Yes (for CI service account state access) |
 | `labels` | Resource labels | No |
 | `github_app_id` | GitHub App ID (for initial Secret Manager sync only) | No (default: null) |
 | `github_app_installation_id` | GitHub App Installation ID (for initial Secret Manager sync only) | No (default: null) |
 | `github_app_private_key` | GitHub App private key PEM contents (for initial Secret Manager sync only) | No (default: null) |
 | `cloudflare_api_token` | Cloudflare API token (for initial Secret Manager sync only) | No (default: null) |
+| `cloudflare_zone_id` | Cloudflare Zone ID for your domain (for initial Secret Manager sync only) | No (default: null) |
 
 ## Outputs
 
@@ -134,8 +129,29 @@ gcloud org-policies list --organization={org_id}
 
 ## Notes
 
-- IAM is minimal at org level. Project-level IAM is in `2-environments/`
-- Groups are not created by terraform to avoid domain coupling
-- Provide group emails via variables
+- Org-level IAM grants only folder/project creation permissions. Project-level IAM is in `2-environments/`
+- Cloud Identity groups are created automatically by terraform during apply
+- Group membership is managed manually via Google Admin console after terraform creates the groups
 - CI service accounts require key generation via `gcloud iam service-accounts keys create` for GitHub Actions
 - Service account keys should be stored as GitHub organization secrets
+
+## Secret Manager IAM
+
+The following IAM bindings are automatically created for Secret Manager secrets:
+
+**Cloudflare API Token:**
+- `dev-ci@<shared-project>.iam.gserviceaccount.com` - `roles/secretmanager.secretAccessor`
+- `prod-ci@<shared-project>.iam.gserviceaccount.com` - `roles/secretmanager.secretAccessor`
+
+Used by application infrastructure modules to authenticate with Cloudflare API.
+
+**Cloudflare Zone ID:**
+- `dev-ci@<shared-project>.iam.gserviceaccount.com` - `roles/secretmanager.secretAccessor`
+- `prod-ci@<shared-project>.iam.gserviceaccount.com` - `roles/secretmanager.secretAccessor`
+
+Used by application infrastructure modules to manage DNS records in the correct Cloudflare zone.
+
+**GitHub App Credentials:**
+- `platform-ci@<shared-project>.iam.gserviceaccount.com` - `roles/secretmanager.secretAccessor`
+
+Used by platform infrastructure (3-github module) to manage GitHub organization settings via GitHub Terraform provider.

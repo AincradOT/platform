@@ -5,7 +5,7 @@ Creates production environment project.
 ## What this creates
 
 - Production project in `prod` folder
-- Minimal APIs enabled (compute, IAM, logging, monitoring, Secret Manager)
+- APIs enabled: compute, IAM, logging, monitoring, Secret Manager
 - Project attached to central logging metrics scope
 - Optional IAM bindings for platform viewers
 
@@ -16,9 +16,7 @@ Creates production environment project.
 - [Secret Manager Overview](https://cloud.google.com/secret-manager/docs) - Application secrets management
 - [Cloud Monitoring Metrics Scopes](https://cloud.google.com/monitoring/settings) - Cross-project monitoring
 
-!!! note
-    For step-by-step bootstrap instructions, see the [Platform README](../../README.md).
-    This document provides reference information for the production terraform root.
+**Note:** For step-by-step bootstrap instructions, see the [Platform README](../../README.md). This document provides reference information for the production terraform root.
 
 ## Configuration
 
@@ -131,4 +129,4 @@ terraform -chdir=platform/2-environments/production apply
 
 ## Notes
 
-- IAM is minimal. Keep production tight - add permissions explicitly as needed
+- IAM includes only platform CI service account access. Keep production tight - add permissions explicitly as needed

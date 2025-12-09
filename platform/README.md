@@ -22,13 +22,11 @@ platform/
 
 ## Prerequisites
 
-**Before starting the bootstrap, complete the manual setup:**
+Complete the [Requirements](https://aincradot.github.io/platform/requirements/) before starting bootstrap. This includes:
 - GCP organization with billing account
-- GitHub organization
+- GitHub organization and GitHub App
 - Domain and DNS in Cloudflare
 - Organization-level IAM roles granted to your account
-
-See the complete [Manual Setup Guide](https://aincradot.github.io/platform/requirements/) for step-by-step instructions.
 
 **Local tools:**
 - [`gcloud` CLI](https://cloud.google.com/sdk/docs/install) installed and authenticated
@@ -41,8 +39,6 @@ See the complete [Manual Setup Guide](https://aincradot.github.io/platform/requi
 - [GCS Backend Configuration](https://developer.hashicorp.com/terraform/language/settings/backends/gcs) - State backend details
 
 ## Bootstrap procedure
-
-**Time estimate**: ~30-45 minutes for complete bootstrap (assumes prerequisites completed)
 
 ### 1. Authenticate
 
@@ -143,6 +139,7 @@ Update with your values. The `state_bucket_name` should match the output from 0-
 Enable the APIs in the bootstrap project:
 
 ```bash
+gcloud services enable cloudidentity.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
 gcloud services enable orgpolicy.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
 gcloud services enable cloudresourcemanager.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
 gcloud services enable cloudbilling.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
@@ -150,9 +147,22 @@ gcloud services enable iam.googleapis.com --project=$(terraform -chdir=platform/
 gcloud services enable servicenetworking.googleapis.com --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id)
 ```
 
-!!! note
-    The API may take a few seconds to propagate after enabling.
-    If you encounter API-related errors during the next step, wait 30 seconds and try again.
+!!! warning "Wait for API propagation"
+APIs take 30-60 seconds to propagate after enabling. Running terraform immediately will fail with "API not enabled" errors.
+
+**Wait before proceeding to step 8:**
+```bash
+# Wait for API propagation
+sleep 60
+```
+
+**Verify APIs are enabled:**
+```bash
+# Verify critical APIs are enabled
+gcloud services list --project=$(terraform -chdir=platform/0-bootstrap output -raw bootstrap_project_id) --enabled | grep -E "cloudidentity|orgpolicy|cloudresourcemanager"
+```
+
+If verification shows APIs are not enabled, wait another 30 seconds and check again. If you skip this verification and encounter errors in step 8, retry `terraform apply`.
 
 ### 8. Run terraform for 1-org
 
@@ -168,6 +178,9 @@ gcloud resource-manager folders list --organization=123456789012
 
 # Verify shared services project
 gcloud projects describe $(terraform -chdir=platform/1-org output -raw shared_project_id)
+
+# Verify Cloud Identity groups were created
+gcloud identity groups search --organization=$(terraform -chdir=platform/1-org output -raw org_id) --labels="cloudidentity.googleapis.com/groups.discussion_forum"
 ```
 
 !!! warning "Stop if verification fails"
@@ -192,8 +205,9 @@ github_app_private_key     = <<-EOT
 -----END RSA PRIVATE KEY-----
 EOT
 
-# Cloudflare API token
-cloudflare_api_token = "YOUR_CLOUDFLARE_API_TOKEN"
+# Cloudflare API token and zone ID
+cloudflare_api_token = "abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
+cloudflare_zone_id   = "1234567890abcdef1234567890abcdef"
 ```
 
 Run terraform to create the secrets:
@@ -212,6 +226,7 @@ You should see:
 - `github-app-installation-id`
 - `github-app-private-key`
 - `cloudflare-api-token`
+- `cloudflare-zone-id`
 
 **Clean up:**
 
@@ -224,6 +239,7 @@ After the initial sync:
    # github_app_installation_id = "12345678"
    # github_app_private_key     = <<-EOT ...
    # cloudflare_api_token       = "..."
+   # cloudflare_zone_id         = "..."
    ```
 
 2. Delete the local PEM file:
@@ -353,21 +369,3 @@ terraform -chdir=platform/3-github apply
 
 !!! note
     GitHub App credentials are automatically read from Secret Manager (created in step 9). No manual PEM file configuration required.
-
-## State management
-
-- `0-bootstrap` uses local backend initially
-- After bootstrap, migrate to GCS backend
-- `1-org` and `2-environments` use GCS backend with separate prefixes
-
-!!! warning "No state locking"
-    GCS does NOT provide native state locking. To avoid state corruption:
-    
-    - **Only one person should run terraform at a time**
-    - Coordinate terraform runs via team chat before applying changes
-    - CI workflows run sequentially per repository (GitHub Actions queues jobs)
-    - If you encounter "state locked" errors, wait for the other operation to complete
-    
-    For small teams (3-10 developers) running terraform sequentially, this is acceptable. If concurrent applies become necessary, consider migrating to Terraform Cloud (free tier) or AWS S3 with DynamoDB locking.
-
-See each terraform root's README for detailed configuration.

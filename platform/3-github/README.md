@@ -4,33 +4,33 @@ GitHub organization infrastructure managed as code.
 
 ## What this creates
 
-- Organization-level secrets (GitHub App credentials synced from Secret Manager to GitHub)
-- Teams and team memberships
-- Organization settings and policies (excluding billing, which remains manual)
+**Managed by terraform:**
+- Organization settings (2FA requirements, base permissions, repository creation policies)
+- Teams (developers, admins, etc.) with descriptions and privacy settings
+- Organization-level encrypted secrets (GitHub App credentials synced from Secret Manager)
+
+**NOT managed (manual via GitHub UI):**
+- Individual repositories and repository-specific settings
+- Branch protection rules, webhooks, labels, milestones
+- Team repository permissions
 
 **Note:** This module automatically reads GitHub App credentials from GCP Secret Manager (stored by 1-org) for authentication. No manual credential configuration required.
 
-## Drift Tolerance
+## Drift Tolerance Model
 
-**Bootstrap pattern:** This module creates initial GitHub organization structure but **will not override manual changes** made via the GitHub UI.
+**Continuous management with selective drift tolerance:**
 
-**What this module does NOT manage:**
-- Repositories (existing repos are completely unaffected)
-- Branch protection rules
-- Repository settings
-- Organization webhooks
+This module uses terraform to enforce organization-level governance while allowing operational flexibility:
 
-**Full drift tolerance (all changes in UI are preserved):**
-- Organization settings (billing_email, company, blog, email, twitter_username, location, description)
-- Teams (name, description, privacy)
-- Team memberships (members, maintainers, roles)
-- Organization secrets (values, visibility)
+- **Enforced settings:** 2FA requirements, base permissions, repository creation policies are continuously managed by terraform
+- **Drift-tolerant fields:** Team memberships, secret values use `lifecycle { ignore_changes }` to preserve manual updates
+- **Manual management:** Repositories and branch protection are managed entirely via GitHub UI
 
-**Use case:** Run terraform once to bootstrap your GitHub organization structure, then manage everything through the GitHub UI without fear of terraform overwriting your changes. Subsequent `terraform apply` runs will only create missing resources, not modify existing ones.
+**Use case:** Platform team maintains org-level governance via terraform, while development teams manage repositories and branch protection via GitHub UI.
 
 ## Prerequisites
 
-1. Complete [Manual Setup](../../docs/requirements.md) including GitHub App creation
+1. Complete [Requirements](../../docs/requirements.md) including GitHub App creation
 2. GitHub App credentials stored in Secret Manager via `1-org` (step 9 in platform/README.md)
 3. GitHub App must be installed to your organization
 4. Complete `1-org` terraform apply to ensure secrets exist in Secret Manager
@@ -41,9 +41,7 @@ GitHub organization infrastructure managed as code.
 - [GitHub Apps Authentication](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app) - App authentication guide
 - [GitHub Organization Settings](https://docs.github.com/en/organizations/managing-organization-settings) - Organization management
 
-!!! note
-    For step-by-step bootstrap instructions, see the [Platform README](../README.md).
-    This document provides reference information for the 3-github terraform root.
+**Note:** For step-by-step bootstrap instructions, see the [Platform README](../README.md). This document provides reference information for the 3-github terraform root.
 
 ## Configuration
 
@@ -60,11 +58,12 @@ github_organization = "aincradot"
 teams = {
   developers = {
     description = "Core developers"
-    members     = ["your-github-username"]
+    members     = ["alice", "bob"]
   }
   admins = {
     description = "Organization administrators"
-    members     = ["your-github-username"]
+    members     = ["alice"]
+    maintainers = ["charlie"]
   }
 }
 
@@ -95,6 +94,8 @@ org_settings = {
 
 - **Automatic authentication**: GitHub App credentials are read from Secret Manager automatically - no manual PEM file handling required
 - **Secrets module**: Syncs GitHub App credentials from GCP Secret Manager to GitHub organization secrets for CI/CD
-- **Teams module**: Creates teams with members and permissions
+- **Teams module**: Creates teams with members and permissions, with drift tolerance for membership changes
+- **Organization settings**: Enforces governance policies (2FA, base permissions) via terraform
 - **Billing exclusion**: `billing_email` in org_settings is intentionally optional and should be managed manually via GitHub UI
+- **Repository management**: NOT included - repositories are created and managed manually via GitHub UI
 - **Secret Manager dependency**: Requires Secret Manager secrets created by `1-org` terraform root

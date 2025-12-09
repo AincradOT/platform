@@ -44,39 +44,6 @@ variable "state_bucket_name" {
   default     = null
 }
 
-variable "gcp_logging_viewers_group" {
-  description = "Group email for logging/monitoring viewer access (e.g., logging-viewers@example.com)."
-  type        = string
-  default     = null
-
-  validation {
-    condition     = var.gcp_logging_viewers_group == null || can(regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", var.gcp_logging_viewers_group))
-    error_message = "gcp_logging_viewers_group must be a valid email address"
-  }
-}
-
-variable "gcp_org_admins_group" {
-  description = "Group email for org-level project creation (e.g., platform-admins@example.com)."
-  type        = string
-  default     = null
-
-  validation {
-    condition     = var.gcp_org_admins_group == null || can(regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", var.gcp_org_admins_group))
-    error_message = "gcp_org_admins_group must be a valid email address"
-  }
-}
-
-variable "gcp_billing_admins_group" {
-  description = "Group email for billing admins on the billing account (e.g., billing-admins@example.com)."
-  type        = string
-  default     = null
-
-  validation {
-    condition     = var.gcp_billing_admins_group == null || can(regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", var.gcp_billing_admins_group))
-    error_message = "gcp_billing_admins_group must be a valid email address"
-  }
-}
-
 # ============================================================================
 # PLATFORM DEFAULTS
 # ============================================================================
@@ -124,5 +91,14 @@ variable "cloudflare_api_token" {
   description = "Cloudflare API token. Only needed for initial bootstrap to sync to Secret Manager."
   type        = string
   sensitive   = true
+  default     = null
+}
+
+# Cloudflare Zone ID for DNS management
+# Only required for initial bootstrap to populate GCP Secret Manager
+variable "cloudflare_zone_id" {
+  description = "Cloudflare Zone ID for your domain. Only needed for initial bootstrap to sync to Secret Manager."
+  type        = string
+  sensitive   = false
   default     = null
 }

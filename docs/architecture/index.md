@@ -12,6 +12,7 @@ The platform is organized into [Terraform](https://www.terraform.io/docs) roots 
 - `0-bootstrap` creates bootstrap project and [GCS state bucket](state-management.md)
 - `1-org` creates organizational folders (shared, dev, prod) and shared services project
 - `2-environments` creates dev and prod environment projects
+- `3-github` creates GitHub organization settings, teams, and secrets
 
 All roots use shared [GCS backend](https://www.terraform.io/docs/language/settings/backends/gcs.html) with separate state prefixes.
 
@@ -21,11 +22,13 @@ Application repositories use the same backend and target environment projects cr
 
 For complete bootstrap procedures, see the [Platform README](../platform/README.md).
 
-The platform uses remote state data sources to eliminate manual output copying between terraform roots:
+## State and remote backends
 
-1. `0-bootstrap` creates state bucket → outputs `state_bucket_name`
-2. `1-org` stores outputs in remote state → `folder_id`, `shared_project_id`, service account emails
-3. `2-environments` automatically reads from `1-org` remote state → no manual copying needed
+See [State Management](state-management.md) for complete details on:
+- GCS bucket configuration and features
+- State prefixes and isolation
+- State locking considerations
+- Bootstrap state migration process
 
 Applications consume platform resources:
 

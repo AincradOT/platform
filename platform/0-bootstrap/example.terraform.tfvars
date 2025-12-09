@@ -10,7 +10,7 @@
 org_id = "123456789012"
 
 # Billing account ID (find at: https://console.cloud.google.com/billing)
-billing_account_id = "XXXXXX-YYYYYY-ZZZZZZ"
+billing_account_id = "ABCDEF-123456-ABCDEF"
 
 # Project name (e.g., "aincrad")
 # This generates project_id: "aincrad-bootstrap"

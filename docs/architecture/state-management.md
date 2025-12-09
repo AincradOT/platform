@@ -47,7 +47,7 @@ Each terraform root uses a unique prefix in the bucket:
 ```
 gs://aincrad-tfstate/
 ├── terraform/bootstrap/           # bootstrap state
-├── terraform/org/                 # organizational structure state
+├── terraform/1-org/               # organizational structure state
 ├── terraform/environments/dev/    # development environment
 ├── terraform/environments/prod/   # production environment
 └── terraform/apps/{repo-name}/    # application infrastructure repos
@@ -57,9 +57,7 @@ Application repositories use their repository name as part of the prefix to avoi
 
 ## State Locking
 
-!!! warning
-    GCS does not provide native state locking.
-    For small teams (3-10 developers) running terraform sequentially, this is acceptable.
+**⚠️ Warning:** GCS does not provide native state locking. For small teams (3-10 developers) running terraform sequentially, this is acceptable.
 
 ### Mitigation
 

@@ -107,7 +107,7 @@ It breaks down as soon as you introduce:
 
 The platform layer exists to:
 
-* centralise the organisation level decisions
+* centralize the organization level decisions
 * give a single source of truth for environments and state
 * avoid every repo reinventing state backends, secrets and CI auth
 * maintain a consistent and well-documented infrastructure that can be managed by a single engineer
@@ -128,17 +128,17 @@ There are four moving parts in this design:
 GCP is not objectively better than AWS or Azure in all cases. It is a good fit here because:
 
 * GCS provides inexpensive Terraform state storage with built-in versioning
-* GCS does not support state locking - avoid concurrent applies
+* GCS does not provide native state locking - avoid concurrent applies
 * Secret Manager integrates cleanly with Terraform, CI and Ansible
 * Service account keys for CI are simpler than Workload Identity Federation for small teams
-* The organisation and project model is relatively simple for small teams
-* The idle cost of a minimal organisation, projects and state bucket is low
+* The organization and project model is relatively simple for small teams
+* The idle cost of a small organization, projects and state bucket is low
 
 GitHub is used because:
 
 * it already hosts most Open Tibia code and tooling
 * GitHub Actions provides OIDC tokens that integrate well with GCP
-* the GitHub provider for Terraform lets the organisation layout be managed as code
+* the GitHub provider for Terraform lets the organization layout be managed as code
 
 Cloudflare is used for DNS and edge services because:
 
@@ -190,7 +190,7 @@ This repository contains Terraform roots organized by lifecycle:
 * `0-bootstrap` - Creates bootstrap project and GCS state bucket (local backend initially)
 * `1-org` - Creates organizational folders and shared services project
 * `2-environments` - Creates dev and production environment projects
-* (optional) `github` - GitHub organisation settings, core repositories, teams and branch protections
+* `3-github` - GitHub organization settings, teams, and organization secrets
 
 Application repositories depend on the platform repository. They do not modify it.
 
@@ -292,14 +292,15 @@ Domain registration and nameserver configuration are manual one-time setup steps
 
 **GitHub organization component** (optional)
 
-* configures GitHub organisation settings (2FA required, base permissions)
-* creates core repository structure
-* defines teams and their base permissions
-* sets up branch protection rules for main and production branches
+* configures GitHub organization settings (2FA required, base permissions, repository creation policies)
+* defines teams with drift tolerance for membership changes
+* syncs organization-level secrets from Secret Manager to GitHub for CI/CD workflows
 
-For small teams (<10 people), the GitHub component can be managed manually via GitHub UI. For larger teams or when reproducibility is critical, it can be codified in terraform.
+Repositories and branch protection rules are managed manually via GitHub UI, not by terraform. This provides operational flexibility for development teams while maintaining organization-level governance.
 
-The platform layer is applied rarely. It changes when the organisation shape changes, not every week.
+For small teams (<10 people), the entire GitHub component can be managed manually via GitHub UI. For larger teams requiring consistent governance policies, terraform enforcement of org-level settings is recommended.
+
+The platform layer is applied rarely. It changes when the organization shape changes, not every week.
 
 ### Application layer
 
@@ -326,14 +327,14 @@ This separation keeps platform concerns (org structure, projects, state backend,
 
 The platform repository handles:
 
-* GCP organisation level setup that must exist before anything else
+* GCP organization level setup that must exist before anything else
 * the bootstrap project and state bucket
 * organizational folders (shared, dev, prod)
 * environment projects and shared services project
 * Secret Manager API enablement (applications create their own secret resources)
 * CI service accounts and their IAM bindings
 * Cloudflare API token storage and IAM bindings for application access
-* GitHub organisation level settings (optional, can be managed manually for small teams)
+* GitHub organization level settings and teams
 
 It does not create application specific infrastructure such as game server VMs, databases or load balancers. Those belong to application repositories.
 
@@ -352,7 +353,7 @@ Each application or service repository is responsible for:
 
 These repositories do not:
 
-* create or destroy GCP organisations, folders, or environment projects
+* create or destroy GCP organizations, folders, or environment projects
 * change the shared state bucket configuration
 * modify platform-level IAM or service accounts
 
@@ -396,7 +397,7 @@ This golden path is not mandatory for writing code. It is mandatory if you want 
 
 Key points:
 
-* a single platform repository defines the organisation skeleton and cross cutting concerns
+* a single platform repository defines the organization skeleton and cross cutting concerns
 * application repositories consume that skeleton and own their own runtime infrastructure
 * GCP and GitHub are wired together using Terraform, GCS state and service account authentication
 * secrets are never hardcoded in Terraform or Ansible inventories

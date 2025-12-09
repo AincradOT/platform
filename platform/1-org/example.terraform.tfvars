@@ -21,7 +21,8 @@ shared_project_id = "aincrad-shared"
 # Used to grant CI service accounts access to terraform state
 state_bucket_name = "aincrad-tfstate"
 
-cloudflare_api_token = "abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"  # Replace with your actual token
+cloudflare_api_token = "cfx_api_v1_1234567890abcdef1234567890abcdef"
+cloudflare_zone_id   = "023e10593bd81a4dd053a95b8"
 
 # GitHub App credentials for dual storage (GitHub org secrets + GCP Secret Manager)
 # Only needed for initial bootstrap to sync to Secret Manager
@@ -36,11 +37,3 @@ MIIEpAIBAAKCAQEA...
 ...
 -----END RSA PRIVATE KEY-----
 EOT
-
-
-# Optional: Group emails for IAM bindings
-# Uncomment and set these if you have Google Workspace / Cloud Identity groups
-
-# gcp_logging_viewers_group  = "logging-viewers@example.com"
-# gcp_org_admins_group       = "platform-admins@example.com"
-# gcp_billing_admins_group   = "billing-admins@example.com"

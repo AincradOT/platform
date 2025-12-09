@@ -2,6 +2,8 @@
 
 This repository defines the platform infrastructure for the Aincrad Open Tibia community, but is **designed to be lifted and shifted** for other projects.
 
+**⏱️ Time to complete:** ~2-3 hours for full bootstrap from scratch (including manual prerequisites)
+
 ## Purpose
 
 !!! note
@@ -19,7 +21,7 @@ For the full rationale, see the [`Golden path`](golden-path.md) write-up.
 
 ### Pragmatic tradeoffs for cost/complexity
 
-- No state locking (GCS does not support this - avoid concurrent applies)
+- No native state locking (GCS does not provide native locking - avoid concurrent applies)
 - Service account keys with rotation instead of Workload Identity Federation (simpler ops)
 - Game servers exposed directly to internet (cost optimization, common in gaming industry)
 - Single region deployment (multi-region is enterprise-grade, not startup-grade)
@@ -32,7 +34,7 @@ Small-to-medium game servers (particularly [Open Tibia](https://github.com/otlan
 
 Ongoing infrastructure management shouldn't be a full-time job. This platform handles:
 
-- [GCP](https://cloud.google.com/) organisation layout and environment [projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
+- [GCP](https://cloud.google.com/) organization layout and environment [projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
 - Shared [Terraform state backend](architecture/state-management.md)
 - [Secret Manager API](https://cloud.google.com/secret-manager/docs) enabled for applications to manage their own secrets
 - CI [service accounts](https://cloud.google.com/iam/docs/service-accounts) for [GitHub Actions](https://docs.github.com/en/actions)
@@ -40,6 +42,10 @@ Ongoing infrastructure management shouldn't be a full-time job. This platform ha
 
 !!! note
     Application repositories consume the platform - they don't modify it. Development teams focus on building features for users, not fiddling with platform configuration.
+
+## Prerequisites
+
+See the [Requirements](requirements.md) page for complete setup instructions.
 
 ## Portability
 
@@ -51,7 +57,7 @@ This platform is designed to be forked and adapted for other organizations:
 - Suitable for other Open Tibia communities or similar small game server projects
 
 !!! warning
-    **Prerequisites:** Solid understanding of Linux, Terraform, GCP IAM, and CI/CD required. Not for infrastructure beginners.
+    **See [Requirements](requirements.md) for prerequisites and initial setup instructions.**
     **Initial setup** includes Cloud Identity, billing, domain setup, terraform bootstrapping, and CI configuration.
 
 ## Scope
@@ -60,7 +66,7 @@ This documentation is about platforming only.
 
 It discusses the management of:
 
-- GCP organisation level resources
+- GCP organization level resources
 - Environment projects such as dev and prod
 - Shared [Terraform state storage](architecture/state-management.md)
 - [Secret Manager API](https://cloud.google.com/secret-manager/docs) enablement (applications create their own secrets)
@@ -82,7 +88,7 @@ Those concerns live in separate application or infrastructure repositories that 
 
 - [Architecture](architecture/index.md)
 
-      Platform layout including GCP organisation structure, environment projects, [Terraform backends](architecture/state-management.md) and [GitHub organisation](architecture/github.md) wiring.
+      Platform layout including GCP organization structure, environment projects, [Terraform backends](architecture/state-management.md) and [GitHub organization](architecture/github.md) wiring.
 
 - [Runbooks](runbooks/index.md)
 

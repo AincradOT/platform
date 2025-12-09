@@ -2,19 +2,24 @@
 
 This section describes how we manage the GitHub organisation as part of the platform.
 
-The GitHub organization is **terraform-managed** but designed to tolerate drift. Terraform bootstraps the organization structure (teams, repositories, branch protections), but manual changes via GitHub UI are not automatically reverted. This allows operational flexibility while maintaining infrastructure as code for reproducibility.
+The GitHub organization uses **terraform for organization-level governance** with continuous management and selective drift tolerance. Terraform enforces critical policies (2FA, base permissions) while allowing operational flexibility for team memberships and repository management.
 
 ## Scope
 
-The GitHub platform [Terraform](https://www.terraform.io/docs) root lives under `github/` in the `platform` repository. It manages:
+The GitHub platform [Terraform](https://www.terraform.io/docs) root lives under `3-github/` in the `platform` repository. It manages:
 
-- organisation level settings
-- core [teams](https://docs.github.com/en/organizations/organizing-members-into-teams) and their permissions
-- core repositories that must always exist
-- [branch protection rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches) for main and production branches
-- standard labels and other repository level defaults
+- Organization-level settings (2FA requirements, base permissions, repository creation policies)
+- Core [teams](https://docs.github.com/en/organizations/organizing-members-into-teams) with descriptions and privacy settings
+- Organization-level encrypted secrets for CI/CD workflows
 
-It does **not** attempt to manage every user membership or every ad hoc repository. The goal is to codify the critical structure and guardrails, not micromanage everything through Terraform.
+It does **not** manage:
+
+- Individual repositories (created and managed manually via GitHub UI)
+- [Branch protection rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches) (configured per-repository via GitHub UI)
+- Repository-specific settings, webhooks, labels, or milestones
+- Team repository permissions (assigned manually via GitHub UI)
+
+The goal is organization-level governance via terraform, while development teams manage repositories and branch protection via GitHub UI.
 
 ## Provider and backend
 
@@ -57,61 +62,18 @@ Terraform manages these through `github_organization_settings`.
 
 ## Teams
 
-Teams organise access and responsibilities. The initial set might look like:
+Teams organize access and responsibilities. Teams are defined in terraform with drift tolerance for memberships:
 
-- `platform` for engineers who manage GCP and GitHub platform
-- `game` for game server and game infrastructure work
-- `web` for the web application and launcher
-- `readers` for people who need code visibility but no write access
+- `developers` for core development team members
+- `admins` for organization administrators
+- Additional teams as needed for your organization
 
-Terraform defines team names and slugs, and binds them to repositories with a clear permission level:
+Terraform creates team structure and initial memberships. Team membership changes made via GitHub UI are preserved (drift-tolerant).
 
-- `platform` team has maintain rights on `platform` and read on everything else
-- `game` team has write or maintain rights on `game-infra` and `game-server`
-- `web` team has write or maintain rights on `web-ui`
+**Team repository permissions** are assigned manually via GitHub UI, not managed by terraform. This provides flexibility for development teams to manage repository access as needed.
 
-Individual human membership in teams can be managed manually at first, or codified later if needed.
+## Organization secrets
 
-## Core repositories
+Terraform syncs GitHub App credentials from GCP Secret Manager to GitHub organization-level encrypted secrets. These secrets are available to all repositories for CI/CD workflows.
 
-We treat several repositories as part of the platform:
-
-- `platform`
-- `game-infra`
-- `game-server`
-- `web-ui`
-- any other truly core repos
-
-Terraform ensures these repositories exist with the correct visibility, default branch and topics. If they are accidentally deleted or misconfigured, a Terraform apply will restore them.
-
-Non core repositories can still be created manually when needed. If a repository becomes critical, it should be added to the Terraform configuration.
-
-## Branch protection
-
-[Branch protection rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches) are essential for keeping infrastructure and core services stable.
-
-Terraform manages branch protection for at least:
-
-- the `main` branch in every core repository
-- a `prod` or `release` branch where one exists
-
-Typical rules:
-
-- require [pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) for changes
-- require [status checks](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/collaborating-on-repositories-with-code-quality-features/about-status-checks) to pass before merging
-- disallow force pushes
-- restrict who can push directly
-
-We should avoid overcomplicating branch rules. The goal is to prevent obvious foot guns, not block every edge case.
-
-## Labels and templates
-
-Standard issue labels and optionally basic issue and pull request templates help new projects look consistent.
-
-Terraform can create a minimal label set in core repositories. It is not mandatory to manage every label as code, but the important ones should be codified so they are present everywhere:
-
-- `infra`
-- `ops`
-- `bug`
-- `enhancement`
-- `security`
+Secret values are managed via Secret Manager and automatically synced to GitHub. Changes to secret values in Secret Manager are preserved (drift-tolerant).

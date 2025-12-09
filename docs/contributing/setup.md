@@ -4,9 +4,9 @@
 
 Make sure you have the following installed:
 
-- [Git](https://git-scm.com/downloads) - Version control system
-- [Make](https://www.gnu.org/software/make/#download) - Build automation tool
-- [Docker](https://docs.docker.com/desktop/) - Containerization platform
+- [Git](https://git-scm.com/downloads) - Version control system ([Getting Started Guide](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git))
+- [Make](https://www.gnu.org/software/make/#download) - Build automation tool ([GNU Make Manual](https://www.gnu.org/software/make/manual/))
+- [Docker](https://docs.docker.com/desktop/) - Containerization platform ([Docker Getting Started](https://docs.docker.com/get-started/))
 
 ## Installation
 

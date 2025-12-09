@@ -61,6 +61,6 @@ module "dev_environment" {
 
 ## Notes
 
-- This module creates the minimal set of APIs required for most applications
+- This module enables APIs: compute, IAM, logging, monitoring, Secret Manager
 - Additional APIs can be enabled in the consuming application's terraform
-- IAM bindings are intentionally minimal - add project-specific permissions in application repos
+- IAM bindings include only CI service account access - add project-specific permissions in application repos

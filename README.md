@@ -1,13 +1,13 @@
 # Aincrad Platforming
 
-This repository holds the platform infrastructure for both Google Cloud Platform and the GitHub organisation.
+This repository holds the platform infrastructure for both Google Cloud Platform and the GitHub organization.
 
 It defines:
 
-- GCP organisation level layout and environment projects
+- GCP organization level layout and environment projects
 - Shared Terraform state backend with Google-managed encryption
 - CI service accounts with key-based authentication for GitHub Actions
-- GitHub organisation settings, core repositories, teams and branch protections
+- GitHub organization settings, core repositories, teams and branch protections
 
 Application and service repositories consume these platform. They do not modify them.
 
@@ -19,11 +19,11 @@ This repository is about platforming only.
 
 It manages:
 
-- GCP organisation level resources
+- GCP organization level resources
 - Environment projects such as dev and prod
 - Shared Terraform state storage with Google-managed encryption
 - CI identities and their permissions
-- GitHub organisation settings, core repositories, teams and branch protections
+- GitHub organization settings, core repositories, teams and branch protections
 
 It does not manage:
 
@@ -42,14 +42,14 @@ Make sure you have the following installed:
 
 Before running any Terraform in this repository you need:
 
-- a GCP organisation and billing account
-- a GitHub organisation where this repository lives
+- a GCP organization and billing account
+- a GitHub organization where this repository lives
 - Google Cloud SDK installed locally
 - Terraform installed locally
-- an account with organisation level permissions in GCP
-- an owner in the GitHub organisation
+- an account with organization level permissions in GCP
+- an owner in the GitHub organization
 
-The initial bootstrap also requires a personal access token or GitHub App token with rights to manage organisation settings, repositories and teams.
+The initial bootstrap also requires a personal access token or GitHub App token with rights to manage organization settings, repositories and teams.
 
 ## Documentation
 

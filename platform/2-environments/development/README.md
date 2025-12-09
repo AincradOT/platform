@@ -5,7 +5,7 @@ Creates development environment project.
 ## What this creates
 
 - Development project in `dev` folder
-- Minimal APIs enabled (compute, IAM, logging, monitoring, Secret Manager)
+- APIs enabled: compute, IAM, logging, monitoring, Secret Manager
 - Project attached to central logging metrics scope
 - Optional IAM bindings for platform viewers
 
@@ -16,9 +16,7 @@ Creates development environment project.
 - [Secret Manager Overview](https://cloud.google.com/secret-manager/docs) - Application secrets management
 - [Cloud Monitoring Metrics Scopes](https://cloud.google.com/monitoring/settings) - Cross-project monitoring
 
-!!! note
-    For step-by-step bootstrap instructions, see the [Platform README](../../README.md).
-    This document provides reference information for the development terraform root.
+**Note:** For step-by-step bootstrap instructions, see the [Platform README](../../README.md). This document provides reference information for the development terraform root.
 
 ## Configuration
 
@@ -126,4 +124,4 @@ terraform -chdir=platform/2-environments/development apply
 
 ## Notes
 
-- IAM is minimal. Add project-specific roles as needed for your application
+- IAM includes only platform CI service account access. Add project-specific roles as needed for your application

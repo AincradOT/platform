@@ -25,7 +25,7 @@ Documentation changes pushed to `master` automatically deploy to GitHub Pages us
 
 ### Dependency Management
 
-[Renovate](https://github.com/renovatebot/renovate) runs daily to scan for dependency updates and creates automated pull requests.
+[Renovate](https://github.com/renovatebot/renovate) runs daily to scan for dependency updates and creates automated pull requests. [Renovate](https://docs.renovatebot.com/) automatically opens pull requests to update dependencies.
 
 ## Branch Protection
 

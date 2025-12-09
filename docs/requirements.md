@@ -1,4 +1,4 @@
-# Manual Setup
+# Requirements
 
 ## Introduction
 
@@ -98,6 +98,33 @@ Minimum steps:
 3. Add a payment method.
 4. Link your initial project to this billing account.
 
+### Cloud Identity Groups
+
+!!! tip
+    Terraform creates the groups and manages IAM bindings. You manage group membership manually via Google Admin console.
+
+The platform uses Cloud Identity groups to manage human access. **Terraform automatically creates these three groups** during `1-org` bootstrap:
+
+1. **`logging-viewers@yourdomain.com`** - Read-only access to logs and monitoring
+   - IAM roles: `roles/logging.viewer`, `roles/monitoring.viewer` on shared project
+   - Add developers who need to troubleshoot issues
+
+2. **`platform-admins@yourdomain.com`** - Platform administrators
+   - IAM role: `roles/resourcemanager.projectCreator` at org level
+   - Add senior engineers managing platform infrastructure
+
+3. **`billing-admins@yourdomain.com`** - Billing account administrators
+   - IAM role: `roles/billing.admin` on billing account
+   - Add finance/leadership with billing account access
+
+**After terraform creates the groups**, add members via [Google Admin console](https://admin.google.com):
+
+1. Navigate to **Directory** → **Groups**
+2. Select a group (e.g., `logging-viewers@yourdomain.com`)
+3. Click **Add members**
+4. Add user email addresses
+5. Save
+
 ### Google Cloud SDK (gcloud)
 
 !!! note
@@ -128,10 +155,9 @@ You are now ready to proceed with bootstrapping the platform using Terraform. Th
 !!! danger
     Even if you created the organization, you must explicitly grant these roles.
     Google Cloud does not automatically give org creators all the permissions needed to bootstrap an entire platform.
-    The roles below are high-privilege. If they are not being granted directly to the organisation owner, only grant them to trusted administrators or admin groups - never to general developers.
+    The roles below are high-privilege. If they are not being granted directly to the organization owner, only grant them to trusted administrators or admin groups - never to general developers.
 
-For the user (or group) that will run the procedures in this document
-(typically your platform admin or organisation owner), grant the following roles.
+For the user (or group) that will run the procedures in this document (typically your platform admin or organization owner), grant the following roles.
 
 Go to the [IAM admin page](https://console.cloud.google.com/iam-admin/):
 
@@ -434,7 +460,7 @@ Save the API token securely:
 
 ```bash
 # Save this somewhere secure (password manager, encrypted file, etc.)
-Cloudflare API Token: YOUR_API_TOKEN_HERE
+Cloudflare API Token: abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
 ```
 
 !!! danger

@@ -24,6 +24,40 @@ This document describes application-level Cloudflare usage patterns. The platfor
 * [DDoS protection](https://www.cloudflare.com/learning/ddos/what-is-a-ddos-attack/) for proxied services
 * [CDN](https://www.cloudflare.com/learning/cdn/what-is-a-cdn/) for static assets (rarely needed for Open Tibia)
 
+## Getting Your Zone ID
+
+The Cloudflare Zone ID is stored in Secret Manager during `1-org` terraform apply.
+
+**During initial setup (1-org terraform):**
+
+1. Log in to the [Cloudflare dashboard](https://dash.cloudflare.com/)
+2. Select your domain from the list
+3. Scroll down on the Overview page
+4. Find **Zone ID** in the API section on the right sidebar
+5. Copy the Zone ID (format: 32-character hexadecimal string like `1234567890abcdef1234567890abcdef`)
+6. Add to `platform/1-org/terraform.tfvars`:
+   ```hcl
+   cloudflare_zone_id = "1234567890abcdef1234567890abcdef"
+   ```
+
+**For application infrastructure:**
+
+Applications read the Zone ID from Secret Manager at runtime using data sources:
+
+```hcl
+data "google_secret_manager_secret_version" "cloudflare_zone_id" {
+  project = var.shared_project_id
+  secret  = "cloudflare-zone-id"
+}
+
+resource "cloudflare_record" "example" {
+  zone_id = data.google_secret_manager_secret_version.cloudflare_zone_id.secret_data
+  # ...
+}
+```
+
+This eliminates the need to duplicate the Zone ID across multiple application repositories.
+
 ## DNS Self-Service Pattern
 
 Application repositories manage their own DNS records using [Cloudflare Terraform provider](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs):
@@ -94,7 +128,6 @@ Cloudflare API tokens are managed by platform repository:
 - Limited permissions (DNS Edit, SSL/TLS Read)
 - Stored in Secret Manager
 - Available to application repositories via terraform outputs
-- Rotated every 6 months
 
 !!! danger
     Never commit API tokens.

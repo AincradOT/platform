@@ -10,10 +10,10 @@
 
 Platform in this context means everything that exists before any application or service repository:
 
-- cloud organisation and environment projects
+- cloud organization and environment projects
 - shared state and secrets stores
 - identity and access for CI and humans
-- source control organisation and base repository layout
+- source control organization and base repository layout
 
 ## High level architecture
 
