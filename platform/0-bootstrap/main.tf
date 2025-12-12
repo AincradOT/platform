@@ -45,6 +45,9 @@ resource "google_storage_bucket" "tf_state" {
       num_newer_versions = 50
     }
   }
+  lifecycle {
+    prevent_destroy = true
+  }
   labels     = local.labels
   depends_on = [google_project_service.enabled]
 }

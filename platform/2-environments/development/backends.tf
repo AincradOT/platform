@@ -22,7 +22,7 @@
 
 terraform {
   backend "gcs" {
-    bucket = "<STATE_BUCKET_NAME_FROM_0_BOOTSTRAP_OUTPUT>"
+    bucket = "aincrad-tfstate"  # Update with actual bucket name from 0-bootstrap output
     prefix = "terraform/environments/development"
   }
 }

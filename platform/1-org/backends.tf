@@ -15,14 +15,14 @@
 #
 # 3. Run terraform init in this directory:
 #
-#    cd ../1-foundation
+#    cd ../1-org
 #    terraform init
 #
 # ============================================================================
 
 terraform {
   backend "gcs" {
-    bucket = "<STATE_BUCKET_NAME_FROM_0_BOOTSTRAP_OUTPUT>"
-    prefix = "terraform/foundation"
+    bucket = "aincrad-tfstate"
+    prefix = "terraform/org"
   }
 }

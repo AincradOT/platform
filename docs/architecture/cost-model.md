@@ -9,7 +9,7 @@ This platform uses GCP **only** for:
 - Database backups/blob storage
 - Shared services (logging/monitoring)
 
-**Application infrastructure** (VMs, game servers, web servers) runs on cheaper providers (Hetzner, OVH, etc.).
+**Application infrastructure** (VMs, game servers, web servers) runs on cost-effective providers as needed.
 
 This keeps GCP costs minimal while providing enterprise-grade state management and secrets.
 
@@ -83,26 +83,7 @@ gcloud billing accounts list
 | Team Size | Environments | Monthly Platform Cost |
 |-----------|--------------|----------------------|
 | 1-3 devs | dev, prod | $14-17 |
-| 3+ devs | dev, nonprod, prod | $28-35 |
-
-### VM/Application infrastructure costs
-
-| Environment | Server Specs | Provider | Monthly Cost |
-|-------------|--------------|----------|-------------|
-| Dev | 2-4 vCPU, 4-8GB RAM, 80GB SSD | Hetzner/OVH | $40 |
-| Prod | 4-8 vCPU, 8-16GB RAM, 160GB SSD | Hetzner/OVH | $70 |
-| **Total** | | | **$110** |
-
-!!! note
-    Dev environment runs lighter stack (no heavy monitoring like Prometheus/Grafana).
-    Prod environment sized for full observability stack and production load.
-
-### Total monthly cost summary
-
-| Team Size | Platform | VMs | **Total** |
-|-----------|----------|-----|----------|
-| 1-3 devs | $14-17 | $110 | **$124-127** |
-| 3+ devs | $28-35 | $110 | **$138-145** |
+| 4+ devs | dev, staging, prod | $28-35 |
 
 ## Summary
 

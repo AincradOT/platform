@@ -5,15 +5,15 @@
 - Separation of concerns between platform and project.
 - Reproducible bootstrap with minimal manual steps.
 - Cheap to operate. Platform overhead should be measured in cents per month.
-- Simple enough that another senior engineer can own it without reverse engineering.
+- Maintainable by a single dev with basic terraform knowledge.
 - Explicit security boundaries around state, secrets and CI identities.
 
 Platform in this context means everything that exists before any application or service repository:
 
-- cloud organisation and environment projects
+- cloud organization and environment projects
 - shared state and secrets stores
 - identity and access for CI and humans
-- source control organisation and base repository layout
+- source control organization and base repository layout
 
 ## High level architecture
 
@@ -46,9 +46,9 @@ This phase is intentionally small and documented. Everything after this should b
 - Clone `platform` repository
 - Run `0-bootstrap` terraform to create state bucket
 - Migrate bootstrap state to GCS
-- Run `1-org` terraform to create folders and shared project
+- Run `1-org` terraform to create folders, shared project, and CI service accounts
 - Run `2-environments` terraform to create dev and prod projects
-- Configure CI service accounts and GitHub secrets (Phase 2)
+- Generate CI service account keys and store in GitHub secrets
 
 At the end of this phase the organisation and platform are in a known, reproducible state.
 

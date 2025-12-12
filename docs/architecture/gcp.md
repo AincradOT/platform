@@ -16,8 +16,9 @@ These manage:
 - Bootstrap project for state storage
 - GCS bucket for Terraform state with versioning
 - Environment projects for dev and prod
-- Shared services project for logging and Secret Manager
-- Service accounts for CI operations (to be added)
+- Shared services project for logging
+- Service accounts for CI operations
+- Secret Manager API enablement (applications create their own secrets)
 
 It does **not** manage individual workloads such as game servers or web applications. Those live in separate repositories and projects.
 
@@ -47,20 +48,20 @@ Each Terraform root uses a distinct `prefix` so state files are isolated and bla
 
 ## Environment projects
 
-We use a simple environment layout:
+We use a three-tier environment layout:
 
 - Bootstrap project for state bucket and platform administration
 - Shared services project for logging, monitoring, and Secret Manager
 - Dev project for development workloads
 - Prod project for production workloads
 
-Example naming: `sao-bootstrap`, `sao-shared-logging`, `sao-dev`, `sao-prod`
+Example naming: `aincrad-bootstrap`, `aincrad-shared`, `aincrad-dev`, `aincrad-prod`
 
 Projects are created by the platform Terraform roots. Application repositories receive the project IDs as inputs and never create projects themselves.
 
 ## Service accounts and roles
 
-The GCP platform will define service accounts for CI operations (Phase 2):
+The GCP platform defines service accounts for CI operations:
 
 - Platform CI service account for Terraform operations on org and projects
 - Dev CI service account for development environment operations
@@ -90,11 +91,12 @@ For small teams, we use service account keys stored as GitHub encrypted secrets:
 
 [Secret Manager](https://cloud.google.com/secret-manager/docs) provides versioned, encrypted storage for application secrets (API keys, database passwords, tokens).
 
-The GCP platform Terraform will be responsible for (Phase 2):
+The GCP platform enables the Secret Manager API in environment projects. **Applications are responsible for**:
 
-- Creating Secret Manager resources with stable names
+- Creating their own Secret Manager resources with application-specific names
 - Configuring IAM bindings for service account access
 - Setting up replication policies
+- Managing secret lifecycle (creation, rotation, deletion)
 
 Secret values are never stored in Terraform. They are set via:
 

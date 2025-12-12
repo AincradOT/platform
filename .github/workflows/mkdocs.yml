@@ -2,7 +2,7 @@ name: docs
 
 on:
   push:
-    branches: [master, feat/docs]
+    branches: [master]
   workflow_dispatch:
   pull_request:
 
@@ -39,6 +39,20 @@ jobs:
 
       - name: Install MkDocs
         run: pip install mkdocs mkdocs-material
+
+      - name: Copy platform READMEs for docs
+        run: |
+          mkdir -p docs/platform/0-bootstrap
+          mkdir -p docs/platform/1-org
+          mkdir -p docs/platform/2-environments/development
+          mkdir -p docs/platform/2-environments/production
+          mkdir -p docs/platform/3-github
+          cp platform/README.md docs/platform/
+          cp platform/0-bootstrap/README.md docs/platform/0-bootstrap/
+          cp platform/1-org/README.md docs/platform/1-org/
+          cp platform/2-environments/development/README.md docs/platform/2-environments/development/
+          cp platform/2-environments/production/README.md docs/platform/2-environments/production/
+          cp platform/3-github/README.md docs/platform/3-github/
 
       - name: Build site
         run: mkdocs build -f .github/mkdocs.yml --strict

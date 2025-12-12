@@ -1,4 +1,4 @@
-# Manual Setup
+# Requirements
 
 ## Introduction
 
@@ -98,31 +98,32 @@ Minimum steps:
 3. Add a payment method.
 4. Link your initial project to this billing account.
 
-### Workspace / IAM Roles
+### Cloud Identity Groups
 
-!!! note
-    If this is a brand-new organization and you are using the same admin account that created Cloud Identity / the organization and the billing account, you likely already have the necessary permissions and can treat this section as reference.
-    These role assignments are mainly for when you delegate platform setup to another user or group.
+!!! tip
+    **Two-step process:** Terraform creates the groups during `1-org` bootstrap and assigns IAM roles. After bootstrap completes, you add members to the groups via Google Admin console.
 
-!!! danger
-    The roles below are high-privilege.
-    Only grant them to trusted administrators or admin groups - never to general developers.
+The platform uses Cloud Identity groups to manage human access. **No manual group creation required** - Terraform automatically creates these three groups during `1-org` bootstrap:
 
-Go to the [IAM admin page](https://console.cloud.google.com/iam-admin/):
+1. **`logging-viewers@yourdomain.com`** - Read-only access to logs and monitoring
+   - IAM roles: `roles/logging.viewer`, `roles/monitoring.viewer` on shared project
+   - Add developers who need to troubleshoot issues
 
-For the user (or group) that will run the procedures in this document
-(typically your platform admin), grant the following roles.
+2. **`platform-admins@yourdomain.com`** - Platform administrators
+   - IAM role: `roles/resourcemanager.projectCreator` at org level
+   - Add senior engineers managing platform infrastructure
 
-On the Google Cloud organization:
+3. **`billing-admins@yourdomain.com`** - Billing account administrators
+   - IAM role: `roles/billing.admin` on billing account
+   - Add finance/leadership with billing account access
 
-* `roles/resourcemanager.organizationAdmin`
-* `roles/orgpolicy.policyAdmin`
-* `roles/resourcemanager.projectCreator`
-* `roles/resourcemanager.folderCreator`
-* `roles/resourcemanager.folderEditor`
-* `roles/resourcemanager.capabilities.update`
-* `roles/resourcemanager.lienModifier`
-* `roles/securitycenter.admin`
+**After terraform creates the groups**, add members via [Google Admin console](https://admin.google.com):
+
+1. Navigate to **Directory** → **Groups**
+2. Select a group (e.g., `logging-viewers@yourdomain.com`)
+3. Click **Add members**
+4. Add user email addresses
+5. Save
 
 ### Google Cloud SDK (gcloud)
 
@@ -148,6 +149,28 @@ gcloud init
 ```
 
 You are now ready to proceed with bootstrapping the platform using Terraform. The bootstrap project and required APIs will be created by the Terraform code in the next steps.
+
+### Workspace / IAM Roles
+
+!!! danger
+    Even if you created the organization, you must explicitly grant these roles.
+    Google Cloud does not automatically give org creators all the permissions needed to bootstrap an entire platform.
+    The roles below are high-privilege. If they are not being granted directly to the organization owner, only grant them to trusted administrators or admin groups - never to general developers.
+
+For the user (or group) that will run the procedures in this document (typically your platform admin or organization owner), grant the following roles.
+
+Go to the [IAM admin page](https://console.cloud.google.com/iam-admin/):
+
+On the user in the view by principals list, edit the roles via the "Edit" button and add the following roles:
+
+* `roles/serviceusage.serviceUsageConsumer`
+* `roles/resourcemanager.organizationAdmin`
+* `roles/resourcemanager.projectCreator`
+* `roles/resourcemanager.folderCreator`
+* `roles/resourcemanager.folderEditor`
+* `roles/resourcemanager.lienModifier`
+* `roles/orgpolicy.policyAdmin`
+* `roles/securitycenter.admin`
 
 ## GitHub
 
@@ -191,7 +214,7 @@ Regular developers should later be added as **Members**, not Owners.
 For this setup, you only need a single repository called `platform`.  
 This repository will host:
 
-- Platform infrastructure code (e.g. Terraform, bootstrap scripts)
+- Platform infrastructure code (Terraform roots for bootstrap, org, environments, GitHub)
 - Shared configuration and documentation for the platform
 
 To create it:
@@ -215,8 +238,245 @@ GitHub Actions will run the platform’s CI/CD pipelines from the `platform` rep
 3. If prompted, enable GitHub Actions for the organization.
 4. Add a simple workflow (e.g. a basic CI file) to confirm that workflows can run.
 
+### Create GitHub App for Terraform
+
+!!! note
+    GitHub Apps provide fine-grained, revocable access for automation tools like Terraform.
+    They are more secure than personal access tokens and don't expire when team members leave.
+    This is a **manual process** - GitHub Apps cannot be created via Terraform itself.
+
+The GitHub App will be used by Terraform to manage your organization's infrastructure as code, including repositories, teams, branch protection, and secrets.
+
+#### Why GitHub Apps vs Personal Access Tokens?
+
+- **Fine-grained permissions**: Only grant the exact permissions needed
+- **Organization-scoped**: Not tied to a specific user account
+- **Audit trail**: All actions appear as coming from the app, not an individual
+- **No expiration**: Unlike PATs, GitHub Apps don't expire after 1 year
+- **Revocable**: Can be uninstalled without affecting user accounts
+
+See: [GitHub Apps documentation](https://docs.github.com/en/apps/creating-github-apps/about-creating-github-apps/about-creating-github-apps)
+
+#### Create the App
+
+1. Navigate to your organization's GitHub Apps settings:
+   ```
+   https://github.com/organizations/YOUR-ORG-NAME/settings/apps
+   ```
+
+2. Click **New GitHub App**
+
+3. Configure the app with the following settings:
+
+   ```
+   GitHub App name: platform-automation
+   Description: Organization automation for GitHub and Terraform infrastructure
+   Homepage URL: https://github.com/YOUR-ORG-NAME
+
+   Webhook:
+   [ ] Active (leave unchecked)
+
+   Repository permissions:
+   Actions: Read & write
+   Administration: Read & write
+   Checks: Read & write
+   Code scanning alerts: Read & write
+   Commit statuses: Read
+   Contents: Read & write
+   Dependabot alerts: Read
+   Dependabot secrets: Read
+   Discussions: Read & write
+   Deployments: Read & write
+   Environments: Read & write
+   Issues: Read & write
+   Metadata: Read
+   Packages: Read & write
+   Pages: Read & write
+   Pull requests: Read & write
+   Repository advisories: Read & write
+   Repository hooks: Read & write
+   Secret scanning alert dismissal requests: Read
+   Secret scanning alerts: Read & write
+   Secret scanning push protection bypass requests: Read
+   Secrets: Read & write
+   Security events: Read & write
+   Variables: Read & write
+   Workflows: Read & write
+
+   Organization permissions:
+   Administration: Read & write
+   Custom organization roles: Read & write
+   Custom properties: Read & write
+   Custom repository roles: Read & write
+   Events: Read
+   Issue Fields: Read & write
+   Issue Types: Read & write
+   Knowledge bases: Read & write
+   Members: Read & write
+   Organization private registries: Read & write
+   Personal access token requests: Read & write
+   Personal access tokens: Read & write
+   Projects: Read & write
+   Secrets: Read & write
+   Variables: Read & write
+
+   Repository access:
+   (*) All repositories (applies to current and future repositories)
+
+   Where can this GitHub App be installed?
+   (*) Only on this account (YOUR-ORG-NAME)
+   ```
+
+4. Click **Create GitHub App**
+
+!!! warning
+    These permissions are extensive by design - they allow Terraform to manage your entire GitHub organization as code.
+    Only authorized platform administrators should have access to the private key.
+
+See: [GitHub Apps permissions](https://docs.github.com/en/apps/creating-github-apps/setting-permissions-for-github-apps/choosing-permissions-for-a-github-app)
+
+#### Generate and Secure the Private Key
+
+1. After creating the app, scroll to the **Private keys** section
+2. Click **Generate a private key**
+3. A `.pem` file will download (e.g., `terraform.2024-12-07.private-key.pem`)
+4. **Store this file securely** - you'll need it for Terraform authentication
+
+!!! danger
+    The private key cannot be recovered if lost. You'll need to generate a new one.
+    Never commit this file to version control. Add `*.pem` to your `.gitignore`.
+
+5. Note the **App ID** at the top of the page (e.g., `123456`)
+
+#### Install the App to Your Organization
+
+1. In the left sidebar, click **Install App**
+2. Click **Install** next to your organization name
+3. Choose **All repositories** (recommended) or select specific repos
+4. Click **Install**
+
+5. After installation, note the **Installation ID** from the URL:
+   ```
+   https://github.com/organizations/YOUR-ORG/settings/installations/12345678
+                                                                      ^^^^^^^^^
+                                                                      Installation ID
+   ```
+
+#### Save Credentials for Bootstrap
+
+You now have three values from the GitHub App:
+- **App ID**: From the app settings page (e.g., `123456`)
+- **Installation ID**: From the installation URL (e.g., `12345678`)
+- **Private key (PEM file)**: The downloaded `.pem` file (e.g., `platform-automation.2024-12-07.private-key.pem`)
+
+Keep these values ready for the platform bootstrap procedure:
+
+```bash
+# Save these somewhere secure (password manager, encrypted file, etc.)
+App ID: 123456
+Installation ID: 12345678
+PEM file: ~/Downloads/platform-automation.2024-12-07.private-key.pem
+```
+
+!!! note
+    **Do NOT delete the PEM file yet.** You'll need it during platform bootstrap (step 9) to store in GCP Secret Manager.
+    The `3-github` terraform module will automatically create GitHub organization secrets from Secret Manager.
+    After the bootstrap sync is complete, you can safely delete it.
+
+See: [Installing GitHub Apps](https://docs.github.com/en/apps/using-github-apps/installing-your-own-github-app) | [GitHub Organization Secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-an-organization)
+
+## Cloudflare
+
+### Create Cloudflare API Token
+
+!!! note
+    Cloudflare API tokens provide secure access for Terraform to manage DNS, routing, and application infrastructure.
+    This token is stored in Secret Manager by the platform and consumed by application infrastructure modules.
+
+#### Why API Tokens vs API Keys?
+
+- **Fine-grained permissions**: Only grant the exact permissions needed
+- **Token-scoped**: Can be restricted to specific zones and resources
+- **Audit trail**: All actions logged with token identification
+- **Revocable**: Can be rotated without affecting other tokens
+- **No email/key pair**: More secure than legacy API keys
+
+See: [Cloudflare API Tokens](https://developers.cloudflare.com/fundamentals/api/get-started/create-token/)
+
+#### Create the Token
+
+1. Navigate to Cloudflare API Tokens:
+   ```
+   https://dash.cloudflare.com/profile/api-tokens
+   ```
+
+2. Click **Create Token**
+
+3. Choose **Create Custom Token**
+
+4. Configure token settings:
+
+   ```
+   Token name: terraform-platform
+
+   Permissions:
+   Account | Account Settings | Read
+   Account | Account Rulesets | Edit
+   Zone | DNS | Edit
+   Zone | Zone | Read
+   Zone | Zone Settings | Edit
+   Zone | Page Rules | Edit
+   Zone | Cache Purge | Purge
+   Zone | Workers Routes | Edit
+
+   Account Resources:
+   Include | All accounts
+
+   Zone Resources:
+   Include | All zones
+
+   IP Address Filtering:
+   (Optional - leave blank for access from anywhere)
+
+   TTL:
+   Start Date: (now)
+   End Date: (leave blank - never expire)
+   ```
+
+   !!! important "Use account-scoped token"
+       Create this as an **account-scoped token** (default), not a user-scoped token.
+       Account-scoped tokens survive user lifecycle changes and are Cloudflare's recommendation for automation.
+       For small projects, setting TTL to never expire is acceptable - the token is secured in GCP Secret Manager with IAM controls.
+
+5. Click **Continue to summary**
+
+6. Review permissions and click **Create Token**
+
+7. **Copy the token** - it will only be shown once
+
+#### Save Token for Bootstrap
+
+Save the API token securely:
+
+```bash
+# Save this somewhere secure (password manager, encrypted file, etc.)
+Cloudflare API Token: abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
+```
+
+!!! danger
+    The API token cannot be retrieved after initial creation. If lost, you'll need to create a new token.
+    Never commit this token to version control.
+
+!!! note
+    You'll use this token during platform bootstrap (step 9) to store in GCP Secret Manager.
+    Application and infrastructure modules will read from Secret Manager to manage Cloudflare resources.
+
+See: [Cloudflare API Token Permissions](https://developers.cloudflare.com/fundamentals/api/reference/permissions/)
+
 At this point you should have:
 
 - A GitHub organization with at least one **Owner**
 - A single `platform` repository under that organization
 - GitHub Actions enabled and ready for your infrastructure and application pipelines
+- A GitHub App with the private key for Terraform automation
+- A Cloudflare API token for infrastructure management

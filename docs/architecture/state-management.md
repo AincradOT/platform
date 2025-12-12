@@ -2,18 +2,16 @@
 
 [Terraform state](https://www.terraform.io/docs/language/state/index.html) is stored in a [GCS bucket](https://cloud.google.com/storage/docs) with [versioning](https://cloud.google.com/storage/docs/object-versioning) enabled by the bootstrap process. All terraform roots (except bootstrap itself initially) use this bucket with unique prefixes for state isolation.
 
-## Overview
-
-Terraform state is stored in a single GCS bucket created by the bootstrap process. All terraform roots (except bootstrap itself initially) use this bucket with unique prefixes for state isolation.
-
 ## State Bucket Configuration
 
 ### Bucket features
 
 - [Versioning](https://cloud.google.com/storage/docs/object-versioning) enabled (retains last 50 versions)
+- [Lifecycle policy](https://cloud.google.com/storage/docs/lifecycle) automatically deletes versions older than the 50 most recent
 - [Uniform bucket-level access](https://cloud.google.com/storage/docs/uniform-bucket-level-access) (UBLA)
 - [Public access prevention](https://cloud.google.com/storage/docs/public-access-prevention) enforced
 - Google-managed encryption at rest
+- `prevent_destroy` lifecycle hook prevents accidental bucket deletion
 
 !!! note
     No KMS encryption is used for the state bucket.
@@ -43,21 +41,19 @@ roles/storage.objectViewer - (optional) audit/monitoring tools
 Each terraform root uses a unique prefix in the bucket:
 
 ```
-gs://sao-tfstate/
-├── terraform/bootstrap/           # bootstrap state
-├── terraform/foundation/          # foundation state
-├── terraform/environments/dev/    # development environment
-├── terraform/environments/prod/   # production environment
-└── terraform/apps/{repo-name}/    # application infrastructure repos
+gs://aincrad-tfstate/
+├── terraform/bootstrap            # bootstrap state
+├── terraform/org                  # organizational structure state
+├── terraform/environments/dev     # development environment
+├── terraform/environments/prod    # production environment
+└── terraform/apps/{repo-name}     # application infrastructure repos
 ```
 
 Application repositories use their repository name as part of the prefix to avoid conflicts.
 
 ## State Locking
 
-!!! warning
-    GCS does not provide native state locking.
-    For small teams (3-10 developers) running terraform sequentially, this is acceptable.
+**⚠️ Warning:** GCS does not provide native state locking. For small teams (3-10 developers) running terraform sequentially, this is acceptable.
 
 ### Mitigation
 
@@ -108,7 +104,7 @@ If state is corrupted or lost:
 
 1. Use GCS versioning to restore a previous version
    ```bash
-   gsutil cp gs://sao-tfstate/terraform/foundation/default.tfstate#<version> gs://sao-tfstate/terraform/foundation/default.tfstate
+   gsutil cp gs://aincrad-tfstate/terraform/org/default.tfstate#<version> gs://aincrad-tfstate/terraform/org/default.tfstate
    ```
 
 2. If no good version exists, rebuild state via `terraform import`

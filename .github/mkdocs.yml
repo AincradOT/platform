@@ -4,6 +4,7 @@ repo_url: https://github.com/aincradot/platform
 edit_uri: edit/master/docs/
 repo_name: Github
 docs_dir: ../docs
+site_dir: site
 
 extra:
   social:
@@ -90,6 +91,7 @@ nav:
 
   - Architecture:
       - Overview: architecture/index.md
+      - Platform: architecture/platforming.md
       - Cloudflare: architecture/cloudflare.md
       - Google Cloud: architecture/gcp.md
       - GitHub Organisation: architecture/github.md
@@ -97,6 +99,17 @@ nav:
       - State Management: architecture/state-management.md
       - Disaster Recovery: architecture/disaster-recovery.md
       - Cost Model: architecture/cost-model.md
+
+  - Runbooks:
+      - Overview: runbooks/index.md
+      - Platform Bootstrap: platform/README.md
+      - Platform Teardown: runbooks/teardown.md
+      - Terraform Modules:
+          - Bootstrap: platform/0-bootstrap/README.md
+          - Organization: platform/1-org/README.md
+          - Development: platform/2-environments/development/README.md
+          - Production: platform/2-environments/production/README.md
+          - GitHub: platform/3-github/README.md
 
   - Contributing:
       - Overview: contributing/index.md

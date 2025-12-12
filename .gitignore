@@ -17,9 +17,13 @@
 # Crash log files
 crash.log
 
-# Exclude all auto.tfvars files, which are likely to contain sensitive data, such as
-# password, private keys, and other secrets. These should not be part of version
-# control as they are data points which should only be used for testing changes locally.
+# Exclude all .tfvars files with real infrastructure values
+# Only example.terraform.tfvars should be committed
+terraform.tfvars
+*.tfvars
+!example.terraform.tfvars
+
+# Exclude auto.tfvars files
 *.auto.tfvars
 
 # Ignore override files as they are usually used to override resources locally and so
@@ -43,6 +47,13 @@ results.sarif
 # Local test files
 temp.sh
 
+# Service account key files (should never be committed)
+*-ci-key.json
+*.json
+!.github/*.json
+!**/package.json
+!**/package-lock.json
+
 # ################################################################
 # For Terraform Modules containing Python files
 # ################################################################
@@ -54,4 +65,6 @@ temp.sh
 # .tox
 # .coverage
 cloud/
-platform/0-bootstrap/example.terraform.tfvars
+.github/site/
+docs/platform/
+.cascade

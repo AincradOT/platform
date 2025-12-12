@@ -38,11 +38,11 @@ Application-specific DR (databases, VMs, application data) is the responsibility
 
 ```bash
 # List available versions
-gsutil ls -a gs://sao-tfstate/terraform/foundation/default.tfstate
+gsutil ls -a gs://aincrad-tfstate/terraform/org/default.tfstate
 
 # Restore specific version
-gsutil cp gs://sao-tfstate/terraform/foundation/default.tfstate#<version> \
-          gs://sao-tfstate/terraform/foundation/default.tfstate
+gsutil cp gs://aincrad-tfstate/terraform/org/default.tfstate#<version> \
+          gs://aincrad-tfstate/terraform/org/default.tfstate
 ```
 
 !!! note
@@ -64,7 +64,7 @@ Secret Manager keeps all versions of secrets. Accidentally overwritten secrets c
 
 ```bash
 # List secret versions
-gcloud secrets versions list secret-name --project=sao-shared-logging
+gcloud secrets versions list secret-name --project=aincrad-shared
 
 # Access previous version
 gcloud secrets versions access <version> --secret=secret-name
@@ -124,13 +124,10 @@ If everything is lost (state, projects, bucket), here's the recovery order:
 
 1. Verify org and billing still exist (these cannot be terraform-managed)
 2. Re-run 0-bootstrap to create new state bucket and bootstrap project
-3. Import or rebuild 1-foundation resources (folders, shared services project, or recreate from scratch if necessary)
+3. Import or rebuild 1-org resources (folders, shared services project, or recreate from scratch if necessary)
 4. Import or rebuild 2-environments projects
 5. Re-populate Secret Manager (values must be re-entered manually)
 6. Notify application teams to verify their state and infrastructure
-
-!!! note
-    Time estimate: 2-4 hours for platform rebuild, assuming no application data loss.
 
 ## Testing DR Procedures
 

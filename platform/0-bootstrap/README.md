@@ -15,50 +15,36 @@ Creates the GCP bootstrap project and GCS bucket for Terraform state.
    ```
    Select your organization account when prompted.
 
-## Setup
-
-1. Copy example tfvars file:
+3. Get your organization ID:
    ```bash
-   cp platform/0-bootstrap/example.terraform.tfvars platform/0-bootstrap/terraform.tfvars
+   gcloud organizations list
    ```
 
-2. Edit `platform/0-bootstrap/terraform.tfvars` with your values.
-
-3. Initialize and apply (from repository root):
+4. Get your billing account ID:
    ```bash
-   terraform -chdir=platform/0-bootstrap init
-   terraform -chdir=platform/0-bootstrap apply
+   gcloud billing accounts list
    ```
 
-4. Note the `state_bucket_name` output:
-   ```bash
-   terraform -chdir=platform/0-bootstrap output state_bucket_name
-   ```
+## Additional Resources
 
-## Migrate to Remote State
+- [GCS Bucket Versioning](https://cloud.google.com/storage/docs/object-versioning) - Understanding state versioning
+- [Terraform State Management](https://developer.hashicorp.com/terraform/language/state) - State concepts and best practices
+- [GCS Backend Configuration](https://developer.hashicorp.com/terraform/language/settings/backends/gcs) - Backend setup details
+- [GCP Project Creation](https://cloud.google.com/resource-manager/docs/creating-managing-projects) - Project lifecycle management
 
-1. Edit `platform/0-bootstrap/backend.gcs.example.tf`:
-   - Update `bucket` with the state bucket name from output
-   - Uncomment the `terraform` block
+!!! note
+    For step-by-step bootstrap instructions, see the [Platform README](../README.md).
+    This document provides reference information for the 0-bootstrap terraform root.
 
-2. Rename and migrate (from repository root):
-   ```bash
-   mv platform/0-bootstrap/backend.gcs.example.tf platform/0-bootstrap/backend.gcs.tf
-   terraform -chdir=platform/0-bootstrap init -migrate-state
-   ```
-   Type `yes` when prompted.
+## Configuration
 
-## Configure Other Roots
+Create `terraform.tfvars` with your values:
 
-Update the `bucket` value in:
-- `platform/1-foundation/backends.tf`
-- `platform/2-environments/*/backends.tf`
-
-Then initialize each root:
-```bash
-terraform -chdir=platform/1-foundation init
-terraform -chdir=platform/2-environments/development init
-terraform -chdir=platform/2-environments/production init
+```hcl
+org_id              = "123456789012"
+billing_account_id  = "ABCDEF-123456-ABCDEF"
+project_name        = "aincrad"
+state_bucket_name   = "aincrad-tfstate"
 ```
 
 ## Variables
@@ -67,15 +53,61 @@ terraform -chdir=platform/2-environments/production init
 |------|-------------|----------|
 | `org_id` | GCP organization ID | Yes |
 | `billing_account_id` | Billing account ID | Yes |
-| `project_name` | Project name (e.g. `sao` generates project ID `sao-bootstrap`) | Yes |
+| `project_name` | Project name (e.g. `aincrad` generates project ID `aincrad-bootstrap`) | Yes |
 | `state_bucket_name` | GCS bucket name for state | Yes |
-| `location` | GCS bucket location | No (default: `europe-west3`) |
+| `location` | GCS bucket location (single region for cost optimization) | No (default: `europe-west3`) |
 | `labels` | Resource labels | No |
 
 ## Outputs
 
 - `bootstrap_project_id`: The created project ID
 - `state_bucket_name`: The state bucket name
+
+## Rollback Procedures
+
+### If terraform apply fails partway through
+
+**Scenario**: Apply fails after project creation but before bucket creation
+
+```bash
+# Check what was created
+gcloud projects list --filter="projectId:{project_name}-bootstrap"
+
+# Let terraform retry (safest approach)
+terraform -chdir=platform/0-bootstrap apply
+
+# Or manually clean up and retry
+gcloud projects delete {project_name}-bootstrap --quiet
+rm -f terraform.tfstate*
+terraform -chdir=platform/0-bootstrap apply
+```
+
+### If you need to completely destroy bootstrap
+
+**Warning**: This deletes the state bucket and all terraform state. Only do this if you're starting over.
+
+```bash
+# Disable prevent_destroy in platform/0-bootstrap/main.tf first
+# Change: lifecycle { prevent_destroy = true }
+# To: lifecycle { prevent_destroy = false }
+
+terraform -chdir=platform/0-bootstrap destroy
+
+# Manually delete project if destroy fails
+gcloud projects delete {project_name}-bootstrap --quiet
+```
+
+### If state bucket already exists error
+
+**Cause**: Bucket name is globally taken or recently deleted
+
+```bash
+# Try a different bucket name in terraform.tfvars
+state_bucket_name = "aincrad-tfstate-abc123"  # Add random suffix
+
+# Or restore the bucket if it was recently deleted (within 30 days)
+gsutil ls -p {project_id} -L gs://{bucket_name}
+```
 
 ## Recovery
 
