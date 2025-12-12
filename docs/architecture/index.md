@@ -20,7 +20,7 @@ Application repositories use the same backend and target environment projects cr
 
 ## Bootstrap and application flow
 
-For complete bootstrap procedures, see the [Platform README](../../platform/README.md).
+For complete bootstrap procedures, see the Platform README.
 
 ## State and remote backends
 

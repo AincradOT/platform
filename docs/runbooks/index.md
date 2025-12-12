@@ -4,7 +4,7 @@ Complete step-by-step procedures for deploying the platform from scratch.
 
 ## Bootstrap Procedure
 
-The complete bootstrap procedure is documented in the [Platform README](../../platform/README.md), which includes:
+The complete bootstrap procedure is documented in the Platform README, which includes:
 
 - Prerequisites verification
 - Authentication setup
