@@ -42,6 +42,25 @@ github_app_private_key     = <<-EOT
 EOT
 cloudflare_api_token       = "abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
 cloudflare_zone_id         = "1234567890abcdef1234567890abcdef"
+
+# SSH connection details for OVH VPS machines (only for initial bootstrap)
+dev_vps_ssh_host     = "51.38.185.123"
+dev_vps_ssh_user     = "ubuntu"
+dev_vps_ssh_password = "your-dev-password"
+dev_vps_ssh_private_key = <<-EOT
+-----BEGIN OPENSSH PRIVATE KEY-----
+...
+-----END OPENSSH PRIVATE KEY-----
+EOT
+
+prod_vps_ssh_host     = "51.38.186.234"
+prod_vps_ssh_user     = "ubuntu"
+prod_vps_ssh_password = "your-prod-password"
+prod_vps_ssh_private_key = <<-EOT
+-----BEGIN OPENSSH PRIVATE KEY-----
+...
+-----END OPENSSH PRIVATE KEY-----
+EOT
 ```
 
 ## Variables
@@ -59,9 +78,18 @@ cloudflare_zone_id         = "1234567890abcdef1234567890abcdef"
 | `github_app_private_key` | GitHub App private key PEM contents (for initial Secret Manager sync only) | No (default: null) |
 | `cloudflare_api_token` | Cloudflare API token (for initial Secret Manager sync only) | No (default: null) |
 | `cloudflare_zone_id` | Cloudflare Zone ID for your domain (for initial Secret Manager sync only) | No (default: null) |
+| `dev_vps_ssh_host` | Development VPS SSH hostname or IP (for initial Secret Manager sync only) | No (default: null) |
+| `dev_vps_ssh_user` | Development VPS SSH username (for initial Secret Manager sync only) | No (default: null) |
+| `dev_vps_ssh_password` | Development VPS SSH password (for initial Secret Manager sync only) | No (default: null) |
+| `dev_vps_ssh_private_key` | Development VPS SSH private key PEM (for initial Secret Manager sync only) | No (default: null) |
+| `prod_vps_ssh_host` | Production VPS SSH hostname or IP (for initial Secret Manager sync only) | No (default: null) |
+| `prod_vps_ssh_user` | Production VPS SSH username (for initial Secret Manager sync only) | No (default: null) |
+| `prod_vps_ssh_password` | Production VPS SSH password (for initial Secret Manager sync only) | No (default: null) |
+| `prod_vps_ssh_private_key` | Production VPS SSH private key PEM (for initial Secret Manager sync only) | No (default: null) |
 
 ## Outputs
 
+- `org_id` - Organization ID
 - `shared_folder_id` - Shared folder ID
 - `dev_folder_id` - Development folder ID
 - `prod_folder_id` - Production folder ID
@@ -156,3 +184,13 @@ Used by application infrastructure modules to manage DNS records in the correct 
 - `platform-ci@<shared-project>.iam.gserviceaccount.com` - `roles/secretmanager.secretAccessor`
 
 Used by platform infrastructure (3-github module) to manage GitHub organization settings via GitHub Terraform provider.
+
+**VPS SSH Credentials (optional):**
+
+Development VPS:
+- `dev-ci@<shared-project>.iam.gserviceaccount.com` - `roles/secretmanager.secretAccessor`
+
+Production VPS:
+- `prod-ci@<shared-project>.iam.gserviceaccount.com` - `roles/secretmanager.secretAccessor`
+
+Used by application deployment workflows (Ansible, configuration management) to provision and configure VPS infrastructure. Only required if using VPS hosting pattern for application infrastructure.

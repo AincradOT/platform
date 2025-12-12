@@ -239,6 +239,176 @@ resource "google_secret_manager_secret_version" "cloudflare_zone_id" {
   }
 }
 
+# SSH connection details for OVH VPS machines (development)
+resource "google_secret_manager_secret" "dev_vps_ssh_host" {
+  project   = google_project.shared.project_id
+  secret_id = "dev-vps-ssh-host"
+
+  replication {
+    auto {}
+  }
+
+  depends_on = [google_project_service.shared_services]
+}
+
+resource "google_secret_manager_secret_version" "dev_vps_ssh_host" {
+  count       = var.dev_vps_ssh_host != null && var.dev_vps_ssh_host != "" ? 1 : 0
+  secret      = google_secret_manager_secret.dev_vps_ssh_host.id
+  secret_data = var.dev_vps_ssh_host
+
+  lifecycle {
+    ignore_changes = [secret_data]
+  }
+}
+
+resource "google_secret_manager_secret" "dev_vps_ssh_user" {
+  project   = google_project.shared.project_id
+  secret_id = "dev-vps-ssh-user"
+
+  replication {
+    auto {}
+  }
+
+  depends_on = [google_project_service.shared_services]
+}
+
+resource "google_secret_manager_secret_version" "dev_vps_ssh_user" {
+  count       = var.dev_vps_ssh_user != null && var.dev_vps_ssh_user != "" ? 1 : 0
+  secret      = google_secret_manager_secret.dev_vps_ssh_user.id
+  secret_data = var.dev_vps_ssh_user
+
+  lifecycle {
+    ignore_changes = [secret_data]
+  }
+}
+
+resource "google_secret_manager_secret" "dev_vps_ssh_password" {
+  project   = google_project.shared.project_id
+  secret_id = "dev-vps-ssh-password"
+
+  replication {
+    auto {}
+  }
+
+  depends_on = [google_project_service.shared_services]
+}
+
+resource "google_secret_manager_secret_version" "dev_vps_ssh_password" {
+  count       = var.dev_vps_ssh_password != null && var.dev_vps_ssh_password != "" ? 1 : 0
+  secret      = google_secret_manager_secret.dev_vps_ssh_password.id
+  secret_data = var.dev_vps_ssh_password
+
+  lifecycle {
+    ignore_changes = [secret_data]
+  }
+}
+
+resource "google_secret_manager_secret" "dev_vps_ssh_private_key" {
+  project   = google_project.shared.project_id
+  secret_id = "dev-vps-ssh-private-key"
+
+  replication {
+    auto {}
+  }
+
+  depends_on = [google_project_service.shared_services]
+}
+
+resource "google_secret_manager_secret_version" "dev_vps_ssh_private_key" {
+  count       = var.dev_vps_ssh_private_key != null && var.dev_vps_ssh_private_key != "" ? 1 : 0
+  secret      = google_secret_manager_secret.dev_vps_ssh_private_key.id
+  secret_data = var.dev_vps_ssh_private_key
+
+  lifecycle {
+    ignore_changes = [secret_data]
+  }
+}
+
+# SSH connection details for OVH VPS machines (production)
+resource "google_secret_manager_secret" "prod_vps_ssh_host" {
+  project   = google_project.shared.project_id
+  secret_id = "prod-vps-ssh-host"
+
+  replication {
+    auto {}
+  }
+
+  depends_on = [google_project_service.shared_services]
+}
+
+resource "google_secret_manager_secret_version" "prod_vps_ssh_host" {
+  count       = var.prod_vps_ssh_host != null && var.prod_vps_ssh_host != "" ? 1 : 0
+  secret      = google_secret_manager_secret.prod_vps_ssh_host.id
+  secret_data = var.prod_vps_ssh_host
+
+  lifecycle {
+    ignore_changes = [secret_data]
+  }
+}
+
+resource "google_secret_manager_secret" "prod_vps_ssh_user" {
+  project   = google_project.shared.project_id
+  secret_id = "prod-vps-ssh-user"
+
+  replication {
+    auto {}
+  }
+
+  depends_on = [google_project_service.shared_services]
+}
+
+resource "google_secret_manager_secret_version" "prod_vps_ssh_user" {
+  count       = var.prod_vps_ssh_user != null && var.prod_vps_ssh_user != "" ? 1 : 0
+  secret      = google_secret_manager_secret.prod_vps_ssh_user.id
+  secret_data = var.prod_vps_ssh_user
+
+  lifecycle {
+    ignore_changes = [secret_data]
+  }
+}
+
+resource "google_secret_manager_secret" "prod_vps_ssh_password" {
+  project   = google_project.shared.project_id
+  secret_id = "prod-vps-ssh-password"
+
+  replication {
+    auto {}
+  }
+
+  depends_on = [google_project_service.shared_services]
+}
+
+resource "google_secret_manager_secret_version" "prod_vps_ssh_password" {
+  count       = var.prod_vps_ssh_password != null && var.prod_vps_ssh_password != "" ? 1 : 0
+  secret      = google_secret_manager_secret.prod_vps_ssh_password.id
+  secret_data = var.prod_vps_ssh_password
+
+  lifecycle {
+    ignore_changes = [secret_data]
+  }
+}
+
+resource "google_secret_manager_secret" "prod_vps_ssh_private_key" {
+  project   = google_project.shared.project_id
+  secret_id = "prod-vps-ssh-private-key"
+
+  replication {
+    auto {}
+  }
+
+  depends_on = [google_project_service.shared_services]
+}
+
+resource "google_secret_manager_secret_version" "prod_vps_ssh_private_key" {
+  count       = var.prod_vps_ssh_private_key != null && var.prod_vps_ssh_private_key != "" ? 1 : 0
+  secret      = google_secret_manager_secret.prod_vps_ssh_private_key.id
+  secret_data = var.prod_vps_ssh_private_key
+
+  lifecycle {
+    ignore_changes = [secret_data]
+  }
+}
+
 # IAM bindings for Secret Manager secrets
 # Cloudflare API token accessible by dev and prod CI service accounts
 resource "google_secret_manager_secret_iam_member" "cloudflare_token_dev_ci" {
@@ -290,4 +460,62 @@ resource "google_secret_manager_secret_iam_member" "github_app_private_key_platf
   secret_id = google_secret_manager_secret.github_app_private_key.secret_id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.platform_ci.email}"
+}
+
+# Development VPS SSH credentials accessible by dev CI service account
+resource "google_secret_manager_secret_iam_member" "dev_vps_ssh_host_dev_ci" {
+  project   = google_project.shared.project_id
+  secret_id = google_secret_manager_secret.dev_vps_ssh_host.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.dev_ci.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "dev_vps_ssh_user_dev_ci" {
+  project   = google_project.shared.project_id
+  secret_id = google_secret_manager_secret.dev_vps_ssh_user.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.dev_ci.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "dev_vps_ssh_password_dev_ci" {
+  project   = google_project.shared.project_id
+  secret_id = google_secret_manager_secret.dev_vps_ssh_password.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.dev_ci.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "dev_vps_ssh_private_key_dev_ci" {
+  project   = google_project.shared.project_id
+  secret_id = google_secret_manager_secret.dev_vps_ssh_private_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.dev_ci.email}"
+}
+
+# Production VPS SSH credentials accessible by prod CI service account
+resource "google_secret_manager_secret_iam_member" "prod_vps_ssh_host_prod_ci" {
+  project   = google_project.shared.project_id
+  secret_id = google_secret_manager_secret.prod_vps_ssh_host.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.prod_ci.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "prod_vps_ssh_user_prod_ci" {
+  project   = google_project.shared.project_id
+  secret_id = google_secret_manager_secret.prod_vps_ssh_user.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.prod_ci.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "prod_vps_ssh_password_prod_ci" {
+  project   = google_project.shared.project_id
+  secret_id = google_secret_manager_secret.prod_vps_ssh_password.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.prod_ci.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "prod_vps_ssh_private_key_prod_ci" {
+  project   = google_project.shared.project_id
+  secret_id = google_secret_manager_secret.prod_vps_ssh_private_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.prod_ci.email}"
 }

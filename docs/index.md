@@ -5,7 +5,7 @@ This repository defines the platform infrastructure for the Aincrad Open Tibia c
 ## Purpose
 
 !!! note
-    Costs are ~$15-18/month for platforming (GCP, Cloudflare domain, GitHub Team), and ~$110/month for VMs for service hosting.
+    ~$15-18/month for platforming (GCP, Cloudflare domain, GitHub Team), and ~$110/month for VMs for service hosting.
     See [Cost Model](architecture/cost-model.md) for details.
 
 This platform applies [CNCF](https://www.cncf.io/) principles using minimal-cost services from major providers ([GCP](https://cloud.google.com/), [Terraform](https://www.terraform.io/), [Cloudflare](https://www.cloudflare.com/)) to deliver:

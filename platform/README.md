@@ -120,8 +120,6 @@ terraform -chdir=platform/0-bootstrap init -migrate-state
 # Type 'yes' when prompted to copy state from local to GCS
 ```
 
-Type `yes` when prompted. If migration fails, see [0-bootstrap README](0-bootstrap/README.md) for troubleshooting.
-
 ### 6. Configure 1-org
 
 Copy and edit the example file:
@@ -208,6 +206,25 @@ EOT
 # Cloudflare API token and zone ID
 cloudflare_api_token = "abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
 cloudflare_zone_id   = "1234567890abcdef1234567890abcdef"
+
+# VPS SSH credentials (optional - only if using VPS hosting for application infrastructure)
+dev_vps_ssh_host     = "51.38.185.123"
+dev_vps_ssh_user     = "ubuntu"
+dev_vps_ssh_password = "temporary-password"  # Optional fallback auth
+dev_vps_ssh_private_key = <<-EOT
+-----BEGIN OPENSSH PRIVATE KEY-----
+[paste contents of your SSH private key]
+-----END OPENSSH PRIVATE KEY-----
+EOT
+
+prod_vps_ssh_host     = "51.38.186.234"
+prod_vps_ssh_user     = "ubuntu"
+prod_vps_ssh_password = "temporary-password"  # Optional fallback auth
+prod_vps_ssh_private_key = <<-EOT
+-----BEGIN OPENSSH PRIVATE KEY-----
+[paste contents of your SSH private key]
+-----END OPENSSH PRIVATE KEY-----
+EOT
 ```
 
 Run terraform to create the secrets:
@@ -227,6 +244,8 @@ You should see:
 - `github-app-private-key`
 - `cloudflare-api-token`
 - `cloudflare-zone-id`
+- `dev-vps-ssh-host`, `dev-vps-ssh-user`, `dev-vps-ssh-password`, `dev-vps-ssh-private-key` (if provided)
+- `prod-vps-ssh-host`, `prod-vps-ssh-user`, `prod-vps-ssh-password`, `prod-vps-ssh-private-key` (if provided)
 
 **Clean up:**
 
@@ -240,6 +259,14 @@ After the initial sync:
    # github_app_private_key     = <<-EOT ...
    # cloudflare_api_token       = "..."
    # cloudflare_zone_id         = "..."
+   # dev_vps_ssh_host           = "..."
+   # dev_vps_ssh_user           = "..."
+   # dev_vps_ssh_password       = "..."
+   # dev_vps_ssh_private_key    = <<-EOT ...
+   # prod_vps_ssh_host          = "..."
+   # prod_vps_ssh_user          = "..."
+   # prod_vps_ssh_password      = "..."
+   # prod_vps_ssh_private_key   = <<-EOT ...
    ```
 
 2. Delete the local PEM file:

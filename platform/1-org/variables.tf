@@ -102,3 +102,61 @@ variable "cloudflare_zone_id" {
   sensitive   = false
   default     = null
 }
+
+# SSH connection details for OVH VPS machines
+# Only required for initial bootstrap to populate GCP Secret Manager
+variable "dev_vps_ssh_host" {
+  description = "Development VPS SSH hostname or IP address. Only needed for initial bootstrap to sync to Secret Manager."
+  type        = string
+  sensitive   = false
+  default     = null
+}
+
+variable "dev_vps_ssh_user" {
+  description = "Development VPS SSH username. Only needed for initial bootstrap to sync to Secret Manager."
+  type        = string
+  sensitive   = false
+  default     = null
+}
+
+variable "dev_vps_ssh_password" {
+  description = "Development VPS SSH password. Only needed for initial bootstrap to sync to Secret Manager."
+  type        = string
+  sensitive   = true
+  default     = null
+}
+
+variable "dev_vps_ssh_private_key" {
+  description = "Development VPS SSH private key (PEM format). Only needed for initial bootstrap to sync to Secret Manager."
+  type        = string
+  sensitive   = true
+  default     = null
+}
+
+variable "prod_vps_ssh_host" {
+  description = "Production VPS SSH hostname or IP address. Only needed for initial bootstrap to sync to Secret Manager."
+  type        = string
+  sensitive   = false
+  default     = null
+}
+
+variable "prod_vps_ssh_user" {
+  description = "Production VPS SSH username. Only needed for initial bootstrap to sync to Secret Manager."
+  type        = string
+  sensitive   = false
+  default     = null
+}
+
+variable "prod_vps_ssh_password" {
+  description = "Production VPS SSH password. Only needed for initial bootstrap to sync to Secret Manager."
+  type        = string
+  sensitive   = true
+  default     = null
+}
+
+variable "prod_vps_ssh_private_key" {
+  description = "Production VPS SSH private key (PEM format). Only needed for initial bootstrap to sync to Secret Manager."
+  type        = string
+  sensitive   = true
+  default     = null
+}

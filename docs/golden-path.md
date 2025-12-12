@@ -290,6 +290,16 @@ The `1-org` platform root stores the Cloudflare API token in Secret Manager (sha
 
 Domain registration and nameserver configuration are manual one-time setup steps (see [Requirements](requirements.md)).
 
+**VPS SSH credentials (optional)**
+
+If using VPS hosting for application infrastructure, the `1-org` platform root can store SSH credentials in Secret Manager for application deployment workflows:
+
+* Host, username, password (fallback), and private key per environment
+* Accessible by environment-specific CI service accounts
+* Used by Ansible, configuration management, or deployment scripts
+
+Applications decide their own hosting strategy (VPS, Cloud Run, GCE, etc.). Platform simply provides credential storage if needed.
+
 **GitHub organization component** (optional)
 
 * configures GitHub organization settings (2FA required, base permissions, repository creation policies)

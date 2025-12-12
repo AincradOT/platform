@@ -5,7 +5,7 @@ Cloudflare provides [DNS](https://www.cloudflare.com/learning/dns/what-is-dns/),
 ## Platform vs Application Responsibility
 
 **Platform provides:**
-- Zone ID (via terraform outputs or documentation)
+- Zone ID stored in Secret Manager
 - API token stored in Secret Manager
 - Domain registration and nameserver configuration
 
