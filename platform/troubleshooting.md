@@ -113,6 +113,8 @@ cat platform-ci-key.json | jq .
 # Use file upload in GitHub UI instead of copy/paste
 # Or use GitHub CLI:
 gh secret set GCP_PLATFORM_SA_KEY < platform-ci-key.json
+gh secret set GCP_DEVELOPMENT_SA_KEY < dev-ci-key.json
+gh secret set GCP_PRODUCTION_SA_KEY < prod-ci-key.json
 ```
 
 ### Organization policy conflicts

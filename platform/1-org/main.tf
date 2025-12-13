@@ -56,6 +56,17 @@ resource "google_org_policy_policy" "skip_default_network" {
   }
 }
 
+resource "google_org_policy_policy" "allow_sa_key_creation_in_shared_project" {
+  name   = "projects/${google_project.shared.project_id}/policies/iam.disableServiceAccountKeyCreation"
+  parent = "projects/${google_project.shared.project_id}"
+
+  spec {
+    rules {
+      enforce = false
+    }
+  }
+}
+
 # Retrieve Cloud Identity customer ID for group creation
 data "google_organization" "org" {
   organization = var.org_id

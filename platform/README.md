@@ -354,10 +354,15 @@ gcloud iam service-accounts keys create prod-ci-key.json \
 
 Store in GitHub organization secrets:
 
-1. Navigate to `https://github.com/organizations/aincradot/settings/secrets/actions` (replace `aincradot` with your organization name)
-2. Create `GCP_PLATFORM_SA_KEY` with contents of `platform-ci-key.json`
-3. Create `GCP_SA_KEY` with contents of `dev-ci-key.json`
-4. Create `GCP_SA_KEY_PROD` with contents of `prod-ci-key.json`
+1. Navigate to `https://github.com/organizations/YOUR-ORG/settings/secrets/actions` (replace `YOUR-ORG` with your organization name)
+2. Create the following organization secrets:
+
+| Secret Name | Value | Purpose |
+|-------------|-------|---------|
+| `GCP_PLATFORM_SA_KEY` | Contents of `platform-ci-key.json` | Platform infrastructure operations |
+| `GCP_DEVELOPMENT_SA_KEY` | Contents of `dev-ci-key.json` | Development environment operations |
+| `GCP_PRODUCTION_SA_KEY` | Contents of `prod-ci-key.json` | Production environment operations |
+| `GCP_SHARED_PROJECT_ID` | Your shared project ID (e.g., `yourorg-shared`) | Secret Manager project reference |
 
 Delete local key files immediately:
 
@@ -391,8 +396,8 @@ terraform -chdir=platform/3-github apply
 ```
 
 **Verify GitHub organization settings:**
-- Check organization secrets exist: `https://github.com/organizations/aincradot/settings/secrets/actions`
-- Verify teams created: `https://github.com/orgs/aincradot/teams`
+- Check organization secrets exist: `https://github.com/organizations/YOUR-ORG/settings/secrets/actions`
+- Verify teams created: `https://github.com/orgs/YOUR-ORG/teams`
 
 !!! note
     GitHub App credentials are automatically read from Secret Manager (created in step 9). No manual PEM file configuration required.
