@@ -43,6 +43,13 @@ EOT
 cloudflare_api_token       = "abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
 cloudflare_zone_id         = "1234567890abcdef1234567890abcdef"
 
+# SOPS age key (optional - only if using SOPS-encrypted tfvars in application/service repos)
+org_sops_age_key = <<-EOT
+# created: 2025-01-01T00:00:00Z
+# public key: age1...
+AGE-SECRET-KEY-1...
+EOT
+
 # SSH connection details for OVH VPS machines (only for initial bootstrap)
 dev_vps_ssh_host     = "51.38.185.123"
 dev_vps_ssh_user     = "ubuntu"
@@ -78,6 +85,7 @@ EOT
 | `github_app_private_key` | GitHub App private key PEM contents (for initial Secret Manager sync only) | No (default: null) |
 | `cloudflare_api_token` | Cloudflare API token (for initial Secret Manager sync only) | No (default: null) |
 | `cloudflare_zone_id` | Cloudflare Zone ID for your domain (for initial Secret Manager sync only) | No (default: null) |
+| `org_sops_age_key` | Organisation-wide age private key for SOPS (for initial Secret Manager sync only) | No (default: null) |
 | `dev_vps_ssh_host` | Development VPS SSH hostname or IP (for initial Secret Manager sync only) | No (default: null) |
 | `dev_vps_ssh_user` | Development VPS SSH username (for initial Secret Manager sync only) | No (default: null) |
 | `dev_vps_ssh_password` | Development VPS SSH password (for initial Secret Manager sync only) | No (default: null) |
@@ -179,6 +187,13 @@ Used by application infrastructure modules to authenticate with Cloudflare API.
 - `prod-ci@<shared-project>.iam.gserviceaccount.com` - `roles/secretmanager.secretAccessor`
 
 Used by application infrastructure modules to manage DNS records in the correct Cloudflare zone.
+
+**SOPS (age) key:**
+- `platform-admins@<your-domain>` - `roles/secretmanager.secretAccessor`
+- `dev-ci@<shared-project>.iam.gserviceaccount.com` - `roles/secretmanager.secretAccessor`
+- `prod-ci@<shared-project>.iam.gserviceaccount.com` - `roles/secretmanager.secretAccessor`
+
+Used by CI in application/service repositories to decrypt SOPS-encrypted terraform variable files.
 
 **GitHub App Credentials:**
 - `platform-ci@<shared-project>.iam.gserviceaccount.com` - `roles/secretmanager.secretAccessor`

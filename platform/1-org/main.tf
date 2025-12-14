@@ -250,6 +250,28 @@ resource "google_secret_manager_secret_version" "cloudflare_zone_id" {
   }
 }
 
+# Organisation-wide SOPS age private key for application/service repositories
+resource "google_secret_manager_secret" "org_sops_age_key" {
+  project   = google_project.shared.project_id
+  secret_id = "org-sops-age-key"
+
+  replication {
+    auto {}
+  }
+
+  depends_on = [google_project_service.shared_services]
+}
+
+resource "google_secret_manager_secret_version" "org_sops_age_key" {
+  count       = var.org_sops_age_key != null && var.org_sops_age_key != "" ? 1 : 0
+  secret      = google_secret_manager_secret.org_sops_age_key.id
+  secret_data = var.org_sops_age_key
+
+  lifecycle {
+    ignore_changes = [secret_data]
+  }
+}
+
 # SSH connection details for OVH VPS machines (development)
 resource "google_secret_manager_secret" "dev_vps_ssh_host" {
   project   = google_project.shared.project_id
@@ -449,6 +471,28 @@ resource "google_secret_manager_secret_iam_member" "cloudflare_zone_id_prod_ci" 
   secret_id = google_secret_manager_secret.cloudflare_zone_id.secret_id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.prod_ci.email}"
+}
+
+# SOPS age key accessible by dev/prod CI service accounts and platform admins
+resource "google_secret_manager_secret_iam_member" "org_sops_age_key_dev_ci" {
+  project   = google_project.shared.project_id
+  secret_id = google_secret_manager_secret.org_sops_age_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.dev_ci.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "org_sops_age_key_prod_ci" {
+  project   = google_project.shared.project_id
+  secret_id = google_secret_manager_secret.org_sops_age_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.prod_ci.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "org_sops_age_key_platform_admins" {
+  project   = google_project.shared.project_id
+  secret_id = google_secret_manager_secret.org_sops_age_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "group:${google_cloud_identity_group.platform_admins.group_key[0].id}"
 }
 
 # GitHub App credentials accessible by platform CI service account only

@@ -103,6 +103,15 @@ variable "cloudflare_zone_id" {
   default     = null
 }
 
+# SOPS (age) key for SOPS-encrypted tfvars across application/service repos
+# Only required for initial bootstrap to populate GCP Secret Manager
+variable "org_sops_age_key" {
+  description = "Organisation-wide age private key for SOPS (full contents of a .sops.age.key file). Only needed for initial bootstrap to sync to Secret Manager."
+  type        = string
+  sensitive   = true
+  default     = null
+}
+
 # SSH connection details for OVH VPS machines
 # Only required for initial bootstrap to populate GCP Secret Manager
 variable "dev_vps_ssh_host" {

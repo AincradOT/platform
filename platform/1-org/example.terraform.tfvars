@@ -24,6 +24,16 @@ state_bucket_name = "aincrad-tfstate"
 cloudflare_api_token = "cfx_api_v1_1234567890abcdef1234567890abcdef"
 cloudflare_zone_id   = "023e10593bd81a4dd053a95b8"
 
+# SOPS (age) key (optional)
+# If you use SOPS-encrypted tfvars in application/service repos, generate one org-wide age keypair
+# and store the *full* private key file contents in Secret Manager via this variable.
+# After initial sync, remove this block from terraform.tfvars.
+org_sops_age_key = <<-EOT
+# created: 2025-01-01T00:00:00Z
+# public key: age1...
+AGE-SECRET-KEY-1...
+EOT
+
 # SSH connection details for OVH VPS machines
 # Only needed for initial bootstrap to sync to Secret Manager
 # After initial sync, remove these lines from terraform.tfvars
