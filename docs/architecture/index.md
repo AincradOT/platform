@@ -43,6 +43,7 @@ Applications consume platform resources:
 - [Google Cloud](gcp.md) - Bootstrap structure, state bucket, projects, service accounts
 - [GitHub Organisation](github.md) - Terraform-managed org settings, teams, branch protections
 - [Continuous Integration](ci.md) - Service account auth, GitHub Apps, workflow patterns
+- [SOPS](sops.md) - Organisation-wide age key, CI decryption, admin workflow
 - [State Management](state-management.md) - GCS backend, versioning, recovery, security
 - [Disaster Recovery](disaster-recovery.md) - Platform rebuild procedures, backup strategies
 - [Cost Model](cost-model.md) - Platform costs ($15-18/month), optimization strategies

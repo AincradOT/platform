@@ -37,7 +37,7 @@ Workflows that run Terraform against GCP follow this pattern:
 2. Run Terraform or other CLIs using those credentials
 3. Terraform reads from GCS backend and applies changes
 
-Example snippet:
+Example snippet using direct authentication:
 
 ```yaml
 jobs:
@@ -49,7 +49,7 @@ jobs:
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          credentials_json: ${{ secrets.GCP_DEVELOPMENT_SA_KEY }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -58,11 +58,38 @@ jobs:
         run: terraform apply -auto-approve
 ```
 
+For workflows that need to retrieve secrets from Secret Manager, use the reusable composite action:
+
+```yaml
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate and get secrets
+        id: gcp
+        uses: ./.github/actions/gcp-auth
+        with:
+          environment: dev  # or prod, platform
+          gcp_sa_key: ${{ secrets.GCP_DEVELOPMENT_SA_KEY }}
+          shared_project_id: ${{ secrets.GCP_SHARED_PROJECT_ID }}
+          secrets: 'cloudflare-api-token,vps-ssh-host,vps-ssh-private-key'
+
+      - name: Use retrieved secrets
+        env:
+          CLOUDFLARE_TOKEN: ${{ steps.gcp.outputs.cloudflare_api_token }}
+        run: echo "Deploying with Cloudflare..."
+```
+
+See `.github/actions/gcp-auth/README.md` for full documentation and available secrets per environment.
+
 The organization-level secrets are:
 
 - `GCP_PLATFORM_SA_KEY` for platform infrastructure operations (org, folders, projects)
-- `GCP_SA_KEY` for dev environment operations
-- `GCP_SA_KEY_PROD` for production environment operations
+- `GCP_DEVELOPMENT_SA_KEY` for dev environment operations
+- `GCP_PRODUCTION_SA_KEY` for production environment operations
+- `GCP_SHARED_PROJECT_ID` for the shared services project ID (Secret Manager lookup)
 
 !!! warning
     Branch protection rules prevent unauthorized changes.

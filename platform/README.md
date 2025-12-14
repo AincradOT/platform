@@ -191,6 +191,51 @@ gcloud identity groups search --organization=$(terraform -chdir=platform/1-org o
     API credentials (GitHub App, Cloudflare) are stored in GCP Secret Manager.
     Platform and application modules will read from Secret Manager to manage infrastructure.
 
+#### 9.1 (Optional) Create an organisation-wide SOPS (age) key
+
+Some application/service repositories may store sensitive terraform variables as **SOPS-encrypted** files (for example `secrets.sops.tfvars.yaml`). Those workflows expect the org-wide age private key to be available in Secret Manager as `org-sops-age-key`.
+
+Generate an age keypair locally and keep the private key secure:
+
+```bash
+# Install age (pick one)
+# macOS: brew install age
+# Ubuntu/Debian: sudo apt-get update && sudo apt-get install -y age
+
+mkdir -p ~/.aincrad
+chmod 700 ~/.aincrad
+
+# Generate the keypair (private key file format used by SOPS)
+age-keygen -o ~/.aincrad/.sops.age.key
+chmod 600 ~/.aincrad/.sops.age.key
+
+# Show the public key (this goes into each repo's .sops.yaml)
+age-keygen -y ~/.aincrad/.sops.age.key
+
+# Show the private key file contents (this is what gets stored in Secret Manager)
+cat ~/.aincrad/.sops.age.key
+```
+
+Populate Secret Manager via `1-org` by passing the **full contents** of the private key file to Terraform (bootstrap only).
+
+Recommended: pass it as a one-time environment variable (avoids writing it to `terraform.tfvars`):
+
+```bash
+export TF_VAR_org_sops_age_key="$(cat ~/.aincrad/.sops.age.key)"
+terraform -chdir=platform/1-org apply
+unset TF_VAR_org_sops_age_key
+```
+
+Alternative: paste it into `platform/1-org/terraform.tfvars` (and remove it after the initial sync):
+
+```hcl
+org_sops_age_key = <<-EOT
+# created: 2025-01-01T00:00:00Z
+# public key: age1...
+AGE-SECRET-KEY-1...
+EOT
+```
+
 Add the credentials to `platform/1-org/terraform.tfvars` using the values you noted during [manual setup](https://aincradot.github.io/platform/requirements/):
 
 ```hcl
@@ -244,6 +289,7 @@ You should see:
 - `github-app-private-key`
 - `cloudflare-api-token`
 - `cloudflare-zone-id`
+- `org-sops-age-key` (if `org_sops_age_key` was provided)
 - `dev-vps-ssh-host`, `dev-vps-ssh-user`, `dev-vps-ssh-password`, `dev-vps-ssh-private-key` (if provided)
 - `prod-vps-ssh-host`, `prod-vps-ssh-user`, `prod-vps-ssh-password`, `prod-vps-ssh-private-key` (if provided)
 
@@ -259,6 +305,7 @@ After the initial sync:
    # github_app_private_key     = <<-EOT ...
    # cloudflare_api_token       = "..."
    # cloudflare_zone_id         = "..."
+   # org_sops_age_key           = <<-EOT ...
    # dev_vps_ssh_host           = "..."
    # dev_vps_ssh_user           = "..."
    # dev_vps_ssh_password       = "..."
@@ -354,10 +401,15 @@ gcloud iam service-accounts keys create prod-ci-key.json \
 
 Store in GitHub organization secrets:
 
-1. Navigate to `https://github.com/organizations/aincradot/settings/secrets/actions` (replace `aincradot` with your organization name)
-2. Create `GCP_PLATFORM_SA_KEY` with contents of `platform-ci-key.json`
-3. Create `GCP_SA_KEY` with contents of `dev-ci-key.json`
-4. Create `GCP_SA_KEY_PROD` with contents of `prod-ci-key.json`
+1. Navigate to `https://github.com/organizations/YOUR-ORG/settings/secrets/actions` (replace `YOUR-ORG` with your organization name)
+2. Create the following organization secrets:
+
+| Secret Name | Value | Purpose |
+|-------------|-------|---------|
+| `GCP_PLATFORM_SA_KEY` | Contents of `platform-ci-key.json` | Platform infrastructure operations |
+| `GCP_DEVELOPMENT_SA_KEY` | Contents of `dev-ci-key.json` | Development environment operations |
+| `GCP_PRODUCTION_SA_KEY` | Contents of `prod-ci-key.json` | Production environment operations |
+| `GCP_SHARED_PROJECT_ID` | Your shared project ID (e.g., `yourorg-shared`) | Secret Manager project reference |
 
 Delete local key files immediately:
 
@@ -391,8 +443,8 @@ terraform -chdir=platform/3-github apply
 ```
 
 **Verify GitHub organization settings:**
-- Check organization secrets exist: `https://github.com/organizations/aincradot/settings/secrets/actions`
-- Verify teams created: `https://github.com/orgs/aincradot/teams`
+- Check organization secrets exist: `https://github.com/organizations/YOUR-ORG/settings/secrets/actions`
+- Verify teams created: `https://github.com/orgs/YOUR-ORG/teams`
 
 !!! note
     GitHub App credentials are automatically read from Secret Manager (created in step 9). No manual PEM file configuration required.
