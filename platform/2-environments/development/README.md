@@ -124,4 +124,4 @@ terraform -chdir=platform/2-environments/development apply
 
 ## Notes
 
-- IAM includes only platform CI service account access. Add project-specific roles as needed for your application
+- IAM includes platform CI service account access plus `roles/storage.admin` for backup bucket creation and management. Add additional project-specific roles as needed for your application.

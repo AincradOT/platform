@@ -49,6 +49,7 @@ module "dev_environment" {
 | `environment_name` | Environment name for labeling (development, production, etc.) | `string` | Yes | - |
 | `project_display_name` | Display name for project | `string` | No | Same as `project_id` |
 | `ci_service_account` | CI service account email to grant editor role | `string` | No | `null` |
+| `ci_storage_admin` | Grant CI service account `roles/storage.admin` on this project | `bool` | No | `false` |
 | `iam_bindings` | Additional IAM bindings (map of {role, member}) | `map(object)` | No | `{}` |
 | `labels` | Additional resource labels | `map(string)` | No | `{}` |
 
@@ -64,3 +65,4 @@ module "dev_environment" {
 - This module enables APIs: compute, IAM, logging, monitoring, Secret Manager
 - Additional APIs can be enabled in the consuming application's terraform
 - IAM bindings include only CI service account access - add project-specific permissions in application repos
+- Set `ci_storage_admin = true` when CI needs to create or manage buckets in this project.

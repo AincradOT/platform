@@ -43,6 +43,12 @@ variable "ci_service_account" {
   default     = null
 }
 
+variable "ci_storage_admin" {
+  description = "Grant CI service account roles/storage.admin on this project for managing buckets."
+  type        = bool
+  default     = false
+}
+
 variable "iam_bindings" {
   description = "Additional IAM bindings. Map key is identifier, value contains role and member."
   type = map(object({

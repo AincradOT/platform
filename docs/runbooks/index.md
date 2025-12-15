@@ -17,6 +17,10 @@ The complete bootstrap procedure is documented in the Platform README, which inc
 
 **After bootstrap**: Application repositories consume the platform boundaries - see the [Golden Path](../golden-path.md) for application patterns and responsibilities.
 
+## Grant CI bucket permissions
+
+If an application Terraform needs to create a backup bucket and fails with `storage.buckets.create`, follow [Grant CI access to manage backup buckets](ci-storage-permissions.md) to give the environment CI service account project-scoped `roles/storage.admin`.
+
 ## Teardown
 
 To decommission the platform and stop all billing, see [Teardown](teardown.md).

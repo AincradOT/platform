@@ -44,6 +44,13 @@ resource "google_project_iam_member" "ci_editor" {
   member  = "serviceAccount:${var.ci_service_account}"
 }
 
+resource "google_project_iam_member" "ci_storage_admin" {
+  count   = var.ci_service_account != null && var.ci_storage_admin ? 1 : 0
+  project = google_project.env.project_id
+  role    = "roles/storage.admin"
+  member  = "serviceAccount:${var.ci_service_account}"
+}
+
 resource "google_project_iam_member" "custom_iam" {
   for_each = var.iam_bindings
   project  = google_project.env.project_id

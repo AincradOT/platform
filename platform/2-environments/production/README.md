@@ -129,4 +129,4 @@ terraform -chdir=platform/2-environments/production apply
 
 ## Notes
 
-- IAM includes only platform CI service account access. Keep production tight - add permissions explicitly as needed
+- IAM includes platform CI service account access plus `roles/storage.admin` for backup bucket creation and management. Keep production tight - add any additional permissions explicitly as needed.

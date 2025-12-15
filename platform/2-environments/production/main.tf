@@ -9,6 +9,7 @@ module "prod_environment" {
 
   project_display_name = var.prod_project_name
   ci_service_account   = local.prod_ci_service_account
+  ci_storage_admin     = true
 
   iam_bindings = var.gcp_platform_viewers_group != null ? {
     platform_viewers = {
